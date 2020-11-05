@@ -1,0 +1,401 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+
+<sqlMap namespace="ADDRESS_GROUP">
+	<select id="select_address_group_type_01"
+	        parameterClass="java.util.Map"
+	        resultClass="com.nara.jdf.db.entity.AddressGroupEntity">		
+		SELECT
+			GROUP_IDX,
+			USERS_IDX,
+			GROUP_NM,
+			GROUP_SORT_NO,
+			DOMAIN,
+			REF_GROUP_IDX,
+			GROUP_STMT,
+			GROUP_TYPE,
+			(SELECT COUNT(ADDRESS_IDX) FROM ADDRESS BB WHERE AA.GROUP_IDX = BB.GROUP_IDX) ADDRESS_CNT
+		FROM ADDRESS_GROUP AA	
+		<dynamic prepend="WHERE">
+			<isGreaterEqual prepend="AND" property="GROUP_IDX" compareValue="1">
+				GROUP_IDX = #GROUP_IDX#
+			</isGreaterEqual>
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="" property= "strKey">
+				<isNotEqual prepend="AND" open=" SUBSTR($strField$,0,1) IN (" close=")" property="strKey" compareValue="">
+					$strKey$
+				</isNotEqual>
+			</isNotNull>
+			<isNotEqual prepend="AND" property="strKeyword" compareValue="">
+				$strIndex$ LIKE CONCAT('%', strKeyword, '%')
+			</isNotEqual>
+		</dynamic>
+		ORDER BY $orderCol$ $orderType$
+		LIMIT $SKIP$, $USERS_LISTNUM$
+	</select> 
+	
+	<select id="select_address_group_type_02"
+	        parameterClass="java.util.Map"
+	        resultClass="com.nara.jdf.db.entity.AddressGroupEntity">
+		SELECT
+			GROUP_IDX,
+			USERS_IDX,
+			GROUP_NM,
+			GROUP_SORT_NO,
+			DOMAIN,
+			REF_GROUP_IDX,
+			GROUP_STMT,
+			GROUP_TYPE
+		FROM ADDRESS_GROUP
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isGreaterThan prepend="AND" property= "ADDRESS_IDX" compareValue="0">
+				GROUP_IDX IN  (
+								SELECT GROUP_IDX
+								FROM ADDRESS
+								WHERE ADDRESS_EMAIL = (SELECT ADDRESS_EMAIL FROM ADDRESS WHERE ADDRESS_IDX = #ADDRESS_IDX#)
+								AND GROUP_IDX > 0				
+							  )
+			</isGreaterThan>
+		</dynamic>
+		ORDER BY $orderCol$ $orderType$
+	</select>
+	
+	<select id="select_address_group_type_03"
+	        parameterClass="java.util.Map"
+	        resultClass="com.nara.jdf.db.entity.AddressGroupEntity">
+		SELECT
+			GROUP_IDX,
+			USERS_IDX,
+			GROUP_NM,
+			GROUP_SORT_NO,
+			DOMAIN,
+			REF_GROUP_IDX,
+			GROUP_STMT,
+			GROUP_TYPE
+		FROM ADDRESS_GROUP
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "GROUP_IDX">
+				GROUP_IDX = #GROUP_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "REF_GROUP_IDX">
+				REF_GROUP_IDX = #REF_GROUP_IDX#
+			</isNotNull>
+		</dynamic>
+	</select>
+		
+	<select id="count_address_group_type_01"
+	        parameterClass="java.util.Map"
+	        resultClass="java.lang.Integer">
+		SELECT
+	  		COUNT(GROUP_IDX) CNT
+		FROM ADDRESS_GROUP	
+		<dynamic prepend="WHERE">
+			<isGreaterEqual prepend="AND" property="GROUP_IDX" compareValue="1">
+				GROUP_IDX = #GROUP_IDX#
+			</isGreaterEqual>
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="" property= "strKey">
+				<isNotEqual prepend="AND" open=" SUBSTR($strField$,0,1) IN (" close=")" property="strKey" compareValue="">
+					$strKey$
+				</isNotEqual>
+			</isNotNull>
+			<isNotEqual prepend="AND" property="strKeyword" compareValue="">
+				$strIndex$ LIKE CONCAT('%', strKeyword, '%')
+			</isNotEqual>
+		</dynamic>
+	</select>
+	
+	<select id="count_address_group_type_02"
+	        parameterClass="java.util.Map"
+	        resultClass="java.lang.Integer">
+		SELECT
+	  		COUNT(GROUP_IDX) CNT
+		FROM ADDRESS_GROUP	
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "GROUP_NM">
+				GROUP_NM = #GROUP_NM#
+			</isNotNull>
+			<isGreaterEqual prepend="AND" property="GROUP_IDX" compareValue="1">
+				GROUP_IDX != #GROUP_IDX#
+			</isGreaterEqual>
+		</dynamic>
+	</select>		
+	
+	<insert id="insert_address_group_type_01"
+	        parameterClass="com.nara.jdf.db.entity.AddressGroupEntity">
+		INSERT INTO ADDRESS_GROUP
+		(
+			GROUP_IDX,
+			USERS_IDX,
+			GROUP_NM,
+			GROUP_SORT_NO,
+			DOMAIN,
+			REF_GROUP_IDX,
+			GROUP_STMT,
+			GROUP_TYPE
+		)
+		VALUES
+		(
+			<dynamic prepend="">
+				<isGreaterEqual prepend="" property="GROUP_IDX" compareValue="1">
+					#GROUP_IDX#,
+				</isGreaterEqual>
+				<isEqual prepend="" property="GROUP_IDX" compareValue="0">
+					NEXTVAL('ADDRESS_GROUP'),
+				</isEqual>
+			</dynamic>
+			#USERS_IDX#,
+			#GROUP_NM#,
+			#GROUP_SORT_NO#,
+			#DOMAIN#,
+			#REF_GROUP_IDX#,
+			#GROUP_STMT#,
+			#GROUP_TYPE#
+		)
+	</insert>
+	
+	<update id="update_address_group_type_01"
+	        parameterClass="com.nara.jdf.db.entity.AddressGroupEntity">
+	    UPDATE ADDRESS_GROUP
+	    SET	GROUP_NM = #GROUP_NM#,
+	        GROUP_STMT = #GROUP_STMT#
+	    WHERE GROUP_IDX = #GROUP_IDX#
+	</update>
+	
+	<update id="simple_update_address_group_type_01"
+	        parameterClass="java.util.Map">
+	    UPDATE ADDRESS_GROUP
+	    SET	GROUP_NM = #GROUP_NM#,
+	    	GROUP_STMT = #GROUP_STMT#
+	    WHERE GROUP_IDX = #GROUP_IDX#
+	</update>
+	
+	<delete id="delete_address_group_type_01"
+	        parameterClass="java.util.Map">
+	    DELETE FROM ADDRESS_GROUP
+	    <dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "GROUP_IDX">
+				GROUP_IDX = #GROUP_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "DOMAIN">
+				DOMAIN = #DOMAIN#
+			</isNotNull>
+		</dynamic>
+	</delete>
+	
+    <select id="select_address_group_idx"
+            parameterClass="java.util.Map"
+            resultClass="java.lang.Integer">
+        SELECT GROUP_IDX
+        FROM ADDRESS_GROUP
+        <dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "GROUP_NM">
+				GROUP_NM = #GROUP_NM#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "DOMAIN">
+				DOMAIN = #DOMAIN#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "REF_GROUP_IDX">
+				REF_GROUP_IDX = #REF_GROUP_IDX#
+			</isNotNull>
+		</dynamic>
+    </select>
+	
+	
+	<select id="select_address_group_type_04" 
+  				parameterClass="java.util.HashMap" 
+  				resultClass="com.nara.jdf.db.entity.AddressGroupEntity">
+		SELECT
+			GROUP_IDX,
+			USERS_IDX,
+			GROUP_NM,
+			GROUP_SORT_NO,
+			DOMAIN,
+			REF_GROUP_IDX,
+			GROUP_STMT,
+			GROUP_TYPE,
+			( SELECT COUNT(*) FROM ADDRESS_GROUP 
+				<dynamic prepend="WHERE">
+					<isNotNull prepend="AND" property= "DOMAIN">
+						DOMAIN = #DOMAIN#
+					</isNotNull>
+					<isNotNull prepend="AND" property= "USERS_IDX">
+						USERS_IDX = #USERS_IDX#
+					</isNotNull>
+					<isNotNull prepend="AND" property= "REF_GROUP_IDX">
+						REF_GROUP_IDX = AA.GROUP_IDX
+					</isNotNull>
+				</dynamic>
+		    ) AS CHILD_GROUP_CNT
+			
+		FROM ADDRESS_GROUP  AA
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "GROUP_IDX">
+				GROUP_IDX = #GROUP_IDX#
+			</isNotNull> 
+			<isNotNull prepend="AND" property= "DOMAIN">
+				DOMAIN = #DOMAIN#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "REF_GROUP_IDX">
+				REF_GROUP_IDX = #REF_GROUP_IDX#
+			</isNotNull> 
+			
+		</dynamic>
+		ORDER BY GROUP_SORT_NO ,GROUP_NM
+  	</select>
+  	
+  	<select id="select_address_group_type_05"
+	        parameterClass="java.util.Map"
+	        resultClass="java.lang.Integer">
+		SELECT
+			GROUP_IDX
+		FROM ADDRESS_GROUP
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "REF_GROUP_IDX">
+				REF_GROUP_IDX = #REF_GROUP_IDX#
+			</isNotNull>
+		</dynamic>
+	</select>
+	
+  	<update id="change_address_group"
+	        parameterClass="java.util.Map">
+  		UPDATE ADDRESS_GROUP
+  		SET USERS_IDX = #AFTER_USERS_IDX#
+  		WHERE USERS_IDX = #BEFORE_USERS_IDX#
+	</update>	
+	
+	<select id="select_address_group_type_06"
+	        parameterClass="java.util.Map"
+	        resultClass="java.util.HashMap">
+		SELECT
+			GROUP_IDX ADDRESS_IDX,
+			CONCAT('G_',GROUP_IDX) EXT_ADDRESS_IDX,
+			USERS_IDX,
+			GROUP_NM ADDRESS_NAME,
+			GROUP_SORT_NO ADDRESS_SORT_NO,
+			DOMAIN,
+			REF_GROUP_IDX,
+			GROUP_STMT,
+			GROUP_TYPE,
+			'' ADDRESS_EMAIL,
+			'' ADDRESS_TEL,
+			'' ADDRESS_CELLTEL
+		FROM ADDRESS_GROUP AA
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				AA.USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "REF_GROUP_IDX">
+				AA.REF_GROUP_IDX = #REF_GROUP_IDX#
+			</isNotNull>
+		</dynamic>
+		ORDER BY AA.GROUP_NM
+	</select>
+
+	<select id="select_address_group_type_07"
+	        parameterClass="java.util.Map"
+	        resultClass="com.nara.jdf.db.entity.AddressGroupEntity">
+		SELECT
+			GROUP_IDX,
+			USERS_IDX,
+			GROUP_NM,
+			GROUP_SORT_NO,
+			DOMAIN,
+			REF_GROUP_IDX,
+			GROUP_STMT,
+			GROUP_TYPE
+		FROM ADDRESS_GROUP
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "REF_GROUP_IDX">
+				REF_GROUP_IDX = #REF_GROUP_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "GROUP_IDX">
+				GROUP_IDX = #GROUP_IDX#
+			</isNotNull> 
+			<isNotNull prepend="AND" property= "DOMAIN">
+				DOMAIN = #DOMAIN#
+			</isNotNull>
+		</dynamic>
+		ORDER BY GROUP_NM
+	</select>
+	
+	<update id="update_address_group_type_02"
+	        parameterClass="com.nara.jdf.db.entity.AddressGroupEntity">
+	    UPDATE ADDRESS_GROUP
+	    SET	GROUP_NM = #GROUP_NM#,
+	        GROUP_STMT = #GROUP_STMT#,
+	        REF_GROUP_IDX = #REF_GROUP_IDX#
+	    WHERE GROUP_IDX = #GROUP_IDX#
+	</update>
+	
+	<select id="select_address_group_tree_make"
+			parameterClass="java.util.Map"
+			resultClass="java.util.HashMap">
+		SELECT 
+			AA.USERS_IDX,
+			AA.DOMAIN,
+			
+			AA.GROUP_IDX GROUP_IDX1,
+			AA.GROUP_NM GROUP_NM1,
+			AA.GROUP_SORT_NO GROUP_SORT_NO1,	
+			AA.REF_GROUP_IDX REF_GROUP_IDX1,
+			IFNULL(AA.GROUP_STMT, ' ') GROUP_STMT1,
+			IFNULL(AA.GROUP_TYPE, 'U') GROUP_TYPE1,
+		
+			BB.GROUP_IDX GROUP_IDX2,
+			CONCAT(SPACE(4),BB.GROUP_NM) GROUP_NM2,
+			BB.GROUP_SORT_NO GROUP_SORT_NO2,	
+			BB.REF_GROUP_IDX REF_GROUP_IDX2,
+			IFNULL(BB.GROUP_STMT, ' ') GROUP_STMT2,
+			IFNULL(BB.GROUP_TYPE, 'U') GROUP_TYPE2,
+			
+			CC.GROUP_IDX GROUP_IDX3,
+			CONCAT(SPACE(8),CC.GROUP_NM) GROUP_NM3,
+			CC.GROUP_SORT_NO GROUP_SORT_NO3,	
+			CC.REF_GROUP_IDX REF_GROUP_IDX3,
+			IFNULL(CC.GROUP_STMT, ' ') GROUP_STMT3,
+			IFNULL(CC.GROUP_TYPE, 'U') GROUP_TYPE3,
+			
+			DD.GROUP_IDX GROUP_IDX4,
+			CONCAT(SPACE(12),DD.GROUP_NM) GROUP_NM4,
+			DD.GROUP_SORT_NO GROUP_SORT_NO4,	
+			DD.REF_GROUP_IDX REF_GROUP_IDX4,
+			IFNULL(DD.GROUP_STMT, ' ') GROUP_STMT4,
+			IFNULL(DD.GROUP_TYPE, 'U') GROUP_TYPE4
+		FROM ADDRESS_GROUP AA LEFT JOIN ADDRESS_GROUP BB ON AA.GROUP_IDX = BB.REF_GROUP_IDX
+		LEFT JOIN ADDRESS_GROUP CC ON BB.GROUP_IDX = CC.REF_GROUP_IDX
+		LEFT JOIN ADDRESS_GROUP DD ON CC.GROUP_IDX = DD.REF_GROUP_IDX
+		WHERE AA.REF_GROUP_IDX = -1
+		AND   AA.USERS_IDX = #USERS_IDX#
+		ORDER BY AA.GROUP_NM, BB.GROUP_NM, CC.GROUP_NM, DD.GROUP_NM
+	</select>	
+</sqlMap>

@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="PUBLICGROUP">
+	<delete id="delete_publicgroup_type_01"
+	        parameterClass="java.util.HashMap">
+		DELETE FROM PUBLICGROUP
+		
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "PUBLICGROUP_IDX">
+				PUBLICGROUP_IDX = #PUBLICGROUP_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "DOMAIN">
+				DOMAIN = #DOMAIN#
+			</isNotNull>
+		</dynamic>
+	</delete>
+	
+    <select id="select_publicgroup_idx"
+            parameterClass="java.util.HashMap"
+            resultClass="java.lang.Integer">
+        SELECT PUBLICGROUP_IDX
+        FROM PUBLICGROUP
+        WHERE
+            DOMAIN = #DOMAIN#
+            <isNull prepend="AND" property="PUBLICGROUP_DEF">
+            PUBLICGROUP_DEF = 0
+            </isNull>
+            <isNotNull prepend="AND" property="PUBLICGROUP_DEF">
+            PUBLICGROUP_DEF = #PUBLICGROUP_DEF#
+            </isNotNull>
+            <isNotNull prepend="AND" property="PUBLICGROUP_NAME">
+            PUBLICGROUP_NAME = #PUBLICGROUP_NAME#
+            </isNotNull>
+    </select>
+    
+    <select id="select_publicgroup_idx_list"
+            parameterClass="java.lang.Integer"
+            resultClass="java.lang.Integer">
+        SELECT 
+        	PUBLICGROUP_IDX
+        FROM PUBLICGROUP
+        WHERE PUBLICGROUP_DEF = #PUBLICGROUP_DEF#
+    </select>
+    
+    
+    <select id="select_publicgroup_type_01" 
+  				parameterClass="java.util.HashMap" 
+  				resultClass="com.nara.jdf.db.entity.PublicGroupEntity">
+		SELECT 
+          	PUBLICGROUP_IDX, 
+          	PUBLICGROUP_DEF, 
+          	DOMAIN, 
+          	PUBLICGROUP_NAME,
+          	IFNULL(PUBLICGROUP_SORT_NO,0) PUBLICGROUP_SORT_NO
+       	FROM PUBLICGROUP 
+        <dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "PUBLICGROUP_IDX">
+				PUBLICGROUP_IDX = #PUBLICGROUP_IDX#
+			</isNotNull> 
+			<isNotNull prepend="AND" property= "DOMAIN">
+				DOMAIN = #DOMAIN#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "PUBLICGROUP_DEF">
+				PUBLICGROUP_DEF = #PUBLICGROUP_DEF#
+			</isNotNull> 
+			
+		</dynamic>
+  	</select>
+  	
+  	<select id="select_publicgroup_type_02" 
+  				parameterClass="java.util.HashMap" 
+  				resultClass="com.nara.jdf.db.entity.PublicGroupEntity">
+		SELECT
+			PUBLICGROUP_IDX, 
+          	PUBLICGROUP_DEF, 
+          	DOMAIN, 
+          	PUBLICGROUP_NAME, 
+			( SELECT COUNT(*) FROM PUBLICGROUP 
+				<dynamic prepend="WHERE">
+					<isNotNull prepend="AND" property= "PUBLICGROUP_DEF">
+						PUBLICGROUP_DEF = AA.PUBLICGROUP_IDX
+					</isNotNull> 
+					<isNotNull prepend="AND" property= "DOMAIN">
+						DOMAIN = #DOMAIN#
+					</isNotNull>
+				</dynamic>
+		    ) AS CHILD_GROUP_CNT
+			
+		FROM PUBLICGROUP  AA
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "PUBLICGROUP_IDX">
+				PUBLICGROUP_IDX = #PUBLICGROUP_IDX#
+			</isNotNull> 
+			<isNotNull prepend="AND" property= "DOMAIN">
+				DOMAIN = #DOMAIN#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "PUBLICGROUP_DEF">
+				PUBLICGROUP_DEF = #PUBLICGROUP_DEF#
+			</isNotNull> 
+			
+		</dynamic>
+		ORDER BY PUBLICGROUP_SORT_NO 
+  	</select>
+  	
+  	<select id="count_publicgroup_p_idx_type_01"
+	        parameterClass="java.util.HashMap"
+	        resultClass="java.lang.Integer">
+		SELECT COUNT(PUBLICGROUP_IDX)			 
+	 	FROM PUBLICGROUP 
+	 	<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "DOMAIN">
+				DOMAIN = #DOMAIN#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "PUBLICGROUP_NAME">
+				PUBLICGROUP_NAME = #PUBLICGROUP_NAME#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "PUBLICGROUP_DEF">
+				PUBLICGROUP_DEF = #PUBLICGROUP_DEF#
+			</isNotNull>
+			
+		</dynamic>
+ 	</select>
+ 	
+  	<insert id="insert_publicgroup_type_01"
+	        parameterClass="com.nara.jdf.db.entity.PublicGroupEntity">
+		INSERT INTO PUBLICGROUP( 
+            PUBLICGROUP_IDX, 
+            PUBLICGROUP_DEF, 
+            DOMAIN,
+            PUBLICGROUP_NAME
+		)
+		VALUES
+		(
+			NEXTVAL('PUBLICGROUP'),
+			#PUBLICGROUP_DEF#,    
+			#DOMAIN#,
+			#PUBLICGROUP_NAME#  
+		)
+	</insert>   
+	
+	<update id="update_publicgroup_type_01"
+	        parameterClass="com.nara.jdf.db.entity.PublicGroupEntity">
+	    UPDATE PUBLICGROUP SET
+	    	PUBLICGROUP_NAME = #PUBLICGROUP_NAME#,
+	    	PUBLICGROUP_DEF = #PUBLICGROUP_DEF#
+		WHERE PUBLICGROUP_IDX= #PUBLICGROUP_IDX# 
+	</update>
+	
+	
+	<select id="count_publicgroup_idx"
+	        parameterClass="java.util.HashMap"
+	        resultClass="java.lang.Integer">
+		SELECT 
+			COUNT(PUBLICGROUP_IDX)			 
+	 	FROM PUBLICGROUP 
+	 	<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "DOMAIN">
+				DOMAIN = #DOMAIN#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "PUBLICGROUP_IDX">
+				PUBLICGROUP_DEF = #PUBLICGROUP_IDX#
+			</isNotNull>
+			
+		</dynamic>
+ 	</select>
+ 	
+ 	<update id="update_publicgroup_type_03"
+	        parameterClass="java.util.Map">
+	    UPDATE PUBLICGROUP
+	    SET	PUBLICGROUP_DEF = #T_PARENT_IDX#
+	    WHERE DOMAIN = #DOMAIN#
+	    	AND PUBLICGROUP_IDX= #PUBLICGROUP_IDX# 
+	</update>
+  	
+  	<procedure id="update_publicgroup_sort" parameterClass="java.util.HashMap" >
+        { call sp_publicgroup_sort_setting(#DOMAIN#, #PUBLICGROUP_DEF#) }
+    </procedure>
+    
+    <select id="get_publicgroup_max_sort_no"
+            parameterClass="java.lang.Integer"
+            resultClass="java.lang.Integer">
+        SELECT IFNULL(MAX(PUBLICGROUP_SORT_NO),0)
+        FROM PUBLICGROUP
+        WHERE PUBLICGROUP_DEF = #PUBLICGROUP_DEF#
+    </select>
+
+    <update id="move_publicgroup"
+            parameterClass="java.util.HashMap">
+    	UPDATE PUBLICGROUP
+    	SET PUBLICGROUP_DEF = #PUBLICGROUP_DEF#,
+    	    PUBLICGROUP_SORT_NO = #PUBLICGROUP_SORT_NO#
+        WHERE DOMAIN = #DOMAIN#
+        AND   PUBLICGROUP_IDX = #PUBLICGROUP_IDX#
+    </update>    
+</sqlMap>

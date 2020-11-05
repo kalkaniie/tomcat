@@ -1,0 +1,129 @@
+<%@ page contentType="text/html;charset=utf-8"%>
+<%@page import="com.nara.springframework.service.UsersService"%>
+<link href="/css/km5_popup.css" rel="stylesheet" type="text/css">
+<style>
+* {margin:0; padding:0;}
+</style>
+<% 
+	com.nara.jdf.Config conf = com.nara.jdf.Configuration.getInitial();
+
+	String methodPath = request.getQueryString() != null ? request.getQueryString():"";
+	String onImg1="",onImg2="",onImg3="",onImg4="", onImg5="";
+	
+	if(
+		methodPath.indexOf("join_opt") != -1 ||
+		methodPath.indexOf("user_list") != -1 ||
+		methodPath.indexOf("usergroup_main") != -1 ||
+		methodPath.indexOf("organize_main") != -1 ||
+		methodPath.indexOf("authority_main") != -1 ||
+		methodPath.indexOf("userList") != -1 ||
+		methodPath.indexOf("registUser") != -1 ||
+		methodPath.indexOf("user_single_regist_form") != -1 ||
+		methodPath.indexOf("user_multi_regist_form") != -1 ||
+		methodPath.indexOf("user_multi_pause_form") != -1 ||
+		methodPath.indexOf("user_multi_delete_form") != -1 ||
+		methodPath.indexOf("reservation_list") != -1 ||
+		methodPath.indexOf("forword_info_list") != -1 ||
+		methodPath.indexOf("agreement_opt") != -1 ||
+		methodPath.indexOf("greetings_opt") != -1 ||
+		methodPath.indexOf("certify_list") != -1 ||
+		methodPath.indexOf("standby_user_list") != -1 ||
+		methodPath.indexOf("alias_info_list") != -1 ||
+		methodPath.indexOf("alias_detail_list") != -1 ||
+		methodPath.indexOf("regist_sk_user_pop") != -1 ||
+		methodPath.indexOf("batch_main") != -1
+	) { 
+		onImg1="_on";
+	} else if (
+		methodPath.indexOf("system_users_list") != -1 ||
+		methodPath.indexOf("agreement_view") != -1 ||
+		methodPath.indexOf("bad_mail_list") != -1 ||
+		methodPath.indexOf("filter_list") != -1 ||
+		methodPath.indexOf("domain_list") != -1 ||
+		methodPath.indexOf("domain_detail") != -1 ||
+		methodPath.indexOf("domain_regist_form") != -1 ||
+		methodPath.indexOf("admin_regist_form") != -1 ||
+		methodPath.indexOf("info_main") != -1 ||
+		methodPath.indexOf("grantIp_list") != -1 ||
+		methodPath.indexOf("linkageIp_list") != -1 
+	) {
+		onImg2="_on";
+	} else if (
+		methodPath.indexOf("mailLog_main") != -1 ||
+		methodPath.indexOf("login_log_list") != -1 ||
+		methodPath.indexOf("archive_list") != -1 ||
+		methodPath.indexOf("mail_queue") != -1		
+	) {
+		onImg3="_on";
+	} else if (
+		methodPath.indexOf("skin_base_form") != -1 ||
+		methodPath.indexOf("popup_list") != -1 ||
+		methodPath.indexOf("card_list") != -1 ||
+		methodPath.indexOf("letter_main") != -1 ||
+		methodPath.indexOf("bbs_list") != -1 ||
+		methodPath.indexOf("bbs_regist_form") != -1 ||
+		methodPath.indexOf("bbs_detail") != -1 ||
+		methodPath.indexOf("bbs_group_main") != -1 ||
+		methodPath.indexOf("formletter_list") != -1 ||
+		methodPath.indexOf("publicgroup_main") != -1||
+		methodPath.indexOf("poll_main") != -1|| 
+		methodPath.indexOf("sharegroup_list") != -1|| 
+		methodPath.indexOf("sys_03_010") != -1 ||
+		methodPath.indexOf("sys_03_020") != -1 ||
+		methodPath.indexOf("sys_03_060") != -1 ||
+		methodPath.indexOf("sys_03_040") != -1 ||
+		methodPath.indexOf("sys_03_050") != -1 ||
+		methodPath.indexOf("tag_filterList") != -1 ||
+		methodPath.indexOf("domain_modify_form") != -1		
+	){
+		onImg4="_on";
+	}else if (
+			methodPath.indexOf("basicSetup") != -1 ||  
+			methodPath.indexOf("admin_webhard_setup") != -1 ||
+			  methodPath.indexOf("individualDisk") != -1 ||
+			  methodPath.indexOf("logIndividual") != -1 ||
+			  methodPath.indexOf("ipConstraint") != -1 ||
+			  methodPath.indexOf("statistic") != -1 ||
+			  methodPath.indexOf("logPublic") != -1 
+			   
+			  
+			 ) {
+			  onImg5="_on";
+			 }
+%>
+<table border="0" cellpadding="0" cellspacing="0">
+	<tr>
+		<td class="admin_logo"><img src="/images_std/kor/set/logo.gif" style="margin-top:8px;" /><br /><img src="/images_std/kor/set/title.gif" /></td>
+		<td style="padding-top:10px;">
+		<table border="0" cellpadding="0" cellspacing="0">
+			<tr>
+				<td><img src="/images_std/kor/set/menu_l.gif" /></td>
+				<td><a href="user.admin.do?method=user_list&gubun=1"><img src="/images_std/kor/set/menu1<%=onImg1%>.gif" border="0" /></a></td>
+				<td><img src="/images_std/kor/set/menu10.gif" /></td>
+				<% if (UsersService.isSystemAdmin(request)) { %>
+				<td><a href="domain.system.do?method=domain_list"><img src="/images_std/kor/set/menu2<%=onImg2%>.gif" border="0" /></a></td>
+				<td><img src="/images_std/kor/set/menu10.gif" /></td>
+				<td><a href="maillog.system.do?method=mailLog_main"><img src="/images_std/kor/set/menu3<%=onImg3%>.gif" border="0" /></a></td>
+				<td><img src="/images_std/kor/set/menu10.gif" /></td>
+				<% } else { %>
+				<td><img src="/images_std/kor/set/menu2<%=onImg2%>.gif" border="0" /></td>
+				<td><img src="/images_std/kor/set/menu10.gif" /></td>
+				<td><img src="/images_std/kor/set/menu3<%=onImg3%>.gif" border="0" /></td>
+				<td><img src="/images_std/kor/set/menu10.gif" /></td>
+				<% } %>
+				<td><a href="formletter.admin.do?method=formletter_list"><img src="/images_std/kor/set/menu4<%=onImg4%>.gif" border="0" /></a></td>
+                <% if(conf.getBoolean("com.nara.bigmail.use")) { %>
+                	<% if(conf.getInt("com.nara.bigmail.diskManager") == 0) {%>
+                		<td><a href="webhard.admin.do?method=basicSetup"><img src="/images_std/kor/set/menu5.gif" border="0" /></a></td>
+                	<%} else { %>
+                		<td><a href="webhard.admin.do?method=basicSetup"><img src="/images_std/kor/set/menu6.gif" border="0" /></a></td>
+                	<% } %>
+				<td><img src="/images_std/kor/set/menu_r2.gif" /></td>
+				<% } else { %>
+				<td><img src="/images_std/kor/set/menu_r.gif" /></td>
+				<% } %>
+			</tr>
+		</table>
+		</td> 
+	</tr>
+</table>

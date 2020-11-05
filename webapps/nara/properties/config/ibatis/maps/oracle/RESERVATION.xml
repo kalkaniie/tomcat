@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="RESERVATION">
+	<delete id="delete_reservation_type_01"
+	        parameterClass="java.util.HashMap">
+		DELETE FROM RESERVATION
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "MAIL_RECONF_IDX">
+				MAIL_RECONF_IDX = #MAIL_RECONF_IDX#
+			</isNotNull>
+  			<isNotNull prepend="AND" property= "RESERVATION_IDX">
+				RESERVATION_IDX = #RESERVATION_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "DOMAIN">
+				SUBSTR(USERS_IDX, INSTR(USERS_IDX, '@')) = '@'||#DOMAIN#
+			</isNotNull>
+  		</dynamic>
+	</delete>
+    <insert id="insert_reservation_mail"
+            parameterClass="java.util.HashMap">
+        INSERT INTO RESERVATION (
+            RESERVATION_IDX,
+            USERS_IDX,
+            RESERVATION_TO,
+            RESERVATION_FILE,
+            RESERVATION_TIME,
+            MAIL_RECONF_IDX
+        ) VALUES (
+            SEQ_RESERVATION.NEXTVAL,
+            #USERS_IDX#,
+            #RESERVATION_TO#,
+            #RESERVATION_FILE#,
+            TO_DATE(#RESERVATION_TIME#,'YYYY-MM-DD HH24:MI:SS'),
+            #MAIL_RECONF_IDX#
+        )
+	</insert>
+	
+	<select id="select_reservaion_type_01"
+			parameterClass="java.util.HashMap"
+			resultClass="com.nara.jdf.db.entity.ReservationEntity">
+		SELECT
+            RESERVATION_IDX,
+            USERS_IDX,
+            RESERVATION_TO,
+            RESERVATION_FILE,
+            RESERVATION_TIME,
+            MAIL_RECONF_IDX
+		FROM RESERVATION
+		
+		<dynamic prepend="WHERE">
+			<isEqual prepend="AND " property="SELECT_KEY" compareValue="RESERVATION_IDX">
+				RESERVATION_IDX = #RESERVATION_IDX#
+			</isEqual>
+			<isEqual prepend="AND " property="SELECT_KEY" compareValue="MAIL_RECONF_IDX">
+				MAIL_RECONF_IDX = #MAIL_RECONF_IDX#
+			</isEqual>
+			<isEqual prepend="AND " property="SELECT_KEY" compareValue="MAIL_RECONF_GROUP">
+				MAIL_RECONF_IDX IN ( SELECT MAIL_RECONF_IDX FROM MAIL_RECONF WHERE MAIL_RECONF_GROUP = #MAIL_RECONF_GROUP# )
+			</isEqual>
+		</dynamic>           		
+	</select>
+	
+	<update id="move_reservation_mail"
+            parameterClass="java.util.HashMap">
+		UPDATE RESERVATION
+		SET USERS_IDX = #AFTER_USERS_IDX#
+		WHERE USERS_IDX = #BEFORE_USERS_IDX#
+	</update>
+</sqlMap>

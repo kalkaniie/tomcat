@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+
+<beans>
+
+<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="basename" value="messages"/>
+	</bean>
+	
+	<!-- ========================= VIEW DEFINITIONS ========================= -->
+	<bean id="jspViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">	
+	  <property name="viewClass" value="org.springframework.web.servlet.view.tiles.TilesJstlView"/>	
+	</bean>
+	
+	
+	<!--  Multi Action Start-->
+	<bean name="/messenger.message.do" class="com.nara.springframework.controller.pub.IntegrationMessageController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean> 
+	
+
+	<bean id="methodNameResolver" class="org.springframework.web.servlet.mvc.multiaction.ParameterMethodNameResolver"> 
+		<property name="paramName">  
+			<value>method</value> 
+		</property> 
+		<property name="defaultMethodName">  
+			<value>login_form</value> 
+		</property> 
+	</bean> 
+
+	<!-- Multi Action End -->
+	
+	<!-- ========================= TILES CONFIG ========================= -->	
+	<bean id="tilesConfigurer" class="org.springframework.web.servlet.view.tiles.TilesConfigurer">
+		<property name="definitions">
+			<list>
+				<value>/WEB-INF/config/tiles/kor_mail-defs.xml</value>
+				<value>/WEB-INF/config/tiles/eng_mail-defs.xml</value>
+			</list>
+		</property>
+	</bean>
+
+
+</beans>

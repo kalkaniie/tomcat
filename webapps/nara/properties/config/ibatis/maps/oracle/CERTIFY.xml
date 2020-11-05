@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="CERTIFY">
+  	<select id="select_certify_count_type_01" 
+   				parameterClass="java.util.HashMap"
+  				resultClass="java.lang.Integer">
+    	SELECT
+			COUNT(*) cnt
+    	FROM CERTIFY
+    	<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "DOMAIN">
+				DOMAIN = #DOMAIN#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "CERTIFY_NAME">
+				CERTIFY_NAME = #CERTIFY_NAME#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "CERTIFY_JUMIN1">
+				CERTIFY_JUMIN1 = #CERTIFY_JUMIN1#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "CERTIFY_JUMIN2">
+				CERTIFY_JUMIN2 = #CERTIFY_JUMIN2#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "CERTIFY_LICENCENUM">
+				CERTIFY_LICENCENUM = #CERTIFY_LICENCENUM#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "CERTIFY_DEPARTMENT">
+				CERTIFY_DEPARTMENT = #CERTIFY_DEPARTMENT#
+			</isNotNull>
+		</dynamic>
+  	</select>
+  	
+  	<delete id="delete_certify_type_01" 
+   				parameterClass="java.util.HashMap">
+    	DELETE FROM CERTIFY
+    	
+    	<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "DOMAIN">
+				DOMAIN = #DOMAIN#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "CERTIFY_NAME">
+				CERTIFY_NAME = #CERTIFY_NAME#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "CERTIFY_IDX">
+				CERTIFY_IDX = #CERTIFY_IDX#
+			</isNotNull>
+		</dynamic>
+  	</delete>
+  	
+  	<select id="select_certify_list_type_01"
+  			parameterClass="java.util.HashMap"
+  			resultClass="com.nara.jdf.db.entity.CertifyEntity">
+  		SELECT
+  			*
+  		FROM (
+			SELECT
+			    CERTIFY_IDX,
+			    DOMAIN,
+			    CERTIFY_ISVALID,
+			    CERTIFY_NAME,
+			    CERTIFY_JUMIN1,
+			    CERTIFY_JUMIN2,
+			    CERTIFY_DEPARTMENT,
+			    CERTIFY_LICENCENUM,
+			    CEIL((ROW_NUMBER() OVER(ORDER BY $orderCol$ $orderType$))/$USERS_LISTNUM$) PAGENUM
+			FROM CERTIFY
+	    
+			<dynamic prepend="WHERE">
+				<isNotNull prepend="AND" property= "DOMAIN">
+					DOMAIN = #DOMAIN#
+				</isNotNull>
+				<isNotEqual prepend="" property="strKeyword" compareValue="">
+					<isNotEqual prepend="AND" property="strIndex" compareValue="CERTIFY_JUMIN">
+						$strIndex$ LIKE '%'||#strKeyword#||'%'
+					</isNotEqual>
+					<isEqual prepend="AND" property="strIndex" compareValue="CERTIFY_JUMIN">
+						CERTIFY_JUMIN1||CERTIFY_JUMIN2 LIKE '%'||REPLACE(#strKeyword#, '-', '')||'%'
+					</isEqual>
+				</isNotEqual>
+			</dynamic>
+		)
+		
+		WHERE PAGENUM = #nPage#
+  	</select>
+  	
+  	<select id="count_certify_list_type_01"
+  			parameterClass="java.util.HashMap"
+  			resultClass="java.lang.Integer">
+		SELECT
+		    COUNT(CERTIFY_IDX) CNT
+		FROM CERTIFY
+    
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "DOMAIN">
+				DOMAIN = #DOMAIN#
+			</isNotNull>
+			<isNotEqual prepend="" property="strKeyword" compareValue="">
+				<isNotEqual prepend="AND" property="strIndex" compareValue="CERTIFY_JUMIN">
+					$strIndex$ LIKE '%'||#strKeyword#||'%'
+				</isNotEqual>
+				<isEqual prepend="AND" property="strIndex" compareValue="CERTIFY_JUMIN">
+					CERTIFY_JUMIN1||CERTIFY_JUMIN2 LIKE '%'||REPLACE(#strKeyword#, '-', '')||'%'
+				</isEqual>
+			</isNotEqual>
+		</dynamic>
+  	</select>
+  	
+  	<insert id="insert_certify_type_01"
+  			parameterClass="com.nara.jdf.db.entity.CertifyEntity">
+  		INSERT INTO CERTIFY
+  		(
+		    CERTIFY_IDX,
+		    DOMAIN,
+		    CERTIFY_ISVALID,
+		    CERTIFY_NAME,
+		    CERTIFY_JUMIN1,
+		    CERTIFY_JUMIN2,
+		    CERTIFY_DEPARTMENT,
+		    CERTIFY_LICENCENUM
+		)
+		VALUES
+		(
+			SEQ_CERTIFY.NEXTVAL,
+		    #DOMAIN#,
+		    #CERTIFY_ISVALID#,
+		    #CERTIFY_NAME#,
+		    #CERTIFY_JUMIN1#,
+		    #CERTIFY_JUMIN2#,
+		    #CERTIFY_DEPARTMENT#,
+		    #CERTIFY_LICENCENUM#
+		)
+  	</insert>
+</sqlMap>

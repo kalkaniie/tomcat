@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="NOTE_RECONF">
+	<insert id="insert_note_reconf_type_01"
+			parameterClass="com.nara.jdf.db.entity.NoteReconfEntity">
+		INSERT INTO NOTE_RECONF
+		(
+			NOTE_RECONF_IDX,
+			USERS_IDX,
+			NOTE_IDX,
+			NOTE_TITLE,
+			NOTE_RECONF_TO,
+			NOTE_RECONF_TO_ORI,
+			NOTE_SEND_TIME,
+			NOTE_READ_TIME,
+			NOTE_SEND_IDX,
+			NOTE_RECONF_STATE	
+		)
+		VALUES
+		(
+			SEQ_NOTE_RECONF.NEXTVAL,
+			#USERS_IDX#,
+			#NOTE_IDX#,
+			#NOTE_TITLE#,
+			#NOTE_RECONF_TO#,
+			#NOTE_RECONF_TO_ORI#,
+			SYSDATE,
+			NULL,
+			#NOTE_SEND_IDX#,
+			#NOTE_RECONF_STATE#		
+		)
+	</insert>
+	
+	<delete id="delete_note_reconf_type_01"
+			parameterClass="java.util.HashMap">
+		DELETE FROM NOTE_RECONF
+		
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "NOTE_SEND_IDX">
+				NOTE_SEND_IDX = #NOTE_SEND_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "NOTE_RECONF_IDX">
+				NOTE_RECONF_IDX = #NOTE_RECONF_IDX#
+			</isNotNull>
+		</dynamic>			
+	</delete>	
+	
+	<select id="select_note_reconf_type_01"
+			parameterClass="java.util.HashMap"
+			resultClass="java.util.HashMap">
+		SELECT
+			NOTE_RECONF_IDX,
+			USERS_IDX,
+			NOTE_IDX,
+			NOTE_TITLE,
+			NOTE_RECONF_TO,
+			NOTE_RECONF_TO_ORI,
+			NOTE_SEND_TIME,
+			NOTE_READ_TIME,
+			NOTE_RECONF_STATE,
+			NOTE_SEND_IDX,
+			NOTE_RECONF_CNT
+		FROM (		
+			SELECT 
+				AA.NOTE_RECONF_IDX,
+                AA.USERS_IDX,
+                AA.NOTE_IDX,
+                sf_get_users_name_id(AA.NOTE_RECONF_TO) NOTE_RECONF_TO ,
+                AA.NOTE_RECONF_TO_ORI,
+                TO_CHAR(AA.NOTE_SEND_TIME,'YYYY-MM-DD HH24:MI:SS') NOTE_SEND_TIME,
+				TO_CHAR(AA.NOTE_READ_TIME,'YYYY-MM-DD HH24:MI:SS') NOTE_READ_TIME,
+                AA.NOTE_SEND_IDX,
+                AA.NOTE_TITLE,
+				AA.NOTE_RECONF_STATE,
+				(SELECT COUNT(NOTE_RECONF_IDX) NOTE_RECONF_CNT
+				FROM NOTE_RECONF BB
+				WHERE AA.NOTE_SEND_IDX = BB.NOTE_SEND_IDX
+				GROUP BY NOTE_SEND_IDX) NOTE_RECONF_CNT,
+				CEIL((ROW_NUMBER() OVER(ORDER BY AA.NOTE_SEND_IDX DESC))/$USERS_LISTNUM$) PAGENUM
+			FROM NOTE_RECONF AA 
+			WHERE NOTE_RECONF_IDX IN (
+    			SELECT MAX(NOTE_RECONF_IDX)
+    			FROM NOTE_RECONF
+				<dynamic prepend="WHERE">
+					<isNotNull prepend="AND" property= "USERS_IDX">
+						USERS_IDX = #USERS_IDX#
+					</isNotNull>
+					<isNotNull prepend="" property= "NOTE_SEND_IDX">
+						<isNotEqual prepend="AND" property= "NOTE_SEND_IDX" compareValue="0">
+							NOTE_SEND_IDX = #NOTE_SEND_IDX#
+						</isNotEqual>
+					</isNotNull>
+				</dynamic>    			
+    			GROUP BY NOTE_SEND_IDX
+			)
+			<dynamic prepend="">
+				<isNotNull prepend="AND" property= "USERS_IDX">
+					USERS_IDX = #USERS_IDX#
+				</isNotNull>
+				<isNotNull prepend="" property= "NOTE_SEND_IDX">
+					<isNotEqual prepend="AND" property= "NOTE_SEND_IDX" compareValue="0">
+						NOTE_SEND_IDX = #NOTE_SEND_IDX#
+					</isNotEqual>
+				</isNotNull>
+			</dynamic>
+		)
+		WHERE PAGENUM = #nPage#	
+	</select>
+	
+	<select id="count_note_reconf_type_01"
+			parameterClass="java.util.HashMap"
+			resultClass="java.lang.Integer">	
+		SELECT 
+			COUNT(NOTE_RECONF_IDX) CNT
+		FROM NOTE_RECONF AA
+		WHERE NOTE_RECONF_IDX IN (
+			SELECT MAX(NOTE_RECONF_IDX)
+			FROM NOTE_RECONF
+			<dynamic prepend="WHERE">
+				<isNotNull prepend="AND" property= "USERS_IDX">
+					USERS_IDX = #USERS_IDX#
+				</isNotNull>
+				<isNotNull prepend="" property= "NOTE_SEND_IDX">
+					<isNotEqual prepend="AND" property= "NOTE_SEND_IDX" compareValue="0">
+						NOTE_SEND_IDX = #NOTE_SEND_IDX#
+					</isNotEqual>
+				</isNotNull>
+			</dynamic>    			
+			GROUP BY NOTE_SEND_IDX
+		)
+		<dynamic prepend="">
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="" property= "NOTE_SEND_IDX">
+				<isNotEqual prepend="AND" property= "NOTE_SEND_IDX" compareValue="0">
+					NOTE_SEND_IDX = #NOTE_SEND_IDX#
+				</isNotEqual>
+			</isNotNull>
+		</dynamic>
+	</select>
+	
+	<update id="update_note_reconf_type_01"
+			parameterClass="java.util.HashMap">	
+		UPDATE NOTE_RECONF
+		SET NOTE_READ_TIME = SYSDATE,
+		    NOTE_RECONF_STATE = 2
+		WHERE USERS_IDX = #USERS_IDX# AND NOTE_IDX = #NOTE_IDX#
+	</update>
+	
+	<select id="select_note_reconf_group_type_01"
+			parameterClass="java.util.HashMap"
+			resultClass="java.util.HashMap">
+		SELECT
+			NOTE_RECONF_IDX,
+			USERS_IDX,
+			NOTE_IDX,
+			NOTE_TITLE,
+			NOTE_RECONF_TO,
+			NOTE_RECONF_TO_ORI,
+			NOTE_SEND_TIME,
+			NOTE_READ_TIME,
+			NOTE_RECONF_STATE,
+			NOTE_SEND_IDX,
+			NOTE_RECONF_CNT
+		FROM (		
+			SELECT 
+				AA.NOTE_RECONF_IDX,
+                AA.USERS_IDX,
+                AA.NOTE_IDX,
+                sf_get_users_name_id(AA.NOTE_RECONF_TO) NOTE_RECONF_TO ,
+                AA.NOTE_RECONF_TO_ORI,
+                TO_CHAR(AA.NOTE_SEND_TIME,'YYYY-MM-DD HH24:MI:SS') NOTE_SEND_TIME,
+				TO_CHAR(AA.NOTE_READ_TIME,'YYYY-MM-DD HH24:MI:SS') NOTE_READ_TIME,
+                AA.NOTE_SEND_IDX,
+                AA.NOTE_TITLE,
+				AA.NOTE_RECONF_STATE,
+				(SELECT COUNT(NOTE_RECONF_IDX) NOTE_RECONF_CNT
+				FROM NOTE_RECONF BB
+				WHERE AA.NOTE_SEND_IDX = BB.NOTE_SEND_IDX
+				GROUP BY NOTE_SEND_IDX) NOTE_RECONF_CNT,
+				CEIL((ROW_NUMBER() OVER(ORDER BY AA.NOTE_SEND_IDX DESC))/$USERS_LISTNUM$) PAGENUM
+			FROM NOTE_RECONF AA
+			<dynamic prepend="WHERE">
+				<isNotNull prepend="AND" property= "USERS_IDX">
+					USERS_IDX = #USERS_IDX#
+				</isNotNull>
+				<isNotNull prepend="" property= "NOTE_SEND_IDX">
+					<isNotEqual prepend="AND" property= "NOTE_SEND_IDX" compareValue="0">
+						NOTE_SEND_IDX = #NOTE_SEND_IDX#
+					</isNotEqual>
+				</isNotNull>
+			</dynamic>
+		)
+		WHERE PAGENUM = #nPage#	
+	</select>
+	
+	<select id="count_note_reconf_group_type_01"
+			parameterClass="java.util.HashMap"
+			resultClass="java.lang.Integer">	
+		SELECT 
+			COUNT(NOTE_RECONF_IDX) CNT
+		FROM NOTE_RECONF AA
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="" property= "NOTE_SEND_IDX">
+				<isNotEqual prepend="AND" property= "NOTE_SEND_IDX" compareValue="0">
+					NOTE_SEND_IDX = #NOTE_SEND_IDX#
+				</isNotEqual>
+			</isNotNull>
+		</dynamic>
+	</select>
+	
+	<select id="select_note_reconf_users_idx"
+			parameterClass="java.util.HashMap"
+			resultClass="java.lang.String">	
+		SELECT 
+			USERS_IDX
+		FROM NOTE_RECONF
+		WHERE NOTE_IDX = #NOTE_IDX#
+	</select>
+</sqlMap>

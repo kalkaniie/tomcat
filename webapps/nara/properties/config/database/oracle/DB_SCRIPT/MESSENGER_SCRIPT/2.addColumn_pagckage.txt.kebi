@@ -1,0 +1,298 @@
+1. view 생성 
+
+		 ---------------------마스터 테이블 ----------------------------------------
+			drop table msg_user_master;
+			create view msg_user_master
+			  as
+			  SELECT  a.users_id users_id,
+			       a.domain,
+			       a.users_name user_nm,       
+			       a.users_jumin1 || a.users_jumin2 rsn_no,
+			       a.users_passwd passwd,
+			       a.users_m_type user_type, --사용자타입(1:일반_개인고객,2:일반_기업고객,3:기업고객,4:호스팅고객) :
+			       a.users_cellno as mobile_phone,
+			       b.passwd_hint_question   PASSWORD_QST ,
+			       b.passwd_hint_answer  PASSWORD_ASW ,     
+			       a.users_m_valid_yn  VALID_YN     ,
+			       a.users_sms_max_quota sms_qt,
+			       decode(a.users_auth,'S', '3','A', '2',  '1' ) user_lvl,  --사용자레벨(0:사용정지,1:일반회원2:도메인관리자3:시스템관리자,9:암호입력오류횟수초과정지)       
+			       a.users_m_charge filler1, --담당업무
+			       a.users_m_email filler2, --이메일
+			       a.users_m_company_phone filler3 -- 회사전화번호
+			  FROM USERS a, PASSWD_HINT b
+			 WHERE a.users_idx = b.users_idx(+);
+
+		 ---------------------조직도 그룹 정보----------------------------------------
+			drop table msg_staff_dept_info;
+			   create view msg_staff_dept_info
+			  as
+			  SELECT user_group_idx||'' org_cd,
+			       decode(p_user_group_idx,'0', '_TOP', p_user_group_idx)||'' prnt_org_cd,
+			       user_group_name org_nm,
+			       to_number(user_group_idx) sort_no  -- check    
+			  FROM USER_GROUP;
+
+		 ---------------------조직도 기본 정보----------------------------------------
+  			  drop table msg_staff_info;
+			  create view msg_staff_info
+			  as
+			  select a.users_id,   
+				a.domain,
+				decode(b.user_group_idx, null, '999999', b.user_group_idx||'') org_cd,
+				USER_GROUP_SORT_NO sort_no,
+				M_ABRV_POSI_NM   ABRV_POSI_NM,
+				duty lvl,
+				M_CORP_TENO    CORP_TENO ,
+				M_HM_TENO  HM_TENO ,
+				M_FAX_NO    FAX_NO  ,
+				M_TEAM_NM  TEAM_NM ,
+				M_DUCD   DUCD ,
+				M_POSI_CD  POSI_CD  ,
+				M_JOIN_YMD  JOIN_YMD,
+				M_RMK RMK ,
+				M_FILLER1   FILLER1 
+			   FROM USERS a, USER_GROUP_LIST b
+			  WHERE a.users_idx = b.users_idx
+			    AND b.user_group_idx is not null;
+
+		 ---------------------도메인 기본 정보----------------------------------------
+ 			drop table msg_domain;
+			 create view msg_domain
+			 as
+			  select 
+			    DOMAIN, 
+			    decode(DOMAIN_TYPE,'C', '3','P', '1',  DOMAIN_TYPE )  DOMAINTYPE ,  
+			    -- C:기업 (단체) P:개인 */  사용자타입(1:개인(기업)고객,3:기업형고객 ,4:호스팅고객)
+			    DOMAIN_M_STATUS DOMANISERVICESTATUS ,
+			    DOMAIN_M_NOTE_TERM NOTE_TERM ,
+			    DOMAIN_M_ATTCH_FILE_SIZE ATTCH_FILE_SIZE ,
+			    DOMAIN_M_FILEROOM_SIZE FILEROOM_SIZE
+			 from domain;
+
+
+		 --------참고 (트리거)--------------------------------------------------------------------
+				create or replace trigger af_userinfo_trig
+				  after insert on useraccountinformation
+				  for each row
+				declare
+				  v_rtn presencegrouplist.groupindex%type;
+				begin
+				      PKG_USERINFO.sp_ins_extend_info(:new.domainname, :new.userid, '0', '0');
+				      PKG_USERINFO.sp_ins_presence_info(:new.domainname, :new.userid, :new.userid);
+				      v_rtn := PKG_USERINFO.sf_ins_buddy_grp_info(:new.domainname, :new.userid, 'etc', '0', '0');
+				      v_rtn := PKG_USERINFO.sf_ins_buddy_grp_info(:new.domainname, :new.userid, '친구들', '1', '0');
+				end af_userinfo_trig;
+
+
+
+				create or replace trigger domain_trig
+				after update on domainList
+				for each row
+				begin
+					UPDATE useraccountinformation set
+						userservicestatus = :new.domainServicestatus
+					where domainName = :new.domainName;
+				end;
+
+
+
+2.  필드 추가(M_로시작)
+users
+user_group_list
+domain
+
+
+-------------- USERS 추가 ----------------------------------------------
+ALTER table USERS 
+ADD 
+(
+  USERS_M_CHARGE            VARCHAR2(100),
+  USERS_M_EMAIL             VARCHAR2(100),
+  USERS_M_TYPE              CHAR(1) default '3',
+  USERS_M_COMPANY_PHONE     VARCHAR2(100),
+  USERS_M_VALID_YN          CHAR(1) default 'N' );
+
+comment on column USERS.USERS_M_CHARGE  is '메신저-담당업무';
+comment on column USERS.USERS_M_EMAIL   is '메신저-이메일';
+comment on column USERS.USERS_M_TYPE
+  is '메신저 타입사용자타입
+(1:일반_개인고객,
+2:일반_기업고객,
+3:기업고객,
+4:호스팅고객)';
+comment on column USERS.USERS_M_COMPANY_PHONE
+  is '메신저회사번호';
+comment on column USERS.USERS_M_VALID_YN
+  is '메신저인증여부';
+
+
+---------------USER_GROUP_LIST 추가---------------------------------------------
+ALTER table USER_GROUP_LIST
+ADD 
+(
+  M_ABRV_POSI_NM      VARCHAR2(100),
+  M_CORP_TENO         VARCHAR2(100),
+  M_HM_TENO           VARCHAR2(100),
+  M_FAX_NO            VARCHAR2(100),
+  M_TEAM_NM           VARCHAR2(50),
+  M_DUCD              CHAR(4),
+  M_POSI_CD           VARCHAR2(4),
+  M_JOIN_YMD          VARCHAR2(8),
+  M_RMK               VARCHAR2(40),
+  M_FILLER1           VARCHAR2(10) );
+
+
+
+comment on column USER_GROUP_LIST.DUTY
+  is '직급명';
+comment on column USER_GROUP_LIST.M_ABRV_POSI_NM
+  is '직위명';
+comment on column USER_GROUP_LIST.M_CORP_TENO
+  is '사내전화';
+comment on column USER_GROUP_LIST.M_HM_TENO
+  is '집전화';
+comment on column USER_GROUP_LIST.M_FAX_NO
+  is '팩스번호';
+comment on column USER_GROUP_LIST.M_TEAM_NM
+  is '팀명';
+comment on column USER_GROUP_LIST.M_DUCD
+  is '직책코드';
+comment on column USER_GROUP_LIST.M_POSI_CD
+  is '직위코드';
+comment on column USER_GROUP_LIST.M_JOIN_YMD
+  is '입사일';
+comment on column USER_GROUP_LIST.M_RMK
+  is '비고';
+
+
+
+---------------USER_GROUP_LIST 추가---------------------------------------------
+
+ALTER table DOMAIN
+ADD 
+(
+ DOMAIN_M_NOTE_TERM           NUMBER default 10,
+  DOMAIN_M_ATTCH_FILE_SIZE     NUMBER default 30720,
+  DOMAIN_M_FILEROOM_SIZE       NUMBER default 10240,
+  DOMAIN_M_STATUS              CHAR(1) default '1' );
+
+comment on column DOMAIN.DOMAIN_M_NOTE_TERM
+  is '쪽지 보관일(일수)';
+comment on column DOMAIN.DOMAIN_M_ATTCH_FILE_SIZE
+  is '첨부파일전송제한사이즈(Kbytes)';
+comment on column DOMAIN.DOMAIN_M_FILEROOM_SIZE
+  is '파일방 파일 보관 제한사이즈(Kbytes)';
+comment on column DOMAIN.DOMAIN_M_STATUS
+  is '도메인상태
+(0:사용정지
+1:사용중 2:사용대기)';
+
+3. 패키지 추가 
+PKG_MSG_MAIL_SYNC
+
+
+create or replace package PKG_MSG_MAIL_SYNC is
+
+  TYPE CursorType IS REF CURSOR;
+  not_found EXCEPTION;
+
+  procedure sp_user_insert(p_userid in varchar2 ,
+                                p_domain in varchar2);
+
+  procedure sp_user_delete(p_userid in varchar2 ,
+                                p_domain in varchar2);
+
+  procedure sp_user_all_delete(p_domain in varchar2);
+end PKG_MSG_MAIL_SYNC; /
+
+
+
+
+create or replace package body PKG_MSG_MAIL_SYNC is
+
+   procedure sp_user_insert(p_userid in varchar2 ,
+                                p_domain in varchar2) is
+   begin
+         INSERT INTO MSG_USER_INFO(USERS_ID,DOMAIN,DISPLAYNAME,USERCURRENTSTATUS,
+	                                USER_LOCAL_IP,USER_LOCAL_PORT,SERVER_IP,SERVER_PORT,CLIENT_TYPE,
+	                                PWDFAIL_COUNT,OLD_USER_LVL)
+        VALUES(p_userid,
+  		         p_domain,
+		       	   p_userid,
+		      	   '-1',
+		      	   null,
+		      	   null,
+		      	   null,
+		      	   null,
+		      	   null,
+		      	   0,
+		      	   null
+               );
+
+        INSERT INTO MSG_BUDDY_GROUP(GROUP_IDX, GROUP_NAME,ISEDITABLE,ISDEFAULT,USERS_ID,DOMAIN,ETC)
+	      VALUES(seq_msg_buddy_group.NEXTVAL,
+               '기본그룹',
+	             'N',
+	             'Y',
+	             p_userid,
+	             p_domain,
+	             null
+	             );
+   end sp_user_insert;
+
+
+   procedure sp_user_delete(p_userid in varchar2 ,
+                                p_domain in varchar2) is
+   begin
+         DELETE FROM MSG_USER_INFO
+    	   WHERE USERS_ID = p_userid
+    	     AND DOMAIN = p_domain;
+
+         DELETE FROM MSG_BUDDY_GROUP
+    	   WHERE USERS_ID = p_userid
+           AND DOMAIN = p_domain;
+
+        DELETE FROM MSG_BUDDY_LIST
+         WHERE OWNER_ID = p_userid
+    	     AND OWNER_DOMAIN = p_domain;
+
+      	DELETE  FROM MSG_BUDDY_REQ_MSG
+        WHERE buddy_idx in  (SELECT buddy_idx FROM MSG_BUDDY_LIST WHERE owner_domain = p_domain AND owner_id=p_userid);
+
+        DELETE  FROM MSG_FILEROOM_DIR
+        WHERE domain = p_domain AND users_id = p_userid;
+
+        DELETE  FROM MSG_FILEROOM_FILE
+        WHERE domain = p_domain AND users_id = p_userid;
+
+        DELETE  FROM MSG_FILEROOM_PSN_SHARE
+        WHERE domain = p_domain AND users_id = p_userid;
+   end sp_user_delete;
+
+   procedure sp_user_all_delete(p_domain in varchar2) is
+   begin
+         DELETE FROM MSG_USER_INFO
+    	   WHERE  DOMAIN = p_domain;
+
+         DELETE FROM MSG_BUDDY_GROUP
+    	   WHERE DOMAIN = p_domain;
+
+        DELETE FROM MSG_BUDDY_LIST
+         WHERE  OWNER_DOMAIN = p_domain;
+
+      	DELETE  FROM MSG_BUDDY_REQ_MSG;
+        
+        DELETE  FROM MSG_FILEROOM_DIR
+        WHERE domain = p_domain;
+
+        DELETE  FROM MSG_FILEROOM_FILE
+        WHERE domain = p_domain ;
+
+        DELETE  FROM MSG_FILEROOM_PSN_SHARE
+        WHERE domain = p_domain;
+   end sp_user_all_delete;
+
+end PKG_MSG_MAIL_SYNC;/
+
+
+

@@ -1,0 +1,504 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="ARCHIVE">
+	<select id="select_archive_entities_type_01"
+	        parameterClass="java.util.HashMap"
+	        resultClass="com.nara.jdf.db.entity.ArchiveMailEntity">
+		SELECT
+			M_IDX,
+			M_ORD,
+			MBOX_IDX,
+			USERS_IDX,
+			M_TAG,
+			M_SENDER,
+			M_SENDERNM,
+			M_TO,
+			M_CC,
+			M_BCC,
+			M_RETURN,
+			M_TYPE,
+			M_CHARSET,
+			M_TITLE,
+			M_CONTENT,
+			DATE_FORMAT(M_TIME, '%Y-%m-%d %T') M_TIME,
+			M_SIZE,
+			M_ATTACHE,
+			M_ATTNUM,
+			M_ATTNAME,
+			M_ATTSIZE,
+			M_ATTTYPE,
+			M_ISREAD,
+			M_PRIORITY,
+			M_INJURIOUSE,
+			M_FILENAME,
+			M_FILEPATH,
+			M_DELETED,
+			M_REMOTEIP
+		FROM $ARCHIVE_TABLE$
+		WHERE M_IDX = #M_IDX#
+		<dynamic prepend="">
+			<isNotNull prepend="AND" property= "M_ORD">
+				M_ORD = #M_ORD#
+			</isNotNull>
+		</dynamic>
+	</select>
+	
+  	<select id="search_archive_list_type_01" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="com.nara.jdf.db.entity.ArchiveMailEntity">
+  	 	SELECT
+			A.M_IDX,
+			(SELECT CASE WHEN M.M_IDX IS NULL THEN 'Y' ELSE 'N' END 
+			FROM $MAIL_TABLE$ M WHERE M.M_IDX = A.M_IDX) IS_DELETED,
+			A.M_ORD,
+			A.MBOX_IDX,
+			(SELECT MBOX_NAME FROM MBOX WHERE MBOX_IDX = A.MBOX_IDX) AS MBOX_NAME,
+			A.USERS_IDX,
+			A.M_TAG,
+			A.M_SENDER,
+			A.M_SENDERNM,
+			A.M_TO,
+			A.M_CC,
+			A.M_BCC,
+			A.M_RETURN,
+			A.M_TYPE,
+			A.M_CHARSET,
+			A.M_TITLE,
+			A.M_CONTENT,
+			DATE_FORMAT(A.M_TIME, '%Y-%m-%d %T') M_TIME,
+			A.M_SIZE,
+			A.M_ATTACHE,
+			A.M_ATTNUM,
+			A.M_ATTNAME,
+			A.M_ATTSIZE,
+			A.M_ATTTYPE,
+			A.M_ISREAD,
+			A.M_PRIORITY,
+			A.M_INJURIOUSE,
+			A.M_FILENAME,
+			A.M_FILEPATH,
+			A.M_DELETED,
+			A.M_REMOTEIP
+  	 	FROM $ARCHIVE_TABLE$ A
+  	 	<dynamic prepend="WHERE">
+  	 		<isNotNull prepend="AND" property= "M_IDX">
+				A.M_IDX = #M_IDX#
+			</isNotNull>
+  	 		<isNotNull prepend="AND" property= "M_ORDER">
+				A.M_ORDER = #M_ORDER#
+			</isNotNull>
+  	 		<isNotNull prepend="AND" property= "USERS_IDX">
+				A.USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "S_M_TIME">
+				A.M_TIME BETWEEN STR_TO_DATE(#S_M_TIME#, '%Y-%m-%d') AND DATE_ADD(DATE_ADD(STR_TO_DATE(#E_M_TIME#, '%Y-%m-%d'), INTERVAL 1 DAY), INTERVAL -1 SECOND)
+			</isNotNull>
+			<isNotEqual prepend="AND" property= "TOTAL_MAIL" compareValue="Y">
+				<isEqual prepend="AND" property= "RECEIVE_MAIL" compareValue="Y">
+					1=1
+				</isEqual>
+				<isEqual prepend="AND" property= "SEND_MAIL" compareValue="Y">
+					1=1
+				</isEqual>
+			</isNotEqual>
+			<isNotEqual prepend="AND" property= "strKeyword" compareValue="">
+				( 1 = 2
+				<isEqual prepend="OR" property= "M_TITLE" compareValue="Y">
+					A.M_TITLE like CONCAT('%',#strKeyword#,'%')
+				</isEqual>
+				<isEqual prepend="OR" property= "M_CONTENT" compareValue="Y">
+					A.M_CONTENT like CONCAT('%',#strKeyword#,'%')
+				</isEqual>
+				<isEqual prepend="OR" property= "M_ATTNAME" compareValue="Y">
+					A.M_ATTNAME like CONCAT('%',#strKeyword#,'%')
+				</isEqual>
+				<isEqual prepend="OR" property= "M_EMAIL" compareValue="Y">
+					( 
+						A.M_SENDER like CONCAT('%',#strKeyword#,'%')
+						OR
+						A.M_TO like CONCAT('%',#strKeyword#,'%')
+					)
+				</isEqual>
+				<isEqual prepend="OR" property= "M_SENDNM" compareValue="Y">
+					A.M_SENDERNM like CONCAT('%',#strKeyword#,'%')
+				</isEqual>
+				)
+			</isNotEqual>
+			<isNotNull prepend="" property= "M_REMOTEIP">
+				<isNotEqual prepend="AND" property= "M_REMOTEIP" compareValue="">
+					REPLACE(A.M_REMOTEIP, 'localhost', '127.0.0.1') LIKE '$M_REMOTEIP$%'
+				</isNotEqual>
+			</isNotNull>
+			
+			AND A.M_ORD = 0
+		</dynamic>
+		ORDER BY A.$orderCol$ $orderType$
+		LIMIT $SKIP$, $USERS_LISTNUM$
+  	</select>	
+  	
+	<select id="count_archive_list_type_01" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="java.lang.Integer">
+	  	 	SELECT
+				COUNT(A.M_IDX) CNT
+	  	 	FROM $ARCHIVE_TABLE$ A
+	  	 	<dynamic prepend="WHERE">
+	  	 		<isNotNull prepend="AND" property= "M_IDX">
+					A.M_IDX = #M_IDX#
+				</isNotNull>
+	  	 		<isNotNull prepend="AND" property= "M_ORDER">
+					A.M_ORDER = #M_ORDER#
+				</isNotNull>
+	  	 		<isNotNull prepend="AND" property= "USERS_IDX">
+					A.USERS_IDX = #USERS_IDX#
+				</isNotNull>
+				<isNotNull prepend="AND" property= "S_M_TIME">
+					A.M_TIME BETWEEN STR_TO_DATE(#S_M_TIME#, '%Y-%m-%d') AND DATE_ADD(DATE_ADD(STR_TO_DATE(#E_M_TIME#, '%Y-%m-%d'), INTERVAL 1 DAY), INTERVAL -1 SECOND)
+				</isNotNull>
+				<isNotEqual prepend="AND" property= "TOTAL_MAIL" compareValue="Y">
+					<isEqual prepend="AND" property= "RECEIVE_MAIL" compareValue="Y">
+						1=1
+					</isEqual>
+					<isEqual prepend="AND" property= "SEND_MAIL" compareValue="Y">
+						1=1
+					</isEqual>
+				</isNotEqual>
+				<isNotEqual prepend="AND" property= "strKeyword" compareValue="">
+					( 1 = 2
+					<isEqual prepend="OR" property= "M_TITLE" compareValue="Y">
+						A.M_TITLE like CONCAT('%',#strKeyword#,'%')
+					</isEqual>
+					<isEqual prepend="OR" property= "M_CONTENT" compareValue="Y">
+						A.M_CONTENT like CONCAT('%',#strKeyword#,'%')
+					</isEqual>
+					<isEqual prepend="OR" property= "M_ATTNAME" compareValue="Y">
+						A.M_ATTNAME like CONCAT('%',#strKeyword#,'%')
+					</isEqual>
+					<isEqual prepend="OR" property= "M_EMAIL" compareValue="Y">
+						( 
+							A.M_SENDER like CONCAT('%',#strKeyword#,'%')
+							OR
+							A.M_TO like CONCAT('%',#strKeyword#,'%')
+						)
+					</isEqual>
+					<isEqual prepend="OR" property= "M_SENDNM" compareValue="Y">
+						A.M_SENDERNM like CONCAT('%',#strKeyword#,'%')
+					</isEqual>
+					)
+				</isNotEqual>
+				<isNotNull prepend="" property= "M_REMOTEIP">
+					<isNotEqual prepend="AND" property= "M_REMOTEIP" compareValue="">
+						REPLACE(A.M_REMOTEIP, 'localhost', '127.0.0.1') LIKE '$M_REMOTEIP$%'
+					</isNotEqual>
+				</isNotNull>
+			</dynamic>
+  	</select>
+  	
+  	<delete id="delete_archive_type_01"
+  				parameterClass="java.util.HashMap">
+  		DELETE FROM $ARCHIVE_TABLE$
+		WHERE M_IDX = #M_IDX#
+  	</delete>	
+  	
+  	<select id="get_archive_filepath" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="java.lang.String">
+	  	 	SELECT
+				M_FILEPATH
+	  	 	FROM $ARCHIVE_TABLE$
+	  	 	WHERE M_IDX = #M_IDX#
+  	</select>  
+  	
+  	<insert id="recover_archive_mail"
+            parameterClass="java.util.HashMap">
+		INSERT INTO $MAIL_TABLE$
+		(
+		    M_IDX,
+		    M_ORDER,
+		    M_GROUP,
+		    MBOX_IDX,
+		    USERS_IDX,
+		    M_SENDER,
+		    M_SENDERNM,
+		    M_RETURN,
+		    M_TO,
+		    M_CC,
+		    M_BCC,
+		    M_TITLE,
+		    M_TIME,
+		    M_SIZE,
+		    M_ATTACHE,
+		    M_ATTACH_NUM,
+		    M_ATTACH_NAME,
+		    M_ATTACH_SIZE,
+		    M_ATTACH_TYPE,
+		    M_TYPE,
+		    M_ISREAD,
+		    M_PRIORITY,
+		    M_INJURIOUSE,
+		    M_DELETED,
+		    M_KIND,
+		    M_FILENAME,
+		    M_FILEPATH,
+		    M_ISPARSED,
+		    TAG_TYPE,
+		    MAIL_RECONF_MESSAGE_ID,
+		    M_NOTICE
+		)
+		SELECT
+		    M_IDX,
+		    M_ORD,
+		    0,
+		    MBOX_IDX,
+		    USERS_IDX,
+		    M_SENDER,
+		    M_SENDERNM,
+		    M_RETURN,
+		    M_TO,
+		    M_CC,
+		    M_BCC,
+		    M_TITLE,
+		    M_TIME,
+		    M_SIZE,
+		    M_ATTACHE,
+		    M_ATTNUM,
+		    M_ATTNAME,
+		    M_ATTSIZE,
+		    M_ATTTYPE,
+		    M_TYPE,
+		    M_ISREAD,
+		    M_PRIORITY,
+		    M_INJURIOUSE,
+		    M_DELETED,
+		    'R',
+		    M_FILENAME,
+		    M_FILEPATH,
+		    'Y',
+		    0,
+		    NULL,
+		    NULL
+		FROM $ARCHIVE_TABLE$
+		WHERE M_IDX = #M_IDX#
+  	</insert>	
+	
+	<insert id="insert_archive_mail"
+  			parameterClass="com.nara.jdf.db.entity.ArchiveMailEntity">
+  		INSERT INTO $ARCHIVE_TABLE$
+  		(
+  			M_IDX,
+			M_ORD,
+			MBOX_IDX,
+			USERS_IDX,
+			M_TAG,
+			M_SENDER,
+			M_SENDERNM,
+			M_TO,
+			M_CC,
+			M_BCC,
+			M_RETURN,
+			M_TYPE,
+			M_CHARSET,
+			M_TITLE,
+			M_TIME,
+			M_SIZE,
+			M_ATTACHE,
+			M_ATTNUM,
+			M_ATTNAME,
+			M_ATTSIZE,
+			M_ATTTYPE,
+			M_ISREAD,
+			M_PRIORITY,
+			M_INJURIOUSE,
+			M_FILENAME,
+			M_FILEPATH,
+			M_DELETED,
+			M_REMOTEIP,
+			M_SECURE_YN,
+			M_CONTENT
+		)
+		values
+		(
+  			#M_IDX#,
+			#M_ORD#,
+			#MBOX_IDX#,
+			#USERS_IDX#,
+			#M_TAG#,
+			#M_SENDER#,
+			#M_SENDERNM#,
+			#M_TO#,
+			#M_CC#,
+			#M_BCC#,
+			#M_RETURN#,
+			#M_TYPE#,
+			#M_CHARSET#,
+			#M_TITLE#,
+			SYSDATE(),
+			#M_SIZE#,
+			#M_ATTACHE#,
+			#M_ATTNUM#,
+			#M_ATTNAME#,
+			#M_ATTSIZE#,
+			#M_ATTTYPE#,
+			#M_ISREAD#,
+			#M_PRIORITY#,
+			#M_INJURIOUSE#,
+			#M_FILENAME#,
+			#M_FILEPATH#,
+			#M_DELETED#,
+			#M_REMOTEIP#,
+			#M_SECURE_YN#,
+			#M_CONTENT#		
+		)
+  	</insert>  	
+  	
+  	<select id="select_secure_mail_statistic" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="com.nara.jdf.db.entity.SecuMailStatisticEntity">
+		SELECT 
+			ZZ.DATE_TYPE DATE_TYPE,
+		  	ZZ.DATE_VALUE DATE_VALUE,
+		  	ZZ.DATE_NAME DATE_NAME,
+		  	IFNULL(CC.TOT_CNT, 0) TOT_CNT,
+		  	IFNULL(CC.TOT_SEND, 0) TOT_SEND,
+		  	IFNULL(CC.TOT_RECEIVE, 0) TOT_RECEIVE,
+		  	IFNULL(CC.TOT_SEND_SECURE, 0) TOT_SEND_SECURE,
+		  	IFNULL(CC.TOT_RECEIVE_SECURE, 0) TOT_RECEIVE_SECURE,
+		  	IFNULL(CC.TOT_SEND_NOMAL, 0) TOT_SEND_NOMAL,
+		  	IFNULL(CC.TOT_RECEIVE_NOMAL, 0) TOT_RECEIVE_NOMAL
+		FROM TEMP_DATE_VAL ZZ LEFT JOIN (
+		    SELECT 
+		    	<dynamic prepend="">
+					<isEqual prepend="" property= "DATE_TYPE" compareValue="HH24">
+						LPAD(DATE_FORMAT(M_TIME, '%H')+1, 2, '0') DATE_KEY, 
+					</isEqual>
+					<isEqual prepend="" property= "DATE_TYPE" compareValue="D">
+						TRIM(DATE_FORMAT(M_TIME, '%d')) DATE_KEY, 
+					</isEqual>
+					<isEqual prepend="" property= "DATE_TYPE" compareValue="W">
+						TRIM(DATE_FORMAT(M_TIME, 'W')) DATE_KEY, 
+					</isEqual>
+					<isEqual prepend="" property= "DATE_TYPE" compareValue="MM">
+						TRIM(DATE_FORMAT(M_TIME, '%m')) DATE_KEY, 
+					</isEqual>
+				</dynamic>
+		    	
+		    	COUNT(AA.M_IDX) TOT_CNT, 
+		    	SUM(CASE WHEN BB.MBOX_TYPE = 2 THEN 1 ELSE 0 END) TOT_SEND, 
+		    	SUM(CASE WHEN BB.MBOX_TYPE != 2 THEN 1 ELSE 0 END) TOT_RECEIVE, 
+		    	SUM(CASE WHEN BB.MBOX_TYPE = 2 AND M_SECURE_YN = 'Y' THEN 1 ELSE 0 END) TOT_SEND_SECURE, 
+		    	SUM(CASE WHEN BB.MBOX_TYPE != 2 AND M_SECURE_YN = 'Y' THEN 1 ELSE 0 END) TOT_RECEIVE_SECURE, 
+		    	SUM(CASE WHEN BB.MBOX_TYPE = 2 AND M_SECURE_YN != 'Y' THEN 1 ELSE 0 END) TOT_SEND_NOMAL, 
+		    	SUM(CASE WHEN BB.MBOX_TYPE != 2 AND M_SECURE_YN != 'Y' THEN 1 ELSE 0 END) TOT_RECEIVE_NOMAL
+		    FROM A_KDICORKR AA JOIN MBOX BB ON AA.MBOX_IDX = BB.MBOX_IDX AND AA.M_ORD = 0
+		    WHERE AA.M_TIME BETWEEN STR_TO_DATE(#START_M_TIME#, '%Y-%m-%d') AND DATE_ADD(DATE_ADD(STR_TO_DATE(#END_M_TIME#, '%Y-%m-%d'), INTERVAL 1 DAY), INTERVAL -1 SECOND)
+		    <dynamic prepend="">
+				<isNotEqual prepend="AND" property= "DOMAIN" compareValue="">
+					#DOMAIN# = SUBSTR(AA.USERS_IDX, INSTR(AA.USERS_IDX, '@')+1) 
+				</isNotEqual>
+			</dynamic>
+		    GROUP BY 
+	    	
+	    	<dynamic prepend="">
+				<isEqual prepend="" property= "DATE_TYPE" compareValue="HH24">
+					LPAD(DATE_FORMAT(M_TIME, '%H')+1, 2, '0')
+				</isEqual>
+				<isEqual prepend="" property= "DATE_TYPE" compareValue="D">
+					TRIM(DATE_FORMAT(M_TIME, '%d'))
+				</isEqual>
+				<isEqual prepend="" property= "DATE_TYPE" compareValue="W">
+					TRIM(DATE_FORMAT(M_TIME, 'W'))
+				</isEqual>
+				<isEqual prepend="" property= "DATE_TYPE" compareValue="MM">
+					TRIM(DATE_FORMAT(M_TIME, '%m'))
+				</isEqual>
+			</dynamic>
+			
+		    ) CC 
+		    ON ZZ.DATE_VALUE = CC.DATE_KEY
+		WHERE ZZ.DATE_TYPE = #DATE_TYPE#		
+		ORDER BY ZZ.DATE_VALUE
+  	</select>
+  	
+  	
+  	
+  	<select id="search_archive_list_user_all" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="com.nara.jdf.db.entity.ArchiveMailLogEntity">
+ 		SELECT 
+    		UM.USERS_IDX,
+    		UM.USERS_NAME, 
+    		UD.USERS_DEPARTMENT,
+    		UD.USERS_JOBCODE, 
+    		UD.USERS_COMPNAME,
+    		VV.RECV_NOMAL,
+    		VV.RECV_SECURITY,
+    		VV.SEND_NOMAL,
+    		VV.SEND_SECURITY
+		FROM
+		(
+	 		SELECT
+				USERS_IDX,
+		        SUM(CASE WHEN V.MBOX_TYPE =1 AND M_SECURE_YN='N' THEN 1 ELSE 0 END) AS RECV_NOMAL,
+		        SUM(CASE WHEN V.MBOX_TYPE =1 AND M_SECURE_YN='Y' THEN 1 ELSE 0 END) AS RECV_SECURITY,
+		        SUM(CASE WHEN V.MBOX_TYPE =2 AND M_SECURE_YN='N' THEN 1 ELSE 0 END) AS SEND_NOMAL,
+		        SUM(CASE when V.MBOX_TYPE =2 AND M_SECURE_YN='Y' THEN 1 ELSE 0 END) AS SEND_SECURITY
+	  	 	FROM 
+	  	 	(
+		  	 	SELECT
+					A.USERS_IDX,
+					CASE WHEN  ( 
+						SELECT MBOX_TYPE 
+						FROM MBOX B 
+						WHERE B.MBOX_IDX = A.MBOX_IDX 
+						AND B.USERS_IDX=A.USERS_IDX
+						) = 2 THEN 2 ELSE 1 END AS MBOX_TYPE,
+					IFNULL(M_SECURE_YN,'N') AS M_SECURE_YN
+		  	 	FROM $ARCHIVE_TABLE$ A
+		  	 	<dynamic prepend="WHERE">
+		  	 		<isNotNull prepend="AND" property= "USERS_IDX">
+						A.USERS_IDX = #USERS_IDX#
+					</isNotNull>
+					<isNotNull prepend="AND" property= "S_M_TIME">
+						A.M_TIME BETWEEN STR_TO_DATE(#S_M_TIME#, '%Y-%m-%d') AND DATE_ADD(DATE_ADD(STR_TO_DATE(#E_M_TIME#, '%Y-%m-%d'), INTERVAL 1 DAY), INTERVAL -1 SECOND)
+					</isNotNull>
+					
+					<isNotEqual prepend="AND" property= "strKeyword" compareValue="">
+						( 1 = 2
+						<isEqual prepend="OR" property= "M_TITLE" compareValue="Y">
+							A.M_TITLE like CONCAT('%',#strKeyword#,'%')
+						</isEqual>
+						<isEqual prepend="OR" property= "M_CONTENT" compareValue="Y">
+							A.M_CONTENT like CONCAT('%',#strKeyword#,'%')
+						</isEqual>
+						<isEqual prepend="OR" property= "M_ATTNAME" compareValue="Y">
+							A.M_ATTNAME like CONCAT('%',#strKeyword#,'%')
+						</isEqual>
+						<isEqual prepend="OR" property= "M_EMAIL" compareValue="Y">
+							( 
+								A.M_SENDER like CONCAT('%',#strKeyword#,'%')
+								OR
+								A.M_TO like CONCAT('%',#strKeyword#,'%')
+							)
+						</isEqual>
+						<isEqual prepend="OR" property= "M_SENDNM" compareValue="Y">
+							A.M_SENDERNM like CONCAT('%',#strKeyword#,'%')
+						</isEqual>
+						)
+					</isNotEqual>
+					<isNotNull prepend="" property= "M_REMOTEIP">
+						<isNotEqual prepend="AND" property= "M_REMOTEIP" compareValue="">
+							REPLACE(A.M_REMOTEIP, 'localhost', '127.0.0.1') LIKE CONCAT(#M_REMOTEIP#,'%')
+						</isNotEqual>
+					</isNotNull>
+					
+					AND A.M_ORD = 0
+				</dynamic>
+					
+			) V
+			GROUP BY V.USERS_IDX
+		)VV , USERS UM	
+		WHERE  VV.USERS_IDX = UM.USERS_IDX 
+  	</select>	
+  	
+</sqlMap>

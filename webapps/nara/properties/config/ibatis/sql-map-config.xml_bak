@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMapConfig PUBLIC "-//iBATIS.com//DTD SQL Map Config 2.0//EN"
+    "http://www.ibatis.com/dtd/sql-map-config-2.dtd">
+
+<!--Always ensure to use the correct XML header as above! -->
+<sqlMapConfig>
+<!--The properties (name=value) in the file specified here can be used placeholders in this config file (e.g.
+  "${driver}". The file is usually relative to the classpath and is optional. -->
+	<properties url="file:////usr/local/kebi/tomcat/webapps/nara/properties/config/nara.properties" />
+	
+	<!--These settings control SqlMap configuration details, primarily to do with transaction
+		management. They are all optional (see the Developer Guide for more). -->
+	<settings
+		cacheModelsEnabled="true"
+		enhancementEnabled="true"
+		lazyLoadingEnabled="true"
+		maxRequests="128"
+		maxSessions="100"
+		maxTransactions="50"
+		useStatementNamespaces="true"
+	/>
+		
+	<!--Type aliases allow you to use a shorter name for long fully qualified class names. -->
+	<!--<typeAlias alias="order" type="testdomain.Order"/>-->
+
+	<!--Configure a datasource to use with this SQL Map using SimpleDataSource.
+		Notice the use of the properties from the above resource --> 
+	<transactionManager type="JDBC"  commitRequired="true" >
+		<!--<dataSource type="JNDI">
+                        <property name="DataSource" value="java:/comp/env/jdbc/DS_KEBI"/>
+                </dataSource>-->
+		<dataSource type="DBCP">
+			<property name="JDBC.Driver" value="${jdbc.driverClassName}"/>
+			<property name="JDBC.ConnectionURL" value="${jdbc.url}"/>
+			<property name="JDBC.Username" value="${jdbc.username}"/>
+			<property name="JDBC.Password" value="${jdbc.password}"/>
+			<property name="JDBC.DefaultAutoCommit" value="true" />
+			
+			<property name="Pool.MaximumActiveConnections" value="100"/>
+			<property name="Pool.MaximumIdleConnections" value="50"/>
+			<property name="Pool.MaximumWait" value="60000"/>
+
+			<property name="Pool.ValidationQuery" value="select 1 from dual"/>
+			<property name="Pool.LogAbandoned" value="false"/>
+			<property name="Pool.RemoveAbandoned" value="false"/>
+			<property name="Pool.RemoveAbandonedTimeout" value="50000"/>
+			
+			<property name="Driver.SetBigStringTryClob" value="true"/>
+		</dataSource>
+	</transactionManager>
+	
+	
+	<!--Identify all SQL Map XML files to be loaded by this SQL map. Notice the paths
+		are relative to the classpath. For now, we only have one� -->
+	<sqlMap url="${db.sqlfile}/${db.type}/DOMAIN.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/SYSTEM_INFO.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/BASEINFO.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/USERS.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/USER_GROUP.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/USER_GROUP_LIST.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/MBOX.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/M_DOMAIN.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/B_DOMAIN.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/APPEND_DOMAIN.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/ORGANIZE.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/ADDRESS.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/ADDRESS_GROUP.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/M_TAG_DOMAIN.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/KEBI_COMMON.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/FILTER.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/MAIL_REPORT.xml" />	
+	<sqlMap url="${db.sqlfile}/${db.type}/SHARE_GROUP.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/SHARE_GROUP_LIST.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/ZIPCODE.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/PASSWD_HINT.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/ANACONDA_USERS.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/ANACONDA_USERGROUP.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/ANACONDA_FILE.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/ANACONDA_FILE_DEL.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/ANACONDA_MAIL.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/ANACONDA_SHARE.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/USERS_RECENT_ADDRESS.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/FORMLETTER.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/POP.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/FILE_SHARE.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/AUTODIVISION.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/RESERVATION.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/INJURE.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/MEMO.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/MAIL_RECONF.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/RESERVEID.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/USERS_REGIST.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/USERS_PAUSE.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/USERS_DELETE.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/POLL.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/POLL_ITEM.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/POLL_LIST.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/CERTIFY.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/PUBLICGROUP.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/PUBLICADDRESS.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/SMS.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/SMS_EMOTI_FLAG.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/BBS.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/BBS_GROUP.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/MEMBER.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/SMS_EMOTICON.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/AUTHORITY.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/IP_BLOCKING.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/ECARD.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/MAIL_LOG.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/SCHEDULE.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/ACCOUNT.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/BBS_USERLOG.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/BBS_TOP.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/WEBFILE_SHARE.xml" />	
+	<sqlMap url="${db.sqlfile}/${db.type}/NOTE_DOMAIN.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/NOTE_ATTACHE.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/NOTE_RECONF.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/GRANT_IP.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/POPUP.xml" />
+    <sqlMap url="${db.sqlfile}/${db.type}/LOGIN_LOG.xml" />
+    <sqlMap url="${db.sqlfile}/${db.type}/ARCHIVE.xml" />
+    <sqlMap url="${db.sqlfile}/${db.type}/USERS_SIGNATURE.xml" />
+    <sqlMap url="${db.sqlfile}/${db.type}/USERS_PASSWD_CHANGE.xml" />
+    <sqlMap url="${db.sqlfile}/${db.type}/USER_GROUP2.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/USER_GROUP_LIST2.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/USER_GROUP3.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/USER_GROUP_LIST3.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/WEBHARD.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/ADMIN_WEBHARD.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/BIGMAIL.xml" />
+	<sqlMap url="${db.sqlfile}/${db.type}/KPNS.xml" />
+ </sqlMapConfig>

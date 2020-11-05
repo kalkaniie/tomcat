@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE daoConfig
+    PUBLIC "-//ibatis.apache.org//DTD DAO Configuration 2.0//EN"
+    "http://ibatis.apache.org/dtd/dao-2.dtd">
+
+<daoConfig>
+
+	<context>
+    	<transactionManager type="SQLMAP">
+    		<property name="SqlMapConfigURL" value="file:///D:/Naravision/src/kp2.0/demo.kebi.com/properties/config/ibatis/sql-map-config.xml"/>
+      		<!--<property name="SqlMapConfigURL" value="file:///D:/KebiPortal-2.0/nara-config/config/ibatis/sql-map-config.xml"/>-->
+      		<!--property name="SqlMapConfigURL" value="file:////usr/local/kebi/tomcat/webapps/nara/properties/config/ibatis/sql-map-config.xml"/-->
+    	</transactionManager>
+
+    	<dao interface="com.nara.springframework.dao.DomainDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapDomainDao"/>
+    
+		<dao interface="com.nara.springframework.dao.SystemInfoDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapSystemInfoDao"/>
+ 
+    	<dao interface="com.nara.springframework.dao.BaseInfoDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapBaseInfoDao"/>
+
+		<dao interface="com.nara.springframework.dao.UserDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapUserDao"/>
+
+		<dao interface="com.nara.springframework.dao.UserGroupDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapUserGroupDao"/>
+ 
+		<dao interface="com.nara.springframework.dao.UserGroupListDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapUserGroupListDao"/>
+     
+		<dao interface="com.nara.springframework.dao.WebMailBoxDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapWebMailBoxDao"/>
+     
+    	<dao interface="com.nara.springframework.dao.WebMailDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapWebMailDao"/>
+		
+		<dao interface="com.nara.springframework.dao.BoardDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapBoardDao"/>
+
+		<dao interface="com.nara.springframework.dao.AppendDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapAppendDao"/>
+       
+    	<dao interface="com.nara.springframework.dao.OrganizeDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapOrganizeDao"/>
+      		
+      	<dao interface="com.nara.springframework.dao.UserPassHintDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapUserPassHintDao"/>
+		
+		<dao interface="com.nara.springframework.dao.AddressDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapAddressDao"/>
+     	
+     	<dao interface="com.nara.springframework.dao.AddressGroupDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapAddressGroupDao"/>
+      		
+    	<dao interface="com.nara.springframework.dao.WebMailArchiveDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapWebMailArchiveDao"/>
+    
+    	<dao interface="com.nara.springframework.dao.ScheduleDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapScheduleDao"/>
+      		
+      	<dao interface="com.nara.springframework.dao.KebiCommonDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapKebiCommonDao"/>
+      	
+      	<dao interface="com.nara.springframework.dao.FilterDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapFilterDao"/>
+      	
+      	<dao interface="com.nara.springframework.dao.AdminMailReportDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapAdminMailReportDao"/>
+      	
+      	<dao interface="com.nara.springframework.dao.ShareGroupDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapShareGroupDao"/>
+      		
+      	<dao interface="com.nara.springframework.dao.ShareGroupListDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapShareGroupListDao"/>
+      		
+      	<dao interface="com.nara.springframework.dao.AnacondaUserDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapAnacondaUserDao"/>
+      	
+      	<dao interface="com.nara.springframework.dao.AnacondaFileDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapAnacondaFileDao"/>
+      	
+      	<dao interface="com.nara.springframework.dao.AnacondaFileDelDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapAnacondaFileDelDao"/>
+      	
+      	<dao interface="com.nara.springframework.dao.AnacondaMailDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapAnacondaMailDao"/>
+      	
+      	<dao interface="com.nara.springframework.dao.AnacondaShareDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapAnacondaShareDao"/>
+      		
+      	<dao interface="com.nara.springframework.dao.AnacondaUserGroupDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapAnacondaUserGroupDao"/>
+      		
+      	<dao interface="com.nara.springframework.dao.ZipCodeDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapZipCodeDao"/>
+      		
+      	<dao interface="com.nara.springframework.dao.UserRecentAddressDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapUserRecentAddressDao"/>
+      	
+      	<dao interface="com.nara.springframework.dao.FormLetterDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapFormLetterDao"/>
+      	
+      	<dao interface="com.nara.springframework.dao.MemoDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapMemoDao"/>
+      			
+      	<dao interface="com.nara.springframework.dao.Pop3Dao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapPop3Dao"/>
+      	
+      	<dao interface="com.nara.springframework.dao.FileShareDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapFileShareDao"/>
+      		
+      	<dao interface="com.nara.springframework.dao.AutoDivisionDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapAutoDivisionDao"/>
+      	
+      	<dao interface="com.nara.springframework.dao.ReservationMailDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapReservationMailDao"/>
+      	
+      	<dao interface="com.nara.springframework.dao.InjureDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapInjureDao"/>
+      		
+      	<dao interface="com.nara.springframework.dao.WebMailReConfirmDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapWebMailReConfirmDao"/>			
+      		
+      	<dao interface="com.nara.springframework.dao.TagDomainDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapTagDomainDao"/>
+      		
+      	<dao interface="com.nara.springframework.dao.ReserveIdDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapReserveIdDao"/>
+      	
+      	<dao interface="com.nara.springframework.dao.UserRegistDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapUserRegistDao"/>
+      		
+      	<dao interface="com.nara.springframework.dao.UserPauseDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapUserPauseDao"/>
+      		
+      	<dao interface="com.nara.springframework.dao.UserDeleteDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapUserDeleteDao"/>
+      		
+      	<dao interface="com.nara.springframework.dao.BbsDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapBbsDao"/>
+      		
+      	<dao interface="com.nara.springframework.dao.BbsGroupDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapBbsGroupDao"/>
+      		
+      	<dao interface="com.nara.springframework.dao.MemberDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapMemberDao"/>		
+      		
+      	<dao interface="com.nara.springframework.dao.PollDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapPollDao"/>
+      		
+      	<dao interface="com.nara.springframework.dao.PollItemDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapPollItemDao"/>
+      		
+      	<dao interface="com.nara.springframework.dao.PollListDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapPollListDao"/>
+      		
+      	<dao interface="com.nara.springframework.dao.CertifyDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapCertifyDao"/>
+      		
+      	<dao interface="com.nara.springframework.dao.PublicGroupDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapPublicGroupDao"/>
+      		
+      	<dao interface="com.nara.springframework.dao.PublicAddressDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapPublicAddressDao"/>
+      		
+      	<dao interface="com.nara.springframework.dao.SmsDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapSmsDao"/>
+      		
+      	<dao interface="com.nara.springframework.dao.AuthorityDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapAuthorityDao"/>	
+      		
+      	<dao interface="com.nara.springframework.dao.SmsEmotiFlagDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapSmsEmotiFlagDao"/>
+      	
+      	<dao interface="com.nara.springframework.dao.IPBlockingDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapIPBlockingDao"/>	
+
+      	<dao interface="com.nara.springframework.dao.ECardDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapECardDao"/>
+
+      	<dao interface="com.nara.springframework.dao.MailLogDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapMailLogDao"/>			
+      		
+      	<dao interface="com.nara.springframework.dao.SmsEmoticonDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapSmsEmoticonDao"/>
+      		
+      	<dao interface="com.nara.springframework.dao.AccountDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapAccountDao"/>
+      		
+      	<dao interface="com.nara.springframework.dao.BbsUserLogDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapBbsUserLogDao"/>
+      		
+      	<dao interface="com.nara.springframework.dao.BbsTopDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapBbsTopDao"/>
+
+      	<dao interface="com.nara.springframework.dao.NoteDomainDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapNoteDomainDao"/>
+      	
+      	<dao interface="com.nara.springframework.dao.NoteReconfDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapNoteReconfDao"/>
+      		
+      	<dao interface="com.nara.springframework.dao.NoteAttacheDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapNoteAttacheDao"/>
+
+      	<dao interface="com.nara.springframework.dao.WebFileShareDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapWebFileShareDao"/>
+      		
+      	<dao interface="com.nara.springframework.dao.GrantIpDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapGrantIpDao"/>	
+  
+  	 
+      	<dao interface="com.nara.springframework.dao.PopUpDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapPopUpDao"/>  
+      		
+      		
+      	<dao interface="com.nara.springframework.dao.LoginLogDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapLoginLogDao"/>
+      		
+      	<dao interface="com.nara.springframework.dao.ArchiveDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapArchiveDao"/>
+      	
+      	<dao interface="com.nara.springframework.dao.UserPasswdChangeDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapUserPasswdChangeDao"/>
+      		
+      		
+      	<dao interface="com.nara.springframework.dao.SignstmtDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapSignstmtDao"/> 
+      	
+      	<dao interface="com.nara.springframework.dao.UserGroup2Dao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapUserGroup2Dao"/>
+ 
+		<dao interface="com.nara.springframework.dao.UserGroupList2Dao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapUserGroupList2Dao"/>
+      	
+      	<dao interface="com.nara.springframework.dao.UserGroup3Dao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapUserGroup3Dao"/>
+ 
+		<dao interface="com.nara.springframework.dao.UserGroupList3Dao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapUserGroupList3Dao"/>	     		
+      		
+      	<dao interface="com.nara.springframework.webhard.WebHardDao"
+      		implementation="com.nara.springframework.webhard.SqlMapWebHardDao"/>
+      		
+      	<dao interface="com.nara.springframework.webhard.AdminWebHardDao"
+      		implementation="com.nara.springframework.webhard.SqlMapAdminWebhardDao"/>
+      	
+        <dao interface="com.nara.springframework.bigmail.BigMailDao"
+      	    implementation="com.nara.springframework.bigmail.SqlMapBigMailDao"/>
+      	    
+      	<dao interface="com.nara.springframework.dao.KpnsDao"
+      	    implementation="com.nara.springframework.dao.ibatis.SqlMapKpnsDao"/>       		
+  </context>
+  
+</daoConfig>

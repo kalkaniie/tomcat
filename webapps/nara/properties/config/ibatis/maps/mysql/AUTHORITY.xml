@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="AUTHORITY">
+	<select id="select_authority_type_01" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="com.nara.jdf.db.entity.AuthorityEntity">
+  		SELECT 
+      		AUTHORITY_IDX,
+      		DOMAIN,
+      		AUTHORITY_NAME,
+      		AUTHORITY_LEVEL ,
+      		AUTHORITY_ENG_NAME
+       FROM AUTHORITY 
+       WHERE DOMAIN =  #DOMAIN# 
+       ORDER BY AUTHORITY_LEVEL 
+	</select>
+	
+	<select id="select_authority_seq_01" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="java.lang.Integer">
+  		SELECT NEXT_VAL 
+  		FROM SEQUENCE 
+  		WHERE NAME = 'AUTHORITY'
+	</select>
+	
+	<select id="select_authority_info_type_01" 
+					parameterClass="java.util.HashMap" 
+					resultClass="com.nara.jdf.db.entity.AuthorityEntity">
+		SELECT 
+     		AUTHORITY_IDX,
+     		DOMAIN,
+     		AUTHORITY_NAME,
+     		AUTHORITY_LEVEL,
+      		AUTHORITY_ENG_NAME 
+      	FROM AUTHORITY 
+     	WHERE AUTHORITY_IDX =  #AUTHORITY_IDX# 
+	</select>
+	
+	<select id="select_authority_max_level" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="java.lang.Integer">
+  		SELECT IFNULL(MAX(AUTHORITY_LEVEL),0) 
+  		FROM AUTHORITY 
+  		WHERE DOMAIN = #DOMAIN#
+	</select>
+	
+	<update id="update_authority_type_01"
+            parameterClass="java.util.HashMap">
+    	UPDATE AUTHORITY SET 
+    	<dynamic prepend="">
+			<isEqual prepend="" property= "UPDATE_TYPE" compareValue="AUTHORITY_NAME">
+				AUTHORITY_NAME =  #AUTHORITY_NAME#
+			</isEqual>
+			<isEqual prepend="" property= "UPDATE_TYPE" compareValue="AUTHORITY_ENG_NAME">
+				AUTHORITY_ENG_NAME =  #AUTHORITY_ENG_NAME#
+			</isEqual>
+			<isEqual prepend="" property= "UPDATE_TYPE" compareValue="AUTHORITY_LEVEL">
+				AUTHORITY_LEVEL =  #AUTHORITY_LEVEL#
+			</isEqual>
+		</dynamic>
+    		
+    	WHERE AUTHORITY_IDX = #AUTHORITY_IDX# 
+	</update>
+	
+	
+	<insert id="insert_authority_type_01"
+            parameterClass="com.nara.jdf.db.entity.AuthorityEntity">
+        INSERT INTO AUTHORITY
+        (
+            AUTHORITY_IDX,
+          	DOMAIN,
+          	AUTHORITY_NAME,
+          	AUTHORITY_LEVEL,
+      		AUTHORITY_ENG_NAME
+        ) VALUES (
+        	NEXTVAL('AUTHORITY'),
+        	#DOMAIN#,
+          	#AUTHORITY_NAME#,
+          	#AUTHORITY_LEVEL#,
+          	#AUTHORITY_ENG_NAME#
+		)
+    </insert>
+    
+    <delete id="delete_authority_type_01"
+  				parameterClass="java.util.HashMap">
+   		DELETE FROM AUTHORITY
+  		WHERE AUTHORITY_IDX =#AUTHORITY_IDX#
+  	</delete>
+</sqlMap>

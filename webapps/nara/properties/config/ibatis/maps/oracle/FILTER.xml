@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="FILTER">
+  	<select id="select_filter_count_type_01" 
+   				parameterClass="com.nara.jdf.db.entity.UserFilterEntity"
+  				resultClass="java.lang.Integer">
+    	SELECT
+			COUNT(*) cnt
+    	FROM FILTER
+    	<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "FILTER_AUTH">
+				FILTER_AUTH = #FILTER_AUTH#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "FILTER_TYPE">
+				FILTER_TYPE = #FILTER_TYPE#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "FILTER_KEYWORD">
+				FILTER_KEYWORD = #FILTER_KEYWORD#
+			</isNotNull>
+		</dynamic>
+  	</select> 	
+ 	<select id="select_filter_type_01" 
+   				parameterClass="java.util.HashMap"
+  				resultClass="com.nara.jdf.db.entity.UserFilterEntity">
+    	SELECT
+			FILTER_IDX,
+			USERS_IDX,
+			FILTER_AUTH,
+			FILTER_TYPE,
+			FILTER_KEYWORD
+    	FROM FILTER
+    	<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "FILTER_AUTH">
+				FILTER_AUTH = #FILTER_AUTH#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "FILTER_TYPE">
+				FILTER_TYPE = #FILTER_TYPE#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "FILTER_KEYWORD">
+				FILTER_KEYWORD = #FILTER_KEYWORD#
+			</isNotNull>
+		</dynamic>
+		
+		ORDER BY FILTER_KEYWORD ASC
+  	</select>
+  	
+	<insert id="insert_filter_type_01"
+          		parameterClass="com.nara.jdf.db.entity.UserFilterEntity">
+		INSERT INTO FILTER
+		(
+			FILTER_IDX,
+            USERS_IDX,
+            FILTER_AUTH,
+            FILTER_TYPE,
+            FILTER_KEYWORD
+        )
+        VALUES
+        (
+        	<dynamic prepend="">
+				<isGreaterEqual prepend="" property="FILTER_IDX" compareValue="1">
+					#FILTER_IDX#,
+				</isGreaterEqual>
+  				<isLessEqual prepend="" property="FILTER_IDX" compareValue="0">
+					SEQ_FILTER.NEXTVAL,
+				</isLessEqual>
+  			</dynamic>
+  
+            #USERS_IDX#,
+            #FILTER_AUTH#,
+            #FILTER_TYPE#,
+            #FILTER_KEYWORD#
+         )
+	</insert>
+	
+	<delete id="delete_filter_type_01"
+	        parameterClass="java.util.HashMap">  
+		DELETE FROM FILTER
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "FILTER_IDX">
+				FILTER_IDX = #FILTER_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "FILTER_IDX_LIST">
+				FILTER_IDX IN ( $FILTER_IDX_LIST$ )
+			</isNotNull>
+		</dynamic>
+	</delete>  
+	
+	<select id="select_filter_count_type_02" 
+   				parameterClass="com.nara.jdf.db.entity.UserFilterEntity"
+  				resultClass="java.lang.Integer">
+    	SELECT
+			COUNT(*) cnt
+    	FROM FILTER
+    	WHERE	FILTER_AUTH = #FILTER_AUTH#
+			AND	FILTER_TYPE = #FILTER_TYPE#
+			AND FILTER_KEYWORD = #FILTER_KEYWORD#
+  	</select> 
+  	
+  	<select id="select_filter_sequence" resultClass="java.lang.Integer">
+    	SELECT SEQ_FILTER.CURRVAL FROM DUAL
+  	</select>  
+  	
+  	<update id="move_filter_info" 
+  			parameterClass="java.util.HashMap">
+    	UPDATE FILTER
+    	SET USERS_IDX = #AFTER_USERS_IDX#
+    	WHERE USERS_IDX = #BEFORE_USERS_IDX#
+  	</update>       
+</sqlMap>

@@ -1,0 +1,143 @@
+
+/* CSS Document */
+* {margin:0px;padding:0px;word-break:break-all;font-size:12px;font-family:돋움, Dotum, AppleGothic,sans-serif,Arial;}/* html, body 사이의 간격을 제거 */
+html {} /* 기본 스크롤 제거 */
+
+
+/*body bg img 시연용 임시 수정(2008.02.13) */
+/* body{margin:9px 18px;background:#fff} */ 
+/*body{margin:157px 35px;background:url(../images/bgTemp.jpg) no-repeat height: 200px;}*/
+body{margin:157px 35px;}
+
+
+html, body, div,td{color: #565656;}
+/*COMMON --------------------- */
+/*p {padding-top: 1em;line-height: 150%;}*/
+textarea, .intx6, .intx7, .intx8{padding: 2px;border: 1px solid #cbcbcb;}
+img	{border:0}
+table{border-collapse:collapse; border:0;}
+td,div{word-break:break-all}
+a{color:#565656;text-decoration: none;}
+a:hover {color:#999;text-decoration: none;}
+
+/* headers here */
+
+h1 { font-size: 150%; color: #FF0000; text-indent: -9000px; background: url(..../images/top/logo.gif) no-repeat left top; height: 34px; }
+
+/*padding-----------------*/
+.padiS{padding:0 8px;}
+.padi02{padding:0 0 30px 0;}
+/*폼 --------------------- */
+.vali, .inchek, .inchek2, .intx2, .intx3, .intx4, .intx5, .intx6, .intx7, .intx8{ vertical-align: middle; }
+.fos{ width:63px;}
+.fos2{ width:160px;height:25px}
+.fos3{ width:165px;}
+.fos4{ width:120px;}
+.fos5{ width:80px;}
+.fos6{ width:53px; }
+.fos7{ width:744px; height:157px; overflow-y:auto; border-style: none;margin:2px 0;padding:2px 5px }
+.intx, .intx2, .intx3, .intx4, .intx5{ background: #e4e4e4;border: 1px solid #cbcbcb;padding:2px 0 0 2px;}
+.intx, .intx3, .intx4, .intx5, .intx6, .intx7, .intx8{height: 14px;}
+.intx{width: 101px;}
+.intx2{ height: 15px; width:423px;}
+.intx3{width: 68px;}
+.intx4{width: 111px;}
+.intx5{width: 75px;}
+.intx6, .intx7, .intx8{color: #565656;padding:2px 2px 0 2px}
+.intx6{ width: 387px}
+.intx7{ width: 495px;}
+.intx8{ width: 597px;}
+.inchek, .inchek2{margin:0px;padding:0;width:13px;height:13px;}
+.inchek2{margin:0 0 0 3px}
+
+/*전체구성-----------------------*/
+#masthead{width:962px;}
+/*탑영역--------------------------*/
+#masthead{ background: url(..../images/top/topmenu_bg.gif) repeat-x bottom; height: 88px; }
+#masthead ul{ list-style: none; background: url(..../images/top/corner_left.gif) no-repeat left top;height: 40px;}
+#masthead li#menu { color: #fff;float: left; height: 16px; margin-top:15px;padding-left:11px;}
+#masthead li#menu a{ position: relative;color: #fff; display: inline; text-decoration: none; padding:1px 12px 0 12px;font-weight: bold;background: url(..../images/line/lineSection01.gif) no-repeat 100% top; }
+#masthead li#menu a.tail{background: none transparent scroll repeat 0% 0%}
+#masthead li#menu a:hover{ color: #cbe9ff; text-decoration: none; }
+#masthead li#submenu{color: #fff; float:right; background: url(..../images/top/topmenu_in_bg.gif); height: 40px; width:486px;}
+#masthead li#submenu span{ position:absolute; background:url(..../images/top/corner_in_left.gif) no-repeat left top; padding-left:10px; padding-top:16px; height: 40px; }
+#masthead li#submenu span a{color: #fff;text-decoration: none; background: url(..../images/line/lineSection02.gif) no-repeat 100% top;padding:1px 8px;}
+#masthead li#submenu span a:hover{ color: #99CCFF; text-decoration: none; }
+#masthead li#submenu span a.tail{background: none transparent scroll repeat 0% 0%}
+#masthead li#submenu span.corner{ position:relative;float:right;background: url(..../images/top/corner_right.gif) no-repeat right top; width: 9px;margin:0px;padding:0px;}
+/*사이드-컨텐츠 묶음--------------------*/
+#container{width:962px; position: relative}
+/*사이드영역--------------------*/
+#sidebar { width:191px; float:left; margin-right: 12px; overflow: hidden;}
+#sidebar .logbox{ background: url(..../images/side/boxType01_bott.gif) no-repeat left bottom; padding-bottom: 8px;}
+#sidebar .logbox h2{font-weight: normal; line-height: 17px; background: url(..../images/side/boxType01_top.gif) no-repeat left top;padding:7px 11px 2px 11px; }
+#sidebar .logbox h2 a{ font-weight: bold; text-decoration: none; color: #565656; }
+#sidebar .logbox div ul li{ display:inline;}
+#sidebar .logbox div{ clear:both; border-top: 1px solid #d5d5d5; border-bottom: 1px solid #d5d5d5; height: 55px; margin:0 9px; padding:0;}
+#sidebar .logbox div ul#ma_info{ border-top: 1px solid #f1f1f1; padding:7px 0 4px 2px; font-weight: bold; background: url(..../images/line/lineSection04.gif) no-repeat 83px 6px; }
+#sidebar .logbox div ul#ma_info li a{ color: #9691ff; font-size: 11px; background: url(..../images/bullet/arrow_samll.gif) no-repeat 21px 2px; padding-right: 6px; }
+#sidebar .logbox div ul#ma_info li#ma01{ background: url(..../images/ico/ico_mail.gif) no-repeat left top; padding:1px 0 0 18px;}
+#sidebar .logbox div ul#ma_info li#ma02{ background: url(..../images/ico/ico_pp.gif) no-repeat 19px 0; padding:1px 0 0 38px; }
+#sidebar .logbox div ul#my_info{ padding:4px 0; font-weight: bold; background:#efefef; }
+#sidebar .logbox div ul#my_info li#my01{ padding-left: 13px; background: url(..../images/bullet/arrow_samll.gif) no-repeat 6px 2px; }
+#sidebar .logbox div ul#my_info li#my02{ padding-left: 25px; background: url(..../images/line/lineSection03.gif) no-repeat 12px 1px; }
+#sidebar .logbox div ul#my_info li#my02 img{ margin: 0px; padding: 0px; vertical-align: middle; }
+
+/*사이드영역---편지함목록-----------------*/
+#sidebar .box01{background: url(..../images/side/boxType02_bott.gif) left bottom; padding-bottom:12px; margin-top: 7px; }
+#sidebar .box01 h2, #sidebar .box02 h2{display:block;font-weight: bold; color: #000000; background: url(..../images/side/boxType02_top.gif) no-repeat left top; height: 24px; padding:9px 9px 0 11px; }
+#sidebar .box01 h2 span, #sidebar .box02 h2 span{ float: left;padding-top:3px;}
+#sidebar .box01 h2 p, #sidebar .box02 h2 p{ float:right;  text-align: right; }
+#sidebar .box01 h2 p a img, #sidebar .box02 h2 p a img{vertical-align: middle;}
+#sidebar .box01 h3{ color: #565656; display: block;padding:10px 0 0 22px; margin:5px 5px 2px 7px; background: url(..../images/side/bg_menuTit.gif) no-repeat left top; }
+#sidebar .box01 ul{ display:block; list-style:none; padding:4px 8px 0 16px;}
+#sidebar .box01 ul li{ display:block; height:21px;background:url(..../images/bullet/bult_sq.gif) no-repeat 0% 50%; vertical-align: middle; }
+#sidebar .box01 ul li em{ color:#9691ff; font-size: 11px; font-style: normal; font-weight: normal; padding-left: 5px; }
+#sidebar .box01 ul a { display:block; font-weight: normal; text-decoration: none; color: #565656; padding-left: 11px; float:left; padding-top: 6px; }
+#sidebar .box01 ul a:hover{ font-weight: bold; text-decoration: none;}
+#sidebar .box01 ul li .leftBtn{ float: right; margin: 0px; padding: 0px; }
+
+/*사이드영역---테그목록-----------------*/
+#sidebar #list_tag{ background: url(..../images/bullet/bult_sq2.gif) repeat-y 16px 6px; }
+#sidebar #list_tag a{padding-left: 40px;}
+#sidebar #tag01{ background:url(..../images/ico/ico_tag01.gif) no-repeat 8px 50%; }
+#sidebar #tag02{ background:url(..../images/ico/ico_tag02.gif) no-repeat 8px 50%; }
+#sidebar #tag03{ background:url(..../images/ico/ico_tag03.gif) no-repeat 8px 50%; }
+
+/*사이드영역---웹버디목록-----------------*/
+#sidebar .box02{ clear:both;background: url(..../images/side/boxType02_bott2.gif) no-repeat left bottom; margin-top: 7px;}
+#sidebar .box02 h3{ display:block; height: 24px;border-bottom: 1px solid #d9d9d9; background: #efefef; margin:0 3px;font-weight: normal; vertical-align: middle; }
+#sidebar .box02 h3 img{}
+#sidebar .box02 h3 .mico{display:block; float:left; width:35px; height:20px; padding:5px 0 0 5px; background: url(..../images/bullet/arrow_samllD.gif) no-repeat 32px 10px; cursor:default }
+#sidebar .box02 h3 .mnina{display:block; float:left;padding:7px 0 0 1px;height:17px;}
+#sidebar .box02 h3 a.mnina{ font-weight: normal;cursor:default }
+#sidebar .box02 .adrA,#sidebar .box02 .allV{display:block; float:left;cursor:default }
+#sidebar .box02 .adrA{width:66px; background: url(..../images/bullet/arrow_samllD.gif) no-repeat 54px 47%; }
+#sidebar .box02 .allV{width:60px;padding-left:10px}
+#sidebar .box02 #msgB{ display: block; height:22px; padding:7px 0 0 10px; background: url(..../images/line/lineSection04.gif) no-repeat 77px 6px; }
+
+#sidebar #msgList{display: block;overflow-y:scroll; height:142px;margin:2px 6px 2px 9px;}
+#sidebar #msgList ol a{ cursor: default; }
+#sidebar #msgList #os1{ visibility:hidden; }
+
+.cop {margin: 0px;padding: 0px;}
+.copt {cursor: pointer;-moz-user-select: none;-khtml-user-select: none; height:14px; padding:3px 0 0 15px; font-weight: bold;}
+.copc{ margin: 0px; padding: 0px;background: url(../images/bullet/msg_icoO.gif) no-repeat 0 2px;}
+.copt a { color: #CC0000; text-decoration: none; }
+.copo{background: url(..../images/bullet/msg_icoC.gif) no-repeat 0 2px;}
+.coptHover, .copo .coptHover {}
+.copf{}
+.copbg { list-style:none; background: #FFFFFF; padding:2px 2px 1px 13px; }
+.copbg li{height: 18px;}
+.copbg li a, .copbg li span a{display:block;float:left;cursor:default}
+.copbg li a{text-align:right;width:23px;margin-right:4px;}
+.copbg li span a{text-align:left;width:110px;padding-top:2px;}
+.copbg li img{vertical-align: middle;}
+
+/*사이드영역---하단설정버튼-----------------*/
+#sidebar #setting{display:block; background: url(..../images/side/sideNote_bg.gif) repeat-y left -1px; line-height: 27px;padding-left:12px;margin-top:3px}
+#sidebar #setting a{ font-weight: bold; text-decoration: none;}
+
+/*하단영역---------------------*/
+#footer{ clear:both;width:949px; background: url(..../images/bullet/bult_ico.gif) no-repeat left 4px; padding: 6px 0 0 13px; border-top: 1px solid #d5d5d5; font: 11px Tahoma; margin-top:10px;}
+#footer a{ font-weight: bold; color: #1881d9; }.cbb_tr a:link { }

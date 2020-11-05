@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+
+<sqlMap namespace="MEMO">
+	
+	<insert id="insert_memo_type_01"
+	        parameterClass="com.nara.jdf.db.entity.MemoEntity">
+	   INSERT INTO MEMO
+		(
+			MEMO_IDX, 
+			USERS_IDX, 
+			MEMO_COLOR, 
+			MEMO_CONTENT, 
+			DIPLAY_YN, 
+			CREATE_DATE,
+			UPDATE_DATE
+		)
+		VALUES
+		(
+			MEMO_SEQ.NEXTVAL, 
+			#USERS_IDX#, 
+			#MEMO_COLOR#, 
+			#MEMO_CONTENT#,
+			#DIPLAY_YN#, 
+			CURRENT,
+			CURRENT
+		)
+	</insert>
+	
+	
+		
+	<select id="select_memo_type_01"
+	        parameterClass="java.util.Map"
+	        resultClass="com.nara.jdf.db.entity.MemoEntity">	        
+		SELECT
+			MEMO_IDX, 
+			MEMO_COLOR, 
+			MEMO_TITLE,
+			MEMO_CONTENT, 
+			UPDATE_DATE,
+			CREATE_DATE	
+		FROM
+			(
+				SELECT
+					MEMO_IDX, 
+					MEMO_COLOR, 
+					SUBSTR(REPLACE(REPLACE(MEMO_CONTENT, CHR(10), ''), CHR(13), ''), 0, 20) MEMO_TITLE,
+					MEMO_CONTENT,
+					UPDATE_DATE, 
+					CREATE_DATE	,
+	  				CEIL((ROW_NUMBER() OVER(ORDER BY $orderCol$ $orderType$))/$USERS_LISTNUM$) PAGENUM
+				FROM MEMO
+				<dynamic prepend="WHERE">
+					<isNotNull prepend="AND" property="USERS_IDX">
+						USERS_IDX = #USERS_IDX#
+					</isNotNull>
+					
+				</dynamic>
+			)
+		WHERE PAGENUM = #nPage#	  	
+	</select>
+
+	
+	<select id="count_memo_type_01"
+	        parameterClass="java.util.Map"
+	        resultClass="java.lang.Integer">
+		SELECT
+	  		COUNT(MEMO_IDX) CNT
+		FROM MEMO
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property="USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotEqual prepend="AND" open=" ( SUBSTR($strField$,0,1) IN (" close=") )" property="strKey" compareValue="">
+				$strKey$
+			</isNotEqual>
+			<isNotEqual prepend="AND" property="strKeyword" compareValue="">
+				$strIndex$ LIKE '%'||#strKeyword#||'%'
+			</isNotEqual>
+		</dynamic>
+	</select>
+	
+	
+	<delete id="delete_memo_type_01"
+	        parameterClass="java.util.Map">
+		DELETE FROM MEMO
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property="MEMO_IDX">
+				MEMO_IDX = #MEMO_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property="USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+		</dynamic>
+	</delete>
+			
+	<update id="update_memo_type_01"
+	        parameterClass="com.nara.jdf.db.entity.MemoEntity">
+	    UPDATE MEMO
+	    SET	USERS_IDX = #USERS_IDX#, 
+			MEMO_COLOR = #MEMO_COLOR#, 
+			MEMO_CONTENT = #MEMO_CONTENT#,
+			DIPLAY_YN = #DIPLAY_YN#,	 
+			UPDATE_DATE = CURRENT
+		WHERE MEMO_IDX = #MEMO_IDX# 
+	</update>
+	
+	<update id="update_memo_type_02"
+	        parameterClass="java.util.Map">
+	    UPDATE MEMO
+	    SET	USERS_IDX = #USERS_IDX#, 
+			<isNotNull prepend="" property="MEMO_COLOR">
+				MEMO_COLOR = #MEMO_COLOR#, 
+			</isNotNull>
+			<isNotNull prepend="" property="MEMO_CONTENT">
+				MEMO_CONTENT = #MEMO_CONTENT#,
+			</isNotNull>
+			<isNotNull prepend="" property="DIPLAY_YN">
+				DIPLAY_YN = #DIPLAY_YN#,	 
+			</isNotNull>
+			UPDATE_DATE = CURRENT
+		WHERE MEMO_IDX = #MEMO_IDX# 
+	</update>		
+	
+	<select id="select_memo_type_02"
+	        parameterClass="java.util.HashMap"
+	        resultClass="com.nara.jdf.db.entity.MemoEntity">
+		SELECT
+			USERS_IDX, 
+			MEMO_COLOR, 
+			SUBSTR(REPLACE(REPLACE(MEMO_CONTENT, CHR(10), ''), CHR(13), ''), 0, 20) MEMO_TITLE,
+			MEMO_CONTENT, 
+			DIPLAY_YN, 
+			CREATE_DATE,
+			UPDATE_DATE
+		FROM MEMO
+		WHERE MEMO_IDX = #MEMO_IDX#
+	</select>
+
+</sqlMap>

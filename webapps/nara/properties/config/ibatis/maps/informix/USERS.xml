@@ -1,0 +1,1259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+ 
+<sqlMap namespace="USERS">
+  	<select id="select_user_count_type_01" 
+   				parameterClass="java.util.HashMap"
+  				resultClass="java.lang.Integer">
+    	SELECT
+			COUNT(*) cnt
+    	FROM USERS_MASTER
+    	<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "DOMAIN">
+				DOMAIN = #DOMAIN#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+		</dynamic>
+  	</select>
+ 
+   	<select id="select_user_count_type_02" 
+   				parameterClass="java.util.HashMap"
+  				resultClass="java.lang.Integer">
+    	SELECT
+			COUNT(*) cnt
+    	FROM USERS_MASTER AA, USERS_DETAIL BB
+    	WHERE AA.USERS_IDX = BB.USERS_IDX
+    	<dynamic prepend="">
+			<isNotNull prepend="AND" property= "DOMAIN">
+				AA.DOMAIN = #AA.DOMAIN#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "USERS_JUMIN1">
+				BB.USERS_JUMIN1 = #USERS_JUMIN1#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "USERS_JUMIN2">
+				BB.USERS_JUMIN2 = #USERS_JUMIN2#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "USERS_LICENCENUM">
+				BB.USERS_LICENCENUM = #USERS_LICENCENUM#
+			</isNotNull>
+		</dynamic>
+  	</select>
+ 
+  	<select id="select_user_type_01" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="com.nara.jdf.db.entity.UserEntity">
+        SELECT AA.USERS_IDX,
+          AA.USERS_ID,
+          AA.DOMAIN,
+          AA.USERS_PASSWD,
+          AA.USERS_NAME,
+          AA.USERS_ENGNAME,
+          BB.USERS_HOMEDIR,
+          BB.USERS_PERMIT,
+          BB.USERS_AUTH,
+          BB.USERS_NICKNAME,
+          BB.USERS_JUMIN1,
+          BB.USERS_JUMIN2,
+          BB.USERS_SEX,
+          BB.USERS_BIRTH,
+          BB.USERS_ISSOLAR,
+          BB.USERS_CELLNO,
+          BB.USERS_FAXNO,
+          BB.USERS_TELNO,
+          BB.USERS_ZIPCODE,
+          BB.USERS_ADDRESS1,
+          BB.USERS_ADDRESS2,
+          BB.USERS_JOBCODE,
+          BB.USERS_COMPNAME,
+          BB.USERS_DEPARTMENT,
+          BB.USERS_PREVEMAIL,
+          BB.USERS_SCHOOLING,
+          BB.USERS_INTEREST,
+          BB.USERS_LICENCENUM,
+          BB.USERS_ISOPEN,
+          BB.USERS_JOINDATE,
+          BB.USERS_EXPIREDDATE,
+          BB.USERS_LOGCOUNT,
+          BB.USERS_LASTHOST,
+          BB.USERS_MAX_VOLUME,
+          BB.USERS_CUR_VOLUME,
+          TO_CHAR(BB.USERS_LASTDATE, '%Y-%m-%d %H:%M:%S') USERS_LASTDATE,
+          BB.USERS_SIGNATURE,
+          BB.USERS_SIGNATURESTMT,
+          BB.USERS_AUTORE,
+          BB.USERS_AUTORESTMT,
+          BB.USERS_USENAME,
+          BB.USERS_SENDBOX,
+          BB.USERS_DELBOX,
+          BB.USERS_AUTO_DEL,
+          BB.USERS_LISTNUM,
+          BB.USERS_ISVOTE,
+          BB.USERS_ABSENT,
+          TO_CHAR(BB.USERS_ABSENT_SDATE, '%Y-%m-%d') USERS_ABSENT_SDATE,
+          TO_CHAR(BB.USERS_ABSENT_EDATE, '%Y-%m-%d') USERS_ABSENT_EDATE,
+          BB.USERS_ABSENT_RESTMT,
+          BB.USERS_OPT_FWD,
+          BB.USERS_OPT_FWD_SAVE,
+          BB.USERS_FWD_LIST,
+          BB.USERS_READDR,
+          BB.USERS_SPAM_LEVEL,
+          BB.USERS_DEL_WASTE,
+          BB.USERS_DEL_SPAM,
+          BB.USERS_LANG,
+          BB.USERS_MAIL_ALARM,
+          BB.USERS_ALARM_SOUND,
+          BB.USERS_INDEX_PAGE,
+          BB.USERS_RECEIVE_INFOMAIL,
+          BB.USERS_MAIL_VIEW,
+          BB.USERS_MAIL_INJURE,
+          BB.USERS_ORGANIZE_IDX,
+          BB.USERS_AUTHORITY_IDX,
+          BB.USERS_SMS_QUOTA,
+          BB.USERS_MAIL_QUOTA,
+          BB.USERS_MEMO,
+          BB.USERS_MSG_YN,
+          BB.USERS_MENTO_YN,
+          BB.USERS_USETAG,
+          BB.USERS_USE_MAIL_PREVIEW,
+          BB.MAX_BIG_UPLOAD_SIZE
+        FROM USERS_MASTER AA,
+          USERS_DETAIL BB
+        WHERE AA.USERS_IDX = BB.USERS_IDX
+		<dynamic prepend="">
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				AA.USERS_IDX = #USERS_IDX#
+			</isNotNull>
+		</dynamic>   
+  	</select>
+	
+	<select id="select_user_type_02" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="com.nara.jdf.db.entity.UserEntity">
+        SELECT USERS_IDX,
+			USERS_NAME,
+        FROM USERS_MASTER
+		<dynamic prepend="WHERE ">
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "USERS_NAME">
+				USERS_NAME = #USERS_NAME#
+			</isNotNull>
+		</dynamic>   
+  	</select>
+  	
+  	<select id="select_user_type_03" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="com.nara.jdf.db.entity.UserEntity">
+        SELECT AA.USERS_IDX,
+          AA.USERS_ID,
+          AA.DOMAIN,
+          AA.USERS_PASSWD,
+          AA.USERS_NAME,
+          AA.USERS_ENGNAME,
+          BB.USERS_HOMEDIR,
+          BB.USERS_PERMIT,
+          BB.USERS_AUTH,
+          BB.USERS_NICKNAME,
+          BB.USERS_JUMIN1,
+          BB.USERS_JUMIN2,
+          BB.USERS_SEX,
+          BB.USERS_BIRTH,
+          BB.USERS_ISSOLAR,
+          BB.USERS_CELLNO,
+          BB.USERS_FAXNO,
+          BB.USERS_TELNO,
+          BB.USERS_ZIPCODE,
+          BB.USERS_ADDRESS1,
+          BB.USERS_ADDRESS2,
+          BB.USERS_JOBCODE,
+          BB.USERS_COMPNAME,
+          BB.USERS_DEPARTMENT,
+          BB.USERS_PREVEMAIL,
+          BB.USERS_SCHOOLING,
+          BB.USERS_INTEREST,
+          BB.USERS_LICENCENUM,
+          BB.USERS_ISOPEN,
+          BB.USERS_JOINDATE,
+          BB.USERS_EXPIREDDATE,
+          BB.USERS_LOGCOUNT,
+          BB.USERS_LASTHOST,
+          BB.USERS_MAX_VOLUME,
+          BB.USERS_CUR_VOLUME,
+          TO_CHAR(BB.USERS_LASTDATE, '%Y-%m-%d %H:%M:%S') USERS_LASTDATE,
+          BB.USERS_SIGNATURE,
+          BB.USERS_SIGNATURESTMT,
+          BB.USERS_AUTORE,
+          BB.USERS_AUTORESTMT,
+          BB.USERS_USENAME,
+          BB.USERS_SENDBOX,
+          BB.USERS_DELBOX,
+          BB.USERS_AUTO_DEL,
+          BB.USERS_LISTNUM,
+          BB.USERS_ISVOTE,
+          BB.USERS_ABSENT,
+          TO_CHAR(BB.USERS_ABSENT_SDATE, 'YYYY-MM-DD') USERS_ABSENT_SDATE,
+          TO_CHAR(BB.USERS_ABSENT_EDATE, 'YYYY-MM-DD') USERS_ABSENT_EDATE,
+          BB.USERS_ABSENT_RESTMT,
+          BB.USERS_OPT_FWD,
+          BB.USERS_OPT_FWD_SAVE,
+          BB.USERS_FWD_LIST,
+          BB.USERS_READDR,
+          BB.USERS_SPAM_LEVEL,
+          BB.USERS_DEL_WASTE,
+          BB.USERS_DEL_SPAM,
+          BB.USERS_LANG,
+          BB.USERS_MAIL_ALARM,
+          BB.USERS_ALARM_SOUND,
+          BB.USERS_INDEX_PAGE,
+          BB.USERS_RECEIVE_INFOMAIL,
+          BB.USERS_MAIL_VIEW,
+          BB.USERS_MAIL_INJURE,
+          BB.USERS_ORGANIZE_IDX,
+          BB.USERS_AUTHORITY_IDX,
+          BB.USERS_SMS_QUOTA,
+          BB.USERS_MAIL_QUOTA,
+          BB.USERS_MEMO,
+          BB.USERS_MSG_YN,
+          BB.USERS_MENTO_YN,
+          BB.USERS_USETAG,
+          BB.USERS_USE_MAIL_PREVIEW
+        FROM USERS_MASTER AA,
+          USERS_DETAIL BB
+        WHERE AA.USERS_IDX = BB.USERS_IDX
+		<dynamic prepend="">
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				AA.USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "DOMAIN">
+				AA.DOMAIN = #DOMAIN#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "USERS_NAME">
+				AA.USERS_NAME = #USERS_NAME#
+			</isNotNull>
+			<isEqual prepend="AND" property= "isAdmin" compareValue="true">
+				USERS_AUTH IN ('A', 'S')
+			</isEqual>
+		</dynamic>   
+  	</select>
+  	
+  	<insert id="insert_user_master_type_01"
+          parameterClass="com.nara.jdf.db.entity.UserEntity">
+			INSERT INTO USERS_MASTER
+			(
+				USERS_IDX,
+				USERS_ID,
+				DOMAIN,
+				USERS_PASSWD,
+				USERS_NAME,
+				USERS_ENGNAME
+			)
+			VALUES
+			(
+				#USERS_IDX#,
+				#USERS_ID#,
+				#DOMAIN#,
+				#USERS_PASSWD#,
+				#USERS_NAME#,
+				#USERS_ENGNAME#
+			)
+	</insert> 
+	<insert id="insert_user_detail_type_01"
+          parameterClass="com.nara.jdf.db.entity.UserEntity">
+			INSERT INTO USERS_DETAIL
+			(
+                USERS_IDX,
+                USERS_HOMEDIR,
+                USERS_PERMIT,
+                USERS_AUTH,
+                USERS_NICKNAME,
+                USERS_JUMIN1,
+                USERS_JUMIN2,
+                USERS_SEX,
+                USERS_BIRTH,
+                USERS_ISSOLAR,
+                USERS_CELLNO,
+                USERS_FAXNO,
+                USERS_TELNO,
+                USERS_ZIPCODE,
+                USERS_ADDRESS1,
+                USERS_ADDRESS2,
+                USERS_JOBCODE,
+                USERS_COMPNAME,
+                USERS_DEPARTMENT,
+                USERS_PREVEMAIL,
+                USERS_SCHOOLING,
+                USERS_INTEREST,
+                USERS_LICENCENUM,
+                USERS_ISOPEN,
+                USERS_JOINDATE,
+                USERS_EXPIREDDATE,
+                USERS_LOGCOUNT,
+                USERS_LASTHOST,
+                USERS_MAX_VOLUME,
+                USERS_CUR_VOLUME,
+                USERS_LASTDATE,
+                USERS_SIGNATURE,
+                USERS_SIGNATURESTMT,
+                USERS_AUTORE,
+                USERS_AUTORESTMT,
+                USERS_USENAME,
+                USERS_SENDBOX,
+                USERS_DELBOX,
+                USERS_AUTO_DEL,
+                USERS_LISTNUM,
+                USERS_ISVOTE,
+                USERS_ABSENT,
+                USERS_ABSENT_SDATE,
+          		USERS_ABSENT_EDATE,
+                USERS_ABSENT_RESTMT,
+                USERS_OPT_FWD,
+                USERS_OPT_FWD_SAVE,
+                USERS_FWD_LIST,
+                USERS_READDR,
+                USERS_SPAM_LEVEL,
+                USERS_DEL_WASTE,
+                USERS_DEL_SPAM,
+                USERS_LANG,
+                USERS_MAIL_ALARM,
+                USERS_ALARM_SOUND,
+                USERS_INDEX_PAGE,
+                USERS_RECEIVE_INFOMAIL,
+                USERS_MAIL_VIEW,
+                USERS_MAIL_INJURE,
+                USERS_ORGANIZE_IDX,
+                USERS_AUTHORITY_IDX,
+                USERS_SMS_QUOTA,
+                USERS_MAIL_QUOTA,
+                USERS_MEMO,
+                USERS_MSG_YN,
+                USERS_MENTO_YN,
+                USERS_USETAG,
+          		USERS_USE_MAIL_PREVIEW
+			)
+			VALUES
+			(
+				#USERS_IDX#,
+                #USERS_HOMEDIR#,
+                #USERS_PERMIT#,
+                #USERS_AUTH#,
+                #USERS_NICKNAME#,
+                #USERS_JUMIN1#,
+                #USERS_JUMIN2#,
+                #USERS_SEX#,
+                #USERS_BIRTH#,
+                #USERS_ISSOLAR#,
+                #USERS_CELLNO#,
+                #USERS_FAXNO#,
+                #USERS_TELNO#,
+                #USERS_ZIPCODE#,
+                #USERS_ADDRESS1#,
+                #USERS_ADDRESS2#,
+                #USERS_JOBCODE#,
+                #USERS_COMPNAME#,
+                #USERS_DEPARTMENT#,
+                #USERS_PREVEMAIL#,
+                #USERS_SCHOOLING#,
+                #USERS_INTEREST#,
+                #USERS_LICENCENUM#,
+                #USERS_ISOPEN#,
+                #USERS_JOINDATE#,
+                #USERS_EXPIREDDATE#,
+                #USERS_LOGCOUNT#,
+                #USERS_LASTHOST#,
+                #USERS_MAX_VOLUME#,
+                #USERS_CUR_VOLUME#,
+                #USERS_LASTDATE#,
+                #USERS_SIGNATURE#,
+                #USERS_SIGNATURESTMT#,
+                #USERS_AUTORE#,
+                #USERS_AUTORESTMT#,
+                #USERS_USENAME#,
+                #USERS_SENDBOX#,
+                #USERS_DELBOX#,
+                #USERS_AUTO_DEL#,
+                #USERS_LISTNUM#,
+                #USERS_ISVOTE#,
+                #USERS_ABSENT#,
+                #USERS_ABSENT_SDATE#,
+                #USERS_ABSENT_EDATE#,
+                #USERS_ABSENT_RESTMT#,
+                #USERS_OPT_FWD#,
+                #USERS_OPT_FWD_SAVE#,
+                #USERS_FWD_LIST#,
+                #USERS_READDR#,
+                #USERS_SPAM_LEVEL#,
+                #USERS_DEL_WASTE#,
+                #USERS_DEL_SPAM#,
+                #USERS_LANG#,
+                #USERS_MAIL_ALARM#,
+                #USERS_ALARM_SOUND#,
+                #USERS_INDEX_PAGE#,
+                #USERS_RECEIVE_INFOMAIL#,
+                #USERS_MAIL_VIEW#,
+                #USERS_MAIL_INJURE#,
+                #USERS_ORGANIZE_IDX#,
+                #USERS_AUTHORITY_IDX#,
+                #USERS_SMS_QUOTA#,
+                #USERS_MAIL_QUOTA#,
+                #USERS_MEMO#,
+                #USERS_MSG_YN#,
+                #USERS_MENTO_YN#,
+                #USERS_USETAG#,
+          		#USERS_USE_MAIL_PREVIEW#
+			)
+	</insert>
+	
+	<update id="update_user_login_log"
+				parameterClass="java.util.HashMap">
+			UPDATE USERS_DETAIL
+			SET	USERS_LOGCOUNT = USERS_LOGCOUNT+1,
+				USERS_LASTHOST = #USERS_LASTHOST#,
+				USERS_LASTDATE = CURRENT,
+				USERS_CUR_VOLUME = #USERS_CUR_VOLUME#
+			WHERE USERS_IDX =  #USERS_IDX#
+	</update>
+	<update id="update_user_cur_volume" 
+				parameterClass="java.util.HashMap">
+			UPDATE USERS_DETAIL
+			SET	USERS_CUR_VOLUME = #USERS_CUR_VOLUME#
+			WHERE USERS_IDX =  #USERS_IDX#
+	</update>
+	<update id="update_user_passwd" 
+				parameterClass="java.util.HashMap">
+			UPDATE USERS_MASTER
+			SET	USERS_PASSWD = #USERS_PASSWD#
+			WHERE USERS_IDX =  #USERS_IDX#
+	</update>
+	<update id="update_user_master_env" 
+				parameterClass="com.nara.jdf.db.entity.UserEntity">
+			UPDATE USERS_MASTER
+			SET	USERS_NAME = #USERS_NAME#,
+			    USERS_ENGNAME = #USERS_ENGNAME#
+			WHERE USERS_IDX =  #USERS_IDX#
+	</update>
+	<update id="update_user_detail_env" 
+				parameterClass="com.nara.jdf.db.entity.UserEntity">
+			UPDATE USERS_DETAIL
+			SET	USERS_NICKNAME = #USERS_NICKNAME#,
+			    USERS_LICENCENUM = #USERS_LICENCENUM#,
+			    USERS_SEX = #USERS_SEX#,
+			    USERS_BIRTH = #USERS_BIRTH#,
+			    USERS_ISSOLAR = #USERS_ISSOLAR#,
+			    USERS_CELLNO = #USERS_CELLNO#,
+			    USERS_FAXNO = #USERS_FAXNO#,
+			    USERS_TELNO = #USERS_TELNO#,
+			    USERS_ZIPCODE = #USERS_ZIPCODE#,
+			    USERS_ADDRESS1 = #USERS_ADDRESS1#,
+			    USERS_ADDRESS2 = #USERS_ADDRESS2#,
+			    USERS_JOBCODE = #USERS_JOBCODE#,
+			    USERS_COMPNAME = #USERS_COMPNAME#,
+			    USERS_DEPARTMENT = #USERS_DEPARTMENT#,
+			    USERS_SCHOOLING = #USERS_SCHOOLING#,
+			    USERS_INTEREST = #USERS_INTEREST#,
+			    USERS_ISOPEN = #USERS_ISOPEN#,
+			    USERS_MEMO = #USERS_MEMO#
+			WHERE USERS_IDX =  #USERS_IDX#
+	</update>
+	
+	<delete id="delete_users_master_type_01"
+  				parameterClass="java.util.HashMap">
+  		DELETE FROM USERS_MASTER
+  		<dynamic prepend="WHERE">
+  			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "USERS_ID">
+				USERS_ID = #USERS_ID#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "DOMAIN">
+				DOMAIN = #DOMAIN#
+			</isNotNull>
+  		</dynamic>
+  	</delete>
+  	<delete id="delete_users_detail_type_01"
+  				parameterClass="java.util.HashMap">
+  		DELETE FROM USERS_DETAIL
+  		<dynamic prepend="WHERE">
+  			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "DOMAIN">
+				SUBSTR(USERS_IDX, INSTR(USERS_IDX, '@')) = '@$DOMAIN$'
+			</isNotNull>
+  		</dynamic>
+  	</delete>
+  	
+  	<update id="update_user_master_user_config" 
+				parameterClass="java.util.HashMap">
+		UPDATE USERS_DETAIL
+		SET USERS_ID = USERS_ID
+		WHERE USERS_IDX =  #USERS_IDX#
+	</update>
+	
+  	<update id="update_user_detail_user_config" 
+				parameterClass="java.util.HashMap">
+		UPDATE USERS_DETAIL
+
+		<dynamic prepend="">
+			<isEqual prepend="SET " property= "UPDATE_TYPE" compareValue="USERS_AUTH">
+				USERS_AUTH = #USERS_AUTH#
+			</isEqual>
+			<isEqual prepend="SET " property= "UPDATE_TYPE" compareValue="USERS_PERMIT">
+				USERS_PERMIT = #USERS_PERMIT#
+			</isEqual>
+			<isEqual prepend="SET " property= "UPDATE_TYPE" compareValue="ABSENT_ENV">
+				USERS_ABSENT = #USERS_ABSENT#,
+				USERS_ABSENT_SDATE = TO_DATE(#USERS_ABSENT_SDATE#, '%Y-%m-%d'),
+				USERS_ABSENT_EDATE = TO_DATE(#USERS_ABSENT_EDATE#, '%Y-%m-%d'),
+				USERS_ABSENT_RESTMT = #USERS_ABSENT_RESTMT#
+			</isEqual>
+			<isEqual prepend="SET " property= "UPDATE_TYPE" compareValue="MAIL_WRITE">
+				USERS_SIGNATURE = #USERS_SIGNATURE#,
+				USERS_AUTORE = #USERS_AUTORE#,
+				USERS_SENDBOX = #USERS_SENDBOX#,
+				USERS_OPT_FWD = #USERS_OPT_FWD#,
+				USERS_OPT_FWD_SAVE = #USERS_OPT_FWD_SAVE#
+			</isEqual>
+			<isEqual prepend="SET " property= "UPDATE_TYPE" compareValue="OPT_FWD">
+				USERS_OPT_FWD = #USERS_OPT_FWD#
+			</isEqual>
+			<isEqual prepend="SET " property= "UPDATE_TYPE" compareValue="READDR">
+				USERS_READDR = #USERS_READDR#
+			</isEqual>
+			<isEqual prepend="SET " property= "UPDATE_TYPE" compareValue="FWD_LIST">
+				USERS_FWD_LIST = #USERS_FWD_LIST#
+			</isEqual>
+			<isEqual prepend="SET " property= "UPDATE_TYPE" compareValue="SPAM_LEVEL">
+				USERS_SPAM_LEVEL = #USERS_SPAM_LEVEL#
+			</isEqual>
+			<isEqual prepend="SET " property= "UPDATE_TYPE" compareValue="INJURE_ENV">
+				USERS_MAIL_INJURE = #USERS_MAIL_INJURE#
+			</isEqual>
+			<isEqual prepend="SET " property= "UPDATE_TYPE" compareValue="USERS_SMS_QUOTA">
+				USERS_SMS_QUOTA = #USERS_SMS_QUOTA#
+			</isEqual>
+			<isEqual prepend="SET " property= "UPDATE_TYPE" compareValue="MINUS_USERS_SMS_QUOTA">
+				USERS_SMS_QUOTA = USERS_SMS_QUOTA - #minusQuota#
+			</isEqual>
+  			<isEqual prepend="SET " property= "UPDATE_TYPE" compareValue="BASIC_ENV">
+				USERS_LANG = #USERS_LANG#,
+				USERS_INDEX_PAGE = #USERS_INDEX_PAGE#,
+				USERS_USENAME = #USERS_USENAME#
+			</isEqual>
+			<isEqual prepend="SET " property= "UPDATE_TYPE" compareValue="MAIL_ENV">
+				USERS_USE_MAIL_PREVIEW = #USERS_USE_MAIL_PREVIEW#,
+				USERS_LISTNUM = #USERS_LISTNUM#,
+				USERS_USETAG = #USERS_USETAG#,
+				USERS_DELBOX = #USERS_DELBOX#,
+				USERS_DEL_SPAM = #USERS_DEL_SPAM#,
+				USERS_AUTO_DEL = #USERS_AUTO_DEL#,
+				USERS_DEL_WASTE = #USERS_DEL_WASTE#
+			</isEqual>
+			<isEqual prepend="SET " property= "UPDATE_TYPE" compareValue="USERS_STMT">
+				$COLUMN_NAME$ = #CONTENT#
+			</isEqual>
+  		</dynamic>
+
+		WHERE USERS_IDX =  #USERS_IDX#
+	</update>
+	
+	<select id="select_user_type_manage_01" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="com.nara.jdf.db.entity.UserEntity">				
+    	SELECT SKIP $SKIP$ FIRST $USERS_LISTNUM$ 
+    	    AA.USERS_IDX,
+      		AA.USERS_ID,
+      		AA.DOMAIN,
+      		AA.USERS_PASSWD,
+      		AA.USERS_NAME,
+      		AA.USERS_ENGNAME,
+      		BB.USERS_HOMEDIR,
+      		BB.USERS_PERMIT,
+      		BB.USERS_AUTH,
+      		BB.USERS_NICKNAME,
+      		BB.USERS_JUMIN1,
+      		BB.USERS_JUMIN2,
+      		BB.USERS_SEX,
+      		BB.USERS_BIRTH,
+      		BB.USERS_ISSOLAR,
+      		BB.USERS_CELLNO,
+      		BB.USERS_FAXNO,
+      		BB.USERS_TELNO,
+      		BB.USERS_ZIPCODE,
+      		BB.USERS_ADDRESS1,
+      		BB.USERS_ADDRESS2,
+      		BB.USERS_JOBCODE,
+      		BB.USERS_COMPNAME,
+      		BB.USERS_DEPARTMENT,
+      		BB.USERS_PREVEMAIL,
+      		BB.USERS_SCHOOLING,
+      		BB.USERS_INTEREST,
+      		BB.USERS_LICENCENUM,
+      		BB.USERS_ISOPEN,
+      		BB.USERS_JOINDATE,
+      		BB.USERS_EXPIREDDATE,
+      		BB.USERS_LOGCOUNT,
+      		BB.USERS_LASTHOST,
+      		BB.USERS_MAX_VOLUME,
+      		BB.USERS_CUR_VOLUME,
+      		TO_CHAR(BB.USERS_LASTDATE, '%Y-%m-%d %H:%M:%S') USERS_LASTDATE,
+      		BB.USERS_SIGNATURE,
+      		BB.USERS_SIGNATURESTMT,
+      		BB.USERS_AUTORE,
+      		BB.USERS_AUTORESTMT,
+      		BB.USERS_USENAME,
+      		BB.USERS_SENDBOX,
+      		BB.USERS_DELBOX,
+      		BB.USERS_AUTO_DEL,
+      		BB.USERS_LISTNUM,
+      		BB.USERS_ISVOTE,
+      		BB.USERS_ABSENT,
+      		TO_CHAR(BB.USERS_ABSENT_SDATE, 'YYYY-MM-DD') USERS_ABSENT_SDATE,
+      		TO_CHAR(BB.USERS_ABSENT_EDATE, 'YYYY-MM-DD') USERS_ABSENT_EDATE,
+      		BB.USERS_ABSENT_RESTMT,
+      		BB.USERS_OPT_FWD,
+      		BB.USERS_OPT_FWD_SAVE,
+      		BB.USERS_FWD_LIST,
+      		BB.USERS_READDR,
+      		BB.USERS_SPAM_LEVEL,
+      		BB.USERS_DEL_WASTE,
+      		BB.USERS_DEL_SPAM,
+      		BB.USERS_LANG,
+      		BB.USERS_MAIL_ALARM,
+      		BB.USERS_ALARM_SOUND,
+      		BB.USERS_INDEX_PAGE,
+      		BB.USERS_RECEIVE_INFOMAIL,
+      		BB.USERS_MAIL_VIEW,
+      		BB.USERS_MAIL_INJURE,
+      		BB.USERS_ORGANIZE_IDX,
+      		BB.USERS_AUTHORITY_IDX,
+      		BB.USERS_SMS_QUOTA,
+      		BB.USERS_MAIL_QUOTA,
+      		BB.USERS_MEMO,
+      		BB.USERS_MSG_YN,
+      		BB.USERS_MENTO_YN,
+      		BB.USERS_USETAG,
+      		BB.USERS_USE_MAIL_PREVIEW
+    	FROM USERS_MASTER AA,
+      		 USERS_DETAIL BB
+    	WHERE AA.USERS_IDX = BB.USERS_IDX
+		
+		<dynamic prepend="">
+			<isNotNull prepend="AND" property= "DOMAIN">
+				AA.DOMAIN = #DOMAIN#
+			</isNotNull>
+			<isNotNull prepend="" property= "USERS_ID">
+				<iterate property="USERS_ID" prepend="" open="" close="" conjunction=" " >
+      				AND USERS_ID LIKE '%$USERS_ID[]$%' 
+ 				</iterate>
+			</isNotNull>
+			<isNotNull prepend="" property= "USERS_NAME">
+ 				<iterate property="USERS_NAME" prepend="" open="" close="" conjunction=" " >
+      				AND USERS_NAME LIKE '%$USERS_NAME[]$%'
+ 				</iterate>
+ 			</isNotNull>
+ 			<isNotNull prepend="" property= "USERS_JUMIN1">
+ 				<iterate property="USERS_JUMIN1" prepend=" AND USERS_JUMIN1 IN " open="(" close=")" conjunction="," >
+          			#USERS_JUMIN1[]#
+ 				</iterate>
+ 			</isNotNull>
+ 			<isNotNull prepend="" property= "USERS_JUMIN2">
+ 				<iterate property="USERS_JUMIN2" prepend=" AND USERS_JUMIN2 IN " open="(" close=")" conjunction="," >
+          			#USERS_JUMIN2[]#
+ 				</iterate>
+ 			</isNotNull>
+ 			<isNotNull prepend="" property= "USERS_DEPARTMENT">
+ 				<iterate property="USERS_DEPARTMENT" prepend="" open="" close="" conjunction=" " >
+          			AND USERS_DEPARTMENT LIKE '%$USERS_DEPARTMENT[]$'%'
+ 				</iterate>
+ 			</isNotNull>
+ 			<isNotNull prepend="" property= "USERS_LICENCENUM">
+ 				<iterate property="USERS_LICENCENUM" prepend=" AND USERS_LICENCENUM IN " open="(" close=")" conjunction="," >
+          			#USERS_LICENCENUM[]#
+ 				</iterate>
+ 			</isNotNull>
+			<isGreaterEqual prepend="" property="USERS_CUR_VOLUME" compareValue="1">
+          		<![CDATA[ AND USERS_CUR_VOLUME - USERS_MAX_VOLUME >= #USERS_CUR_VOLUME# ]]>
+ 			</isGreaterEqual>
+ 			<isNotNull prepend="" property= "USERS_LASTDATE">
+ 				<iterate property="USERS_LASTDATE" prepend="" open="" close="" conjunction=" " >
+          			<![CDATA[ AND USERS_LASTDATE <= CURRENT - #USERS_LASTDATE[]# ]]>
+ 				</iterate>
+ 			</isNotNull>
+ 			<isNotNull prepend="" property= "USERS_PERMIT">
+ 				<iterate property="USERS_PERMIT" prepend="" open="" close="" conjunction=" " >
+          			 AND USERS_PERMIT = #USERS_PERMIT[]#
+ 				</iterate>
+ 			</isNotNull>
+		</dynamic>
+
+		ORDER BY $orderCol$ $orderType$
+  	</select>
+  	
+  	<select id="count_user_type_manage_01" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="java.lang.Integer">				
+        	SELECT COUNT(AA.USERS_IDX) CNT
+        	FROM USERS_MASTER AA,
+          		 USERS_DETAIL BB
+        	WHERE AA.USERS_IDX = BB.USERS_IDX
+			
+			<dynamic prepend="">
+				<isNotNull prepend="AND" property= "DOMAIN">
+					AA.DOMAIN = #DOMAIN#
+				</isNotNull>
+				<isNotNull prepend="" property= "USERS_ID">
+					<iterate property="USERS_ID" prepend="" open="" close="" conjunction=" " >
+          				AND USERS_ID LIKE '%$USERS_ID[]$%' 
+     				</iterate>
+				</isNotNull>
+				<isNotNull prepend="" property= "USERS_NAME">
+     				<iterate property="USERS_NAME" prepend="" open="" close="" conjunction=" " >
+          				AND USERS_NAME LIKE '%$USERS_NAME[]$%'
+     				</iterate>
+     			</isNotNull>
+     			<isNotNull prepend="" property= "USERS_JUMIN1">
+     				<iterate property="USERS_JUMIN1" prepend=" AND USERS_JUMIN1 IN " open="(" close=")" conjunction="," >
+	          			#USERS_JUMIN1[]#
+     				</iterate>
+     			</isNotNull>
+     			<isNotNull prepend="" property= "USERS_JUMIN2">
+     				<iterate property="USERS_JUMIN2" prepend=" AND USERS_JUMIN2 IN " open="(" close=")" conjunction="," >
+	          			#USERS_JUMIN2[]#
+     				</iterate>
+     			</isNotNull>
+     			<isNotNull prepend="" property= "USERS_DEPARTMENT">
+     				<iterate property="USERS_DEPARTMENT" prepend="" open="" close="" conjunction=" " >
+	          			AND USERS_DEPARTMENT LIKE '%$USERS_DEPARTMENT[]$%'
+     				</iterate>
+     			</isNotNull>
+     			<isNotNull prepend="" property= "USERS_LICENCENUM">
+     				<iterate property="USERS_LICENCENUM" prepend=" AND USERS_LICENCENUM IN " open="(" close=")" conjunction="," >
+	          			#USERS_LICENCENUM[]#
+     				</iterate>
+     			</isNotNull>
+				<isGreaterEqual prepend="" property="USERS_CUR_VOLUME" compareValue="1">
+	          		<![CDATA[ AND USERS_CUR_VOLUME - USERS_MAX_VOLUME >= #USERS_CUR_VOLUME# ]]>
+     			</isGreaterEqual>
+     			<isNotNull prepend="" property= "USERS_LASTDATE">
+     				<iterate property="USERS_LASTDATE" prepend="" open="" close="" conjunction=" " >
+	          			<![CDATA[ AND USERS_LASTDATE <= CURRENT - #USERS_LASTDATE[]# ]]>
+     				</iterate>
+     			</isNotNull>
+     			<isNotNull prepend="" property= "USERS_PERMIT">
+     				<iterate property="USERS_PERMIT" prepend="" open="" close="" conjunction=" " >
+	          			 AND USERS_PERMIT = #USERS_PERMIT[]#
+     				</iterate>
+     			</isNotNull>
+			</dynamic>
+  	</select>
+  	
+  	<update id="update_user_detail_user_max_volume" 
+				parameterClass="java.util.HashMap">
+		UPDATE USERS_DETAIL
+
+		<dynamic prepend="">
+			<isEqual prepend="SET " property= "UPDATE_TYPE" compareValue="ADD_VOLUME">
+				USERS_MAX_VOLUME = USERS_MAX_VOLUME + (#USERS_MAX_VOLUME#)
+			</isEqual>
+			<isEqual prepend="SET " property= "UPDATE_TYPE" compareValue="RESET_VOLUME">
+				USERS_MAX_VOLUME = #USERS_MAX_VOLUME#
+			</isEqual>
+  		</dynamic>
+		
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "DOMAIN">
+				USERS_IDX LIKE '%@$DOMAIN$'
+			</isNotNull>
+		</dynamic>
+	</update>
+	
+	<update id="update_user_master_by_admin" 
+				parameterClass="com.nara.jdf.db.entity.UserEntity">
+		UPDATE USERS_MASTER
+		SET    USERS_NAME = #USERS_NAME#,
+		       USERS_ENGNAME = #USERS_ENGNAME#
+		WHERE  USERS_IDX = #USERS_IDX#
+	</update>
+	
+	<update id="update_user_detail_by_admin" 
+				parameterClass="com.nara.jdf.db.entity.UserEntity">
+		UPDATE USERS_DETAIL
+		SET    USERS_NICKNAME = #USERS_NICKNAME#,
+		       USERS_JUMIN1 = #USERS_JUMIN1#,
+		       USERS_JUMIN2 = #USERS_JUMIN2#,
+		       USERS_BIRTH = #USERS_BIRTH#,
+		       USERS_SEX = #USERS_SEX#,
+		       USERS_ISSOLAR = #USERS_ISSOLAR#,
+		       USERS_CELLNO = #USERS_CELLNO#,
+		       USERS_FAXNO = #USERS_FAXNO#,
+		       USERS_TELNO = #USERS_TELNO#,
+		       USERS_ZIPCODE = #USERS_ZIPCODE#,
+		       USERS_ADDRESS1 = #USERS_ADDRESS1#,
+		       USERS_ADDRESS2 = #USERS_ADDRESS2#,
+		       USERS_JOBCODE = #USERS_JOBCODE#,
+		       USERS_PREVEMAIL = #USERS_PREVEMAIL#,
+		       USERS_COMPNAME = #USERS_COMPNAME#,
+		       USERS_DEPARTMENT = #USERS_DEPARTMENT#,
+		       USERS_SCHOOLING = #USERS_SCHOOLING#,
+		       USERS_INTEREST = #USERS_INTEREST#,
+		       USERS_ISOPEN = #USERS_ISOPEN#,
+		       USERS_LICENCENUM = #USERS_LICENCENUM#,
+		       USERS_MAX_VOLUME = #USERS_MAX_VOLUME#,
+		       USERS_PERMIT = #USERS_PERMIT#,
+		       USERS_LANG = #USERS_LANG#,
+		       USERS_INDEX_PAGE = #USERS_INDEX_PAGE#,
+		       USERS_USENAME = #USERS_USENAME#,
+		       USERS_AUTORE = #USERS_AUTORE#,
+		       USERS_ABSENT = #USERS_ABSENT#,
+		       USERS_OPT_FWD = #USERS_OPT_FWD#,
+		       USERS_SIGNATURE = #USERS_SIGNATURE#,
+		       USERS_MAIL_VIEW = #USERS_MAIL_VIEW#,
+		       USERS_LISTNUM = #USERS_LISTNUM#,
+		       USERS_MAIL_ALARM = #USERS_MAIL_ALARM#,
+		       USERS_ALARM_SOUND = #USERS_ALARM_SOUND#,
+		       USERS_DEL_SPAM = #USERS_DEL_SPAM#,
+		       USERS_AUTO_DEL = #USERS_AUTO_DEL#,
+		       USERS_DEL_WASTE = #USERS_DEL_WASTE#,
+		       USERS_SENDBOX = #USERS_SENDBOX#,
+		       USERS_DELBOX = #USERS_DELBOX#,
+		       USERS_SMS_QUOTA = #USERS_SMS_QUOTA#,
+		       USERS_MEMO = #USERS_MEMO#
+		WHERE  USERS_IDX = #USERS_IDX#
+	</update>
+	
+	<update id="update_user_detail_by_domain" 
+				parameterClass="java.util.HashMap">
+		UPDATE USERS_DETAIL
+		
+		<dynamic prepend="">
+			<isEqual prepend="SET " property= "UPDATE_TYPE" compareValue="USERS_MAIL_QUOTA">
+				USERS_MAIL_QUOTA = #USERS_MAIL_QUOTA#
+			</isEqual>
+  		</dynamic>
+  		
+		WHERE  SUBSTR(USERS_IDX, INSTR(USERS_IDX, '@')) = '@$DOMAIN$'
+	</update>
+	
+	<select id="select_user_by_ogan_auth" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="java.util.HashMap">	
+		SELECT SKIP $SKIP$ FIRST $USERS_LISTNUM$ 
+			DD.USERS_IDX,
+			DD.USERS_ID,
+   			DD.DOMAIN,
+   			DD.USERS_NAME,
+   			AA.USERS_PERMIT,
+   			AA.USERS_AUTH,
+   			BB.ORGANIZE_IDX,
+   			BB.ORGANIZE_NAME,
+   			CC.AUTHORITY_IDX,
+   			CC.AUTHORITY_NAME
+		FROM USERS_MASTER DD JOIN USERS_DETAIL AA ON DD.USERS_IDX = AA.USERS_IDX 
+		LEFT JOIN ORGANIZE BB   ON AA.USERS_ORGANIZE_IDX = BB.ORGANIZE_IDX 
+		LEFT JOIN AUTHORITY CC ON AA.USERS_AUTHORITY_IDX = CC.AUTHORITY_IDX	
+
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "DOMAIN">
+				DD.DOMAIN = #DOMAIN#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "USERS_PERMIT">
+				AA.USERS_PERMIT = #USERS_PERMIT#
+			</isNotNull>
+			<isNotEqual prepend="AND" property= "strIndex" compareValue="">
+				DD.$strIndex$ LIKE '%$strKeyword$%'
+			</isNotEqual>
+		</dynamic>
+
+		ORDER BY DD.$orderCol$ $orderType$
+	</select>
+	
+	<select id="count_user_by_ogan_auth" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="java.lang.Integer">	
+		SELECT 	COUNT(DD.USERS_IDX) CNT
+		FROM USERS_MASTER DD JOIN USERS_DETAIL AA ON DD.USERS_IDX = AA.USERS_IDX 
+		LEFT JOIN ORGANIZE BB   ON AA.USERS_ORGANIZE_IDX = BB.ORGANIZE_IDX 
+		LEFT JOIN AUTHORITY CC ON AA.USERS_AUTHORITY_IDX = CC.AUTHORITY_IDX	
+
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "DOMAIN">
+					DD.DOMAIN = #DOMAIN#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "USERS_PERMIT">
+				AA.USERS_PERMIT = #USERS_PERMIT#
+			</isNotNull>
+			<isNotEqual prepend="AND" property= "strIndex" compareValue="">
+				DD.$strIndex$ LIKE '%$strKeyword$%'
+			</isNotEqual>
+		</dynamic>
+	</select>
+
+	<select id="select_user_by_member" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="com.nara.jdf.db.entity.MemberEntity">	
+		SELECT SKIP $SKIP$ FIRST $USERS_LISTNUM$ 
+       		USERS_MASTER.DOMAIN, 
+      		USERS_MASTER.USERS_IDX, 
+      		USERS_MASTER.USERS_ID, 
+      		USERS_MASTER.USERS_NAME, 
+      		USERS_DETAIL.USERS_JUMIN1, 
+      		USERS_DETAIL.USERS_JUMIN2, 
+      		USERS_DETAIL.USERS_LICENCENUM, 
+      		NVL(MEMBER_IDX,0)  AS MEMBER_IDX, 
+      		NVL(ORGANIZE_IDX,0) AS ORGANIZE_IDX, 
+      	    NVL(AUTHORITY_IDX,0) AS AUTHORITY_IDX
+			<dynamic prepend="">
+				<isEqual prepend="" property= "ORGANIZE_IDX" compareValue="-1">
+					FROM USERS_MASTER JOIN USERS_DETAIL ON USERS_MASTER.USERS_IDX = USERS_DETAIL.USERS_IDX 
+					LEFT JOIN MEMBER ON USERS_MASTER.USERS_IDX = MEMBER.USERS_IDX 
+	         		WHERE MEMBER.USERS_IDX IS NULL
+				</isEqual>	
+				<isEqual prepend="" property= "ORGANIZE_IDX" compareValue="0">
+					FROM USERS_MASTER JOIN USERS_DETAIL ON USERS_MASTER.USERS_IDX = USERS_DETAIL.USERS_IDX  
+					LEFT JOIN MEMBER ON USERS_MASTER.USERS_IDX = MEMBER.USERS_IDX 
+	         		WHERE MEMBER.USERS_IDX IS NOT NULL
+				</isEqual>
+				<isGreaterEqual prepend="" property= "ORGANIZE_IDX" compareValue="1">
+					FROM USERS_MASTER JOIN USERS_DETAIL ON USERS_MASTER.USERS_IDX = USERS_DETAIL.USERS_IDX  
+					LEFT JOIN MEMBER ON USERS_MASTER.USERS_IDX = MEMBER.USERS_IDX 
+	         		WHERE MEMBER.USERS_IDX IS NOT NULL 
+	         			AND MEMBER.ORGANIZE_IDX = #ORGANIZE_IDX# 
+				</isGreaterEqual>
+				
+				<isEqual prepend="" property= "AUTHORITY_IDX" compareValue="-1">
+					AND MEMBER.AUTHORITY_IDX = 0
+				</isEqual>
+				<isGreaterEqual prepend="" property= "AUTHORITY_IDX" compareValue="1">
+					AND MEMBER.AUTHORITY_IDX = #AUTHORITY_IDX#
+				</isGreaterEqual>
+				
+				<isNotEqual prepend="" property= "strIndex" compareValue="">
+					<isEqual prepend="" property= "strIndex" compareValue="USERS_JUMIN">
+						AND USERS_DETAIL.USERS_JUMIN1||'-'||USERS_DETAIL.USERS_JUMIN2 = #strKeyword#
+					</isEqual>
+					<isEqual prepend="" property= "strIndex" compareValue="USERS_NAME">
+						AND USERS_MASTER.USERS_NAME LIKE '%$strKeyword$%'
+					</isEqual>
+					<isEqual prepend="" property= "strIndex" compareValue="USERS_ID">
+						AND USERS_MASTER.USERS_ID LIKE '%$strKeyword$%'
+					</isEqual>
+					<isEqual prepend="" property= "strIndex" compareValue="USERS_LICENCENUM">
+						AND USERS_DETAIL.USERS_LICENCENUM LIKE '%$strKeyword$%'
+					</isEqual>
+				</isNotEqual>
+				
+			</dynamic>	
+	        AND USERS_MASTER.DOMAIN = #DOMAIN# 
+        	
+        	ORDER BY USERS_MASTER.$orderCol$ $orderType$
+	</select>
+	
+	<select id="count_user_by_member" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="java.lang.Integer">	
+		SELECT 
+       		count(USERS_MASTER.USERS_IDX) 
+		<dynamic prepend="">
+			<isEqual prepend="" property= "ORGANIZE_IDX" compareValue="-1">
+				FROM USERS_MASTER JOIN USERS_DETAIL ON USERS_MASTER.USERS_IDX = USERS_DETAIL.USERS_IDX 
+				LEFT JOIN MEMBER ON USERS_MASTER.USERS_IDX = MEMBER.USERS_IDX 
+         		WHERE MEMBER.USERS_IDX IS NULL
+			</isEqual>	
+			<isEqual prepend="" property= "ORGANIZE_IDX" compareValue="0">
+				FROM USERS_MASTER JOIN USERS_DETAIL ON USERS_MASTER.USERS_IDX = USERS_DETAIL.USERS_IDX  
+				LEFT JOIN MEMBER ON USERS_MASTER.USERS_IDX = MEMBER.USERS_IDX 
+         		WHERE MEMBER.USERS_IDX IS NOT NULL
+			</isEqual>
+			<isGreaterEqual prepend="" property= "ORGANIZE_IDX" compareValue="1">
+				FROM USERS_MASTER JOIN USERS_DETAIL ON USERS_MASTER.USERS_IDX = USERS_DETAIL.USERS_IDX  
+				LEFT JOIN MEMBER ON USERS_MASTER.USERS_IDX = MEMBER.USERS_IDX 
+         		WHERE MEMBER.USERS_IDX IS NOT NULL 
+         			AND MEMBER.ORGANIZE_IDX = #ORGANIZE_IDX# 
+			</isGreaterEqual>
+			
+			
+			<isEqual prepend="" property= "AUTHORITY_IDX" compareValue="-1">
+				AND MEMBER.AUTHORITY_IDX = 0
+			</isEqual>
+			<isGreaterEqual prepend="" property= "AUTHORITY_IDX" compareValue="1">
+				AND MEMBER.AUTHORITY_IDX = #AUTHORITY_IDX#
+			</isGreaterEqual>
+			
+			<isNotEqual prepend="" property= "strIndex" compareValue="">
+				<isEqual prepend="" property= "strIndex" compareValue="USERS_JUMIN">
+					AND USERS_DETAIL.USERS_JUMIN1||'-'||USERS_DETAIL.USERS_JUMIN2 = #strKeyword#
+				</isEqual>
+				<isEqual prepend="" property= "strIndex" compareValue="USERS_NAME">
+					AND USERS_MASTER.USERS_NAME LIKE '%$strKeyword$%'
+				</isEqual>
+				<isEqual prepend="" property= "strIndex" compareValue="USERS_ID">
+					AND USERS_MASTER.USERS_ID LIKE '%$strKeyword$%'
+				</isEqual>
+				<isEqual prepend="" property= "strIndex" compareValue="USERS_LICENCENUM">
+					AND USERS_DETAIL.USERS_LICENCENUM LIKE '%$strKeyword$%'
+				</isEqual>
+			</isNotEqual>
+			
+		</dynamic>	
+        AND USERS_MASTER.DOMAIN = #DOMAIN# 
+      
+     </select>
+
+	
+	<select id="select_user_by_smsinfo" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="com.nara.jdf.db.entity.UserEntity">	
+		SELECT SKIP $SKIP$ FIRST $USERS_LISTNUM$
+			AA.USERS_IDX, 
+			AA.USERS_ID, 
+			BB.USERS_CELLNO, 
+			AA.USERS_NAME, 
+			BB.USERS_SMS_QUOTA
+		FROM USERS_MASTER AA JOIN USERS_DETAIL BB ON AA.USERS_IDX = BB.USERS_IDX
+
+		<dynamic prepend="WHERE">
+			<isNotEqual prepend="AND" property= "DOMAIN" compareValue="">
+				AA.DOMAIN = #DOMAIN#
+			</isNotEqual>
+			<isNotEqual prepend="AND" property= "strIndex" compareValue="">
+				AA.$strIndex$ LIKE '%$strKeyword$%'
+			</isNotEqual>
+		</dynamic>
+
+		ORDER BY AA.$orderCol$ $orderType$
+	</select>
+	
+	<select id="count_user_by_smsinfo" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="java.lang.Integer">
+		SELECT 
+   			COUNT(AA.USERS_IDX) CNT
+		FROM USERS_MASTER AA JOIN USERS_DETAIL BB ON AA.USERS_IDX = BB.USERS_IDX 
+		
+		<dynamic prepend="WHERE">
+			<isNotEqual prepend="AND" property= "DOMAIN" compareValue="">
+					AA.DOMAIN = #DOMAIN#
+			</isNotEqual>
+			<isNotEqual prepend="AND" property= "strIndex" compareValue="">
+				AA.$strIndex$ LIKE '%$strKeyword$%'
+			</isNotEqual>
+		</dynamic>
+	</select>
+
+	<select id="select_user_list_type_01" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="com.nara.jdf.db.entity.UserEntity">				
+    	SELECT SKIP $SKIP$ FIRST $USERS_LISTNUM$
+    	    AA.USERS_IDX,
+      		AA.USERS_ID,
+      		AA.DOMAIN,
+      		AA.USERS_PASSWD,
+      		AA.USERS_NAME,
+      		AA.USERS_ENGNAME,
+      		BB.USERS_HOMEDIR,
+      		BB.USERS_PERMIT,
+      		BB.USERS_AUTH,
+      		BB.USERS_NICKNAME,
+      		BB.USERS_JUMIN1,
+      		BB.USERS_JUMIN2,
+      		BB.USERS_SEX,
+      		BB.USERS_BIRTH,
+      		BB.USERS_ISSOLAR,
+      		BB.USERS_CELLNO,
+      		BB.USERS_FAXNO,
+      		BB.USERS_TELNO,
+      		BB.USERS_ZIPCODE,
+      		BB.USERS_ADDRESS1,
+      		BB.USERS_ADDRESS2,
+      		BB.USERS_JOBCODE,
+      		BB.USERS_COMPNAME,
+      		BB.USERS_DEPARTMENT,
+      		BB.USERS_PREVEMAIL,
+      		BB.USERS_SCHOOLING,
+      		BB.USERS_INTEREST,
+      		BB.USERS_LICENCENUM,
+      		BB.USERS_ISOPEN,
+      		BB.USERS_JOINDATE,
+      		BB.USERS_EXPIREDDATE,
+      		BB.USERS_LOGCOUNT,
+      		BB.USERS_LASTHOST,
+      		BB.USERS_MAX_VOLUME,
+      		BB.USERS_CUR_VOLUME,
+      		TO_CHAR(BB.USERS_LASTDATE, '%Y-%m-%d %H:%M:%S') USERS_LASTDATE,
+      		BB.USERS_SIGNATURE,
+      		BB.USERS_SIGNATURESTMT,
+      		BB.USERS_AUTORE,
+      		BB.USERS_AUTORESTMT,
+      		BB.USERS_USENAME,
+      		BB.USERS_SENDBOX,
+      		BB.USERS_DELBOX,
+      		BB.USERS_AUTO_DEL,
+      		BB.USERS_LISTNUM,
+      		BB.USERS_ISVOTE,
+      		BB.USERS_ABSENT,
+      		TO_CHAR(BB.USERS_ABSENT_SDATE, 'YYYY-MM-DD') USERS_ABSENT_SDATE,
+      		TO_CHAR(BB.USERS_ABSENT_EDATE, 'YYYY-MM-DD') USERS_ABSENT_EDATE,
+      		BB.USERS_ABSENT_RESTMT,
+      		BB.USERS_OPT_FWD,
+      		BB.USERS_OPT_FWD_SAVE,
+      		BB.USERS_FWD_LIST,
+      		BB.USERS_READDR,
+      		BB.USERS_SPAM_LEVEL,
+      		BB.USERS_DEL_WASTE,
+      		BB.USERS_DEL_SPAM,
+      		BB.USERS_LANG,
+      		BB.USERS_MAIL_ALARM,
+      		BB.USERS_ALARM_SOUND,
+      		BB.USERS_INDEX_PAGE,
+      		BB.USERS_RECEIVE_INFOMAIL,
+      		BB.USERS_MAIL_VIEW,
+      		BB.USERS_MAIL_INJURE,
+      		BB.USERS_ORGANIZE_IDX,
+      		BB.USERS_AUTHORITY_IDX,
+      		BB.USERS_SMS_QUOTA,
+      		BB.USERS_MAIL_QUOTA,
+      		BB.USERS_MEMO,
+      		BB.USERS_MSG_YN,
+      		BB.USERS_MENTO_YN,
+      		BB.USERS_USETAG,
+      		BB.USERS_USE_MAIL_PREVIEW
+    	FROM USERS_MASTER AA,
+      		 USERS_DETAIL BB
+    	WHERE AA.USERS_IDX = BB.USERS_IDX
+		
+		<dynamic prepend="">
+			<isNotNull prepend="AND" property= "DOMAIN">
+				AA.DOMAIN = #DOMAIN#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "USERS_ID">
+      			AA.USERS_ID = #USERS_ID# 
+			</isNotNull>
+			<isNotNull prepend="AND" property= "USERS_NAME">
+      			AA.USERS_NAME = #USERS_NAME# 
+ 			</isNotNull>
+ 			<isNotNull prepend="AND" property= "USERS_PERMIT">
+      			BB.USERS_PERMIT = #USERS_PERMIT# 
+ 			</isNotNull>
+ 			<isNotNull prepend="AND" property= "USERS_AUTH">
+      			BB.USERS_AUTH = #USERS_AUTH# 
+ 			</isNotNull>
+ 			
+ 			<isNotNull prepend="" property= "strKeyword">
+ 				<isEqual prepend="AND" property= "strIndex" compareValue="USERS_ID">
+	          		AA.USERS_ID LIKE '%$strKeyword$%'
+	          	</isEqual>
+	          	<isEqual prepend="AND" property= "strIndex" compareValue="USERS_NAME">
+	          		AA.USERS_NAME LIKE '%$strKeyword$%'
+	          	</isEqual>
+	          	<isEqual prepend="AND" property= "strIndex" compareValue="USERS_JUMIN">
+	          		BB.USERS_JUMIN1||BB.USERS_JUMIN2 LIKE '%'||REPLACE(#strKeyword#, '-', '')||'%'
+	          	</isEqual>
+	          	<isEqual prepend="AND" property= "strIndex" compareValue="USERS_DEPARTMENT">
+	          		BB.USERS_DEPARTMENT LIKE '%$strKeyword$%'
+	          	</isEqual>
+	          	<isEqual prepend="AND" property= "strIndex" compareValue="USERS_LICENCENUM">
+	          		BB.USERS_LICENCENUM LIKE '%$strKeyword$%'
+	          	</isEqual>
+ 			</isNotNull>
+		</dynamic>
+
+		ORDER BY $orderCol$ $orderType$
+  	</select>
+  	
+  	<select id="count_user_list_type_01" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="java.lang.Integer">				
+        	SELECT COUNT(AA.USERS_IDX) CNT
+        	FROM USERS_MASTER AA,
+          		 USERS_DETAIL BB
+        	WHERE AA.USERS_IDX = BB.USERS_IDX
+			
+			<dynamic prepend="">
+				<isNotNull prepend="AND" property= "DOMAIN">
+					AA.DOMAIN = #DOMAIN#
+				</isNotNull>
+				<isNotNull prepend="AND" property= "USERS_ID">
+          			AA.USERS_ID = #USERS_ID# 
+				</isNotNull>
+				<isNotNull prepend="AND" property= "USERS_NAME">
+          			AA.USERS_NAME = #USERS_NAME# 
+     			</isNotNull>
+     			<isNotNull prepend="AND" property= "USERS_PERMIT">
+          			BB.USERS_PERMIT = #USERS_PERMIT# 
+     			</isNotNull>
+     			<isNotNull prepend="AND" property= "USERS_AUTH">
+          			BB.USERS_AUTH = #USERS_AUTH# 
+     			</isNotNull>
+     			
+     			<isNotNull prepend="" property= "strKeyword">
+     				<isEqual prepend="AND" property= "strIndex" compareValue="USERS_ID">
+		          		AA.USERS_ID LIKE '%$strKeyword$%'
+		          	</isEqual>
+		          	<isEqual prepend="AND" property= "strIndex" compareValue="USERS_NAME">
+		          		AA.USERS_NAME LIKE '%$strKeyword$%'
+		          	</isEqual>
+		          	<isEqual prepend="AND" property= "strIndex" compareValue="USERS_JUMIN">
+		          		BB.USERS_JUMIN1||BB.USERS_JUMIN2 LIKE '%'||REPLACE(#strKeyword#, '-', '')||'%'
+		          	</isEqual>
+		          	<isEqual prepend="AND" property= "strIndex" compareValue="USERS_DEPARTMENT">
+		          		BB.USERS_DEPARTMENT LIKE '%$strKeyword$%'
+		          	</isEqual>
+		          	<isEqual prepend="AND" property= "strIndex" compareValue="USERS_LICENCENUM">
+		          		BB.USERS_LICENCENUM LIKE '%$strKeyword$%'
+		          	</isEqual>
+     			</isNotNull>
+			</dynamic>
+  	</select>
+  	
+  	<update id="update_users_mail_quota"
+  	        parameterClass="java.util.HashMap">
+        UPDATE USERS_DETAIL
+        SET USERS_MAIL_QUOTA = USERS_MAIL_QUOTA - #USERS_MAIL_QUOTA#
+        WHERE USERS_IDX = #USERS_IDX# 
+            AND USERS_MAIL_QUOTA - #USERS_MAIL_QUOTA# >= 0
+    </update>
+  	
+  	<select id="select_users_signaturestmt"
+  	        parameterClass="java.lang.String"
+  	        resultClass="java.lang.String">
+  	    SELECT USERS_SIGNATURESTMT FROM USERS_DETAIL
+  	    WHERE USERS_IDX = #USERS_IDX#
+  	</select>
+  	
+  	<select id="select_users_idx_by_organize_idx"
+  	        parameterClass="java.util.HashMap"
+  	        resultClass="java.lang.String">
+  	    SELECT U.USERS_IDX
+  	    FROM USERS U, ORGANIZE O, MEMBER M
+  	    WHERE O.ORGANIZE_IDX = #ORGANIZE_IDX#
+  	        AND O.DOMAIN = #DOMAIN#
+  	        AND O.ORGANIZE_IDX = M.ORGANIZE_IDX
+  	        AND M.USERS_IDX = U.USERS_IDX
+  	</select>
+  	
+  	<select id="select_users_idx_by_domain"
+            parameterClass="java.lang.String"
+            resultClass="java.lang.String">
+        SELECT USERS_IDX FROM USERS_MASTER WHERE DOMAIN = #DOMAIN#
+    </select>
+    
+    <select id="select_users_stmt"
+            parameterClass="java.util.HashMap"
+            resultClass="java.lang.String">
+        SELECT $COLUMN_NAME$ FROM USERS_DETAIL WHERE USERS_IDX = #USERS_IDX#
+    </select>
+  	
+  	<select id="select_users_autorestmt"
+  	        parameterClass="java.lang.String"
+  	        resultClass="java.lang.String">
+  	    SELECT USERS_AUTORESTMT FROM USERS_DETAIL
+  	    WHERE USERS_IDX = #USERS_IDX#
+  	</select>
+</sqlMap>

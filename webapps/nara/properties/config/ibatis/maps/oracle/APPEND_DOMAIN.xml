@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="APPEND_DOMAIN"> 
+   	<select id="select_append_type_01" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="com.nara.jdf.db.entity.AppendEntity">
+  		SELECT 
+            APPEND_IDX,
+            BBS_IDX,
+            B_IDX,
+            USERS_IDX,
+            APPEND_PASSWD,
+            APPEND_NAME,
+            APPEND_EMAIL,
+            APPEND_CONTENT,
+            APPEND_DATE 
+        FROM $APPEND_TABLE$
+        <dynamic prepend="WHERE">
+  			<isNotNull prepend="AND" property= "APPEND_IDX">
+				APPEND_IDX = #APPEND_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "B_IDX">
+				B_IDX = #B_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "BBS_IDX">
+				BBS_IDX = #BBS_IDX#
+			</isNotNull>
+		</dynamic>
+        ORDER BY APPEND_IDX 
+	</select>
+	
+	<select id="select_append_type_02" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="com.nara.jdf.db.entity.AppendEntity">
+  		SELECT 
+            APPEND_IDX,
+            BBS_IDX,
+            B_IDX,
+            USERS_IDX,
+            APPEND_PASSWD,
+            APPEND_NAME,
+            APPEND_EMAIL,
+            APPEND_CONTENT,
+            APPEND_DATE 
+        FROM 
+            $APPEND_TABLE$
+        <dynamic prepend="WHERE">
+  			<isNotNull prepend="AND" property= "APPEND_IDX">
+				APPEND_IDX = #APPEND_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "B_IDX">
+				B_IDX = #B_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "BBS_IDX">
+				BBS_IDX = #BBS_IDX#
+			</isNotNull>
+		</dynamic>
+        ORDER BY APPEND_IDX 
+	</select>
+	
+	<insert id="insert_append_type_01"
+            parameterClass="com.nara.jdf.db.entity.AppendEntity">
+        INSERT INTO 
+            $APPEND_TABLE$
+            (
+            APPEND_IDX,
+            BBS_IDX,
+            B_IDX,
+            USERS_IDX,
+            APPEND_PASSWD,
+            APPEND_NAME,
+            APPEND_EMAIL,
+            APPEND_CONTENT,
+            APPEND_DATE 
+        ) VALUES (
+        	<dynamic prepend="">
+				<isGreaterEqual prepend="" property="APPEND_IDX" compareValue="1">
+					#APPEND_IDX#,
+				</isGreaterEqual>
+				<isLessEqual prepend="" property="APPEND_IDX" compareValue="0">
+					SEQ_$APPEND_TABLE$.NEXTVAL,
+				</isLessEqual>
+			</dynamic>
+        	#BBS_IDX#,
+            #B_IDX#,
+            #USERS_IDX#,
+            #APPEND_PASSWD#,
+            #APPEND_NAME#,
+            #APPEND_EMAIL#,
+            #APPEND_CONTENT#,
+            TO_CHAR(sysdate,'YYYY-MM-DD HH24:MI:SS')
+        )
+    </insert>
+    
+    <delete id="delete_append_type_01"
+  				parameterClass="java.util.HashMap">
+   		DELETE FROM  $APPEND_TABLE$
+  		<dynamic prepend="WHERE">
+  			<isNotNull prepend="AND" property= "APPEND_IDX">
+				APPEND_IDX = #APPEND_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "B_IDX">
+				B_IDX = #B_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "BBS_IDX">
+				BBS_IDX = #BBS_IDX#
+			</isNotNull>
+		</dynamic>
+  	</delete>
+    
+</sqlMap>

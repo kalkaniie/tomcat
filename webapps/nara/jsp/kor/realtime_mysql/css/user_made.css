@@ -1,0 +1,14 @@
+/* 사용자 정의  CSS */
+
+/* Dialog private */
+    .msgTop{position:relative;cursor:hand} 
+
+/* Note private */
+    .notebox {
+           margin: 5px auto;
+           padding: 2px;
+           width: 300px;
+           text-align:center;
+           border: 2px solid #797;
+           background-color: #ded
+    }

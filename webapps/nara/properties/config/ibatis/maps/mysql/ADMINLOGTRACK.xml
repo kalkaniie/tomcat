@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="ADMINLOGTRACK">
+	
+	
+	<insert id="insert_admin_log_insert"
+          parameterClass="com.nara.jdf.db.entity.AdminLogTrackEntity">
+			INSERT INTO ADMINLOGTRACKENTITY
+			(
+				  ADMIN_LOG_IDX ,
+				  WEB_SESSION_ID,
+				  USERS_IDX    ,
+				  USERS_ID     ,
+				  CONNECT_TIME ,
+				  DOMAIN       ,
+				  USERS_AUTH   ,
+				  USERS_CONTENT      ,
+				  USER_ACTION  ,
+				  ACTION_MENU ,  
+				  TARGET_USERS_IDS
+			)
+			VALUES
+			(
+				NEXTVAL('ADMINLOGTRACKENTITY'),
+				#WEB_SESSION_ID#,
+				#USERS_IDX#,
+				#USERS_ID#,
+				SYSDATE(), 
+				#DOMAIN#,  
+				#USERS_AUTH#,
+				#USERS_CONTENT:jdbcType=CLOB#, 
+				#USER_ACTION# ,        
+			  	#ACTION_MENU#,
+			  	#TARGET_USERS_IDS#
+			)
+	</insert> 
+	
+	<insert id="insert_tmp_admin_log_insert"
+          parameterClass="com.nara.jdf.db.entity.AdminLogTrackEntity">
+			INSERT INTO ADMINLOGTRACKENTITY_TMP
+			(
+				  ADMIN_LOG_IDX ,
+				  WEB_SESSION_ID,
+				  USERS_IDX    ,
+				  USERS_ID     ,
+				  CONNECT_TIME ,
+				  USERS_CONTENT      
+			)
+			VALUES
+			(
+				NEXTVAL('ADMINLOGTRACKENTITY_TMP'),
+				#WEB_SESSION_ID#,
+				#USERS_IDX#,
+				#USERS_ID#,
+				SYSDATE(), 
+				#USERS_CONTENT:jdbcType=CLOB# 
+			)
+	</insert> 
+	
+
+	<select id="select_log_tmp_list"
+	        parameterClass="java.util.HashMap"
+	        resultClass="com.nara.jdf.db.entity.AdminLogTrackEntity">
+	SELECT 
+		USERS_CONTENT 
+	FROM ADMINLOGTRACKENTITY_TMP
+	WHERE WEB_SESSION_ID = #WEB_SESSION_ID#
+	AND USERS_IDX =   #USERS_IDX#
+	<![CDATA[ AND  rownum <= 1 ]]>	
+	</select>
+
+<select id="select_login_log_list" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="com.nara.jdf.db.entity.AdminLogTrackEntity">				
+	        SELECT
+	        	ADMIN_LOG_IDX, 
+				USERS_IDX,
+				USERS_ID,
+				DOMAIN,
+				DATE_FORMAT(CONNECT_TIME,'%Y-%m-%d %T') CONNECT_TIME,
+				USERS_AUTH,
+				USER_ACTION,
+				WEB_SESSION_ID,
+				TARGET_USERS_IDS,
+				ACTION_MENU,
+				ACTION_GUBUN
+        		FROM ADMINLOGTRACKENTITY 
+			<dynamic prepend="WHERE">
+			<isEqual prepend="AND" property= "strIndex1" compareValue="S">
+      			USERS_AUTH = 'S' 
+			</isEqual>
+			<isEqual prepend="AND" property= "strIndex1" compareValue="A">
+      			USERS_AUTH = 'A'
+			</isEqual>
+			<isEqual prepend="AND" property="strIndex2" compareValue="01">
+				USER_ACTION = #strIndex2#
+ 			</isEqual>
+ 			<isEqual prepend="AND" property="strIndex2" compareValue="02">
+				USER_ACTION = #strIndex2#
+ 			</isEqual>
+ 			<isEqual prepend="AND" property="strIndex2" compareValue="03">
+				USER_ACTION = #strIndex2#
+ 			</isEqual>
+ 			<isEqual prepend="AND" property="strIndex2" compareValue="04">
+				USER_ACTION = #strIndex2#
+ 			</isEqual>
+ 			<isEqual prepend="AND" property="strIndex2" compareValue="05">
+				USER_ACTION = #strIndex2#
+ 			</isEqual>
+ 			<isEqual prepend="AND" property="strIndex2" compareValue="06">
+				USER_ACTION = #strIndex2#
+ 			</isEqual>
+ 			<isEqual prepend="AND" property="strIndex2" compareValue="07">
+				USER_ACTION = #strIndex2#
+ 			</isEqual>
+ 			<isEqual prepend="AND" property="strIndex2" compareValue="08">
+				USER_ACTION = #strIndex2#
+ 			</isEqual>
+ 			<isEqual prepend="AND" property="strIndex2" compareValue="09">
+				USER_ACTION = #strIndex2#
+ 			</isEqual>
+ 			<isEqual prepend="AND" property="strIndex2" compareValue="10">
+				USER_ACTION = #strIndex2#
+ 			</isEqual>
+ 			<isEqual prepend="AND" property="strIndex2" compareValue="11">
+				USER_ACTION = #strIndex2#
+ 			</isEqual>
+ 			<isEqual prepend="AND" property="strIndex2" compareValue="12">
+				USER_ACTION = #strIndex2#
+ 			</isEqual>
+ 			<isEqual prepend="AND" property= "strIndex3" compareValue="1">
+      			ACTION_MENU = '01'
+ 			</isEqual>
+ 			<isEqual prepend="AND" property= "strIndex3" compareValue="2">
+      			ACTION_MENU = '02'
+ 			</isEqual>
+ 			<isEqual prepend="AND" property= "strIndex3" compareValue="3">
+      			ACTION_MENU = '03'
+ 			</isEqual>
+ 			
+ 			<isNotEqual prepend="AND" property="strKeyword" compareValue="">
+ 				<isEqual prepend="" property="strIndex4" compareValue="A">
+					USERS_ID LIKE CONCAT('%',#strKeyword#,'%')
+				</isEqual>
+				<isEqual prepend="" property="strIndex4" compareValue="U">
+					TARGET_USERS_IDS LIKE CONCAT('%',#strKeyword#,'%')
+				</isEqual>
+			</isNotEqual>
+ 			</dynamic>
+ 			ORDER BY $orderCol$ $orderType$
+ 			LIMIT $SKIP$, $USERS_LISTNUM$
+	  	</select>
+	
+  	
+  	<select id="count_login_log_list" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="java.lang.Integer">				
+        SELECT
+        	COUNT(ADMIN_LOG_IDX) CNT
+    	FROM ADMINLOGTRACKENTITY
+		<dynamic prepend="WHERE">
+			<isEqual prepend="AND" property= "strIndex1" compareValue="S">
+      			USERS_AUTH = 'S' 
+			</isEqual>
+				<isEqual prepend="AND" property= "strIndex1" compareValue="A">
+      			USERS_AUTH = 'A'
+			</isEqual>
+				<isEqual prepend="AND" property="strIndex2" compareValue="01">
+				USER_ACTION = #strIndex2#
+ 			</isEqual>
+ 			<isEqual prepend="AND" property="strIndex2" compareValue="02">
+				USER_ACTION = #strIndex2#
+ 			</isEqual>
+ 			<isEqual prepend="AND" property="strIndex2" compareValue="03">
+				USER_ACTION = #strIndex2#
+ 			</isEqual>
+ 			<isEqual prepend="AND" property="strIndex2" compareValue="04">
+				USER_ACTION = #strIndex2#
+ 			</isEqual>
+ 			<isEqual prepend="AND" property="strIndex2" compareValue="05">
+				USER_ACTION = #strIndex2#
+ 			</isEqual>
+ 			<isEqual prepend="AND" property="strIndex2" compareValue="06">
+				USER_ACTION = #strIndex2#
+ 			</isEqual>
+ 			<isEqual prepend="AND" property="strIndex2" compareValue="07">
+				USER_ACTION = #strIndex2#
+ 			</isEqual>
+ 			<isEqual prepend="AND" property="strIndex2" compareValue="08">
+				USER_ACTION = #strIndex2#
+ 			</isEqual>
+ 			<isEqual prepend="AND" property= "strIndex3" compareValue="1">
+      			ACTION_MENU = '01' 
+ 			</isEqual>
+ 			<isEqual prepend="AND" property= "strIndex3" compareValue="2">
+      			ACTION_MENU = '02' 
+ 			</isEqual>
+ 			<isEqual prepend="AND" property= "strIndex3" compareValue="3">
+      			ACTION_MENU = '03'
+ 			</isEqual>
+ 			<isNotEqual prepend="AND" property="strKeyword" compareValue="">
+ 				<isEqual prepend="" property="strIndex4" compareValue="A">
+					USERS_ID LIKE CONCAT('%',#strKeyword#,'%')
+				</isEqual>
+				<isEqual prepend="" property="strIndex4" compareValue="U">
+					TARGET_USERS_IDS LIKE CONCAT('%',#strKeyword#,'%')
+				</isEqual>
+			</isNotEqual>
+ 			</dynamic>
+  	</select>
+  	
+	<select id="select_admin_add_list"
+	        parameterClass="java.util.HashMap"
+	        resultClass="com.nara.jdf.db.entity.AdminLogTrackEntity">
+		SELECT 
+		ADMIN_LOG_IDX,
+		USERS_CONTENT,
+		DATE_FORMAT(CONNECT_TIME,'%Y-%m-%d %T') CONNECT_TIME,
+		USERS_AUTH,
+		USER_ACTION,
+		ACTION_MENU,
+		WEB_SESSION_ID,
+		TARGET_USERS_IDS,
+		ACTION_GUBUN,
+		USERS_ID
+		FROM ADMINLOGTRACKENTITY 
+		WHERE 
+		ADMIN_LOG_IDX = #ADMIN_LOG_IDX# 
+	</select>
+</sqlMap>

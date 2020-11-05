@@ -1,0 +1,7 @@
+alter table domain add tag_filter_level number(1) default 1;
+
+alter table domain add tag_filter_0 varchar2(100) ;
+alter table domain add tag_filter_1 varchar2(100) default 'script,style,javascript,iframe';
+alter table domain add tag_filter_2 varchar2(100) default 'bgsound';
+alter table domain add tag_filter_3 varchar2(100) ;
+alter table domain add tag_filter_4 varchar2(100) ;

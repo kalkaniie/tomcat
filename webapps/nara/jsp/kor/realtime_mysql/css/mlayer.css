@@ -1,0 +1,151 @@
+
+/* CSS Document */
+/*사이드영역---멀티레이어-------------------*/
+.add_box, .add_box2, .add_box3,.add_box4{position:absolute; z-index:1000;border:1px solid #747474; background: #FFFFFF;padding:1px;display:none}
+.add_box{ top:144px; left:7px; }
+.add_box span, .add_box2 span, .add_box3 span{ display:block; height:14px;width:161px; background: #d4d5d7 url(..../images/bullet/arrow_samll2.gif) no-repeat 4px 6px;  font-weight: bold; color: #FFFFFF;padding:3px 0 0 12px; position:relative }
+.add_box span img, .add_box2 span img, .add_box3 span img{position:absolute;left:158px;top:2px;margin:0;padding:0; cursor:pointer}
+.add_box2 ul, .add_box2 li, .add_box2 li p, .add_box2 li a, .add_box3 ul, .add_box3 li, .add_box3 li b, .msgWdw span{display:block}
+
+.add_box input{margin:4px 0 6px 6px; }
+.add_box img{ margin:6px 0 0 7px; vertical-align: top; }
+
+.add_box2{ top:382px; left:7px;}
+.add_box2 ul{height:160px;width:170px;margin:7px 0 3px 2px; list-style:none;overflow-y:scroll;}
+.add_box2 li{height:21px;}
+.add_box2 li p{float:left;width:113px}
+.add_box2 li p img{padding:2px; border: 1px solid #dbdbdb;margin:1px 3px 0 0; vertical-align: middle; }
+.add_box2 li input{ vertical-align: top; }
+.add_box2 li a{float:right;margin:1px 3px 0 0;border:none;padding:0 }
+ li.tagImg_nom2 p img{padding:0 3px; border-style: none;}
+
+/*사이드영역---멀티레이어---웹버디리스트 옵션창----------------*/
+.add_box3{width:110px;top:562px;left:49px}
+.add_box3 span{width:110px;}
+.add_box3 span img{left:85px;top:2px;}
+.add_box3 ul{ list-style: none;padding:5px 0 1px 0; }
+.add_box3 li{ background: url(..../images/bullet/bult_sq3.gif) no-repeat 6px 7px;  padding:0 0 5px 12px;cursor:pointer }
+.add_box3 li img{vertical-align: middle;float:left}
+.add_box3 li b{ float:right;font-weight: normal;width:70px }
+
+/*친구정보 옵션창----------------*/
+.add_box4{width:300px;top:50px;left:49px}
+.add_box4 span{width:300px;}
+.add_box4 span img{right:85px;top:2px;}
+.add_box4 ul{ list-style: none;padding:5px 0 1px 0; }
+.add_box4 li{ background: url(..../images/bullet/bult_sq3.gif) no-repeat 6px 7px;  padding:0 0 5px 12px;cursor:pointer }
+.add_box4 li img{vertical-align: middle;float:left}
+.add_box4 li b{ float:right;font-weight: normal;width:70px }
+
+
+/*사이드영역---멀티레이어---메신져창----------------*/
+.msgWdw{ position:relative; z-index:1000; border:1px solid #747474; background: #FFFFFF url(..../images/box/msgBox_topbg.gif) repeat-x left top;width:223px;display:none;}
+.msgWdw h2{ position: relative;background: url(..../images/box/msgBox_topside.gif) no-repeat left top; font-weight: bold; color: #000000;padding:10px 0 0 7px;cursor: default;height:25px; }
+.msgWdw h2 img{vertical-align: middle;}
+.msgWdw ul{ list-style:none; line-height: 21px;padding:0 10px;height:142px;overflow-y: auto;margin:0 2px 0 0 ;}
+.msgWdw ul li b{margin:0 4px 0 0}
+.msgWdw_entry{background: #efefef; border-top: 1px solid #d9d9d9; border-bottom: 1px solid #d9d9d9;padding: 5px; margin:5px 0 0 0; }
+.msgWdw_entry span{background: #fff;border: 1px solid #a6a6a6; line-height: 18px; font-weight: normal; overflow-y: auto; height:30px; padding:3px; cursor:pointer;}
+.msgWdw_cntnt{ list-style:none; line-height: 21px; padding:0 10 0 0px; height:92%; overflow-y: auto; margin:0 4px 0 5px ;}
+.msgWdw_textarea{ width:100%; height:50px; border: 0px; solid #d9d9d9; padding:0px; margin:0 0 0 0; overflow:auto;}
+.msgWdw_textarea_pop{ width:99%; height:85px; border: 0px; solid #d9d9d9; padding:5px; margin:0 0 0 0;}
+.msgWdw_crut_user { width:100%; height:20px; position:relative; z-index:1000; background: #FFFDE3; display:none; padding:3 3 3 3px; line-height:140%; }
+.msgWdw_crut_user_item {float:left; width:100%; height:40px; overflow-y: auto; position:relative; z-index:1; background: #FFFDE3; display:none; padding:3 3 3 3px; line-height:140%; }
+.msgWdw_edit_icon { cursor:hand; hspace:10px; }
+.msgWdw_fontColorList {position:absolute; top:0px; left:0px; display:none;}
+/*.msgWdw_crut_user_item {float:left; width:100%; position:relative; z-index:1000; border-bottom: 1px solid #99BBE8; border-left: 1px solid #99BBE8; border-right: 1px solid #99BBE8; background: #FFFDE3; display:none; padding:3 3 3 3px;}*/
+/*.msgWdw_crut_user { position:relative; z-index:1000; border-bottom: 1px solid #99BBE8; background: #FFFDE3; display:none; padding:3 3 3 3px;}*/
+/*.msgWdw_textarea{ width:210;height:25; border-top: 1px solid #d9d9d9; border-bottom: 1px solid #d9d9d9;padding: 5px; margin:5px 0 0 0;}*/
+.btnAct{ position: relative;float:right;bottom:17px;right:6px;margin-left:2px; cursor:pointer}
+
+
+
+.msgWico{padding:0 6px 0 0}
+
+.msgWdw_opt{ background: #e3e3e3; padding: 5px 0 0 11px; height: 18px; }
+.msgWdw_opt span{float:left; background: url(..../images/bullet/arrow_samllD.gif) no-repeat 29px 40%; border-right: 1px solid #d3d3d3;color: #565656;font-weight: normal;cursor:default;height:10px; margin-right:0px; padding:1px 18px 0 0;  }
+.msgWdw_opt a{width:84px;float:left;margin:1px 0 0 0}
+.msgWdw_opt img{ position: relative; top:3px; float:right; cursor:default;}
+
+/*사이드영역---멀티레이어---일정추가----------------*/
+.add_box4{width:234px;top:309px;left:2px}
+.add_box4 span{ display:block; height:14px;background: #d4d5d7 url(..../images/bullet/arrow_samll2.gif) no-repeat 4px 6px;  font-weight: bold; color: #FFFFFF;padding:3px 0 0 12px; position:relative }
+.add_box4 span img{position:absolute;right:3px;top:2px;margin:0;padding:0; cursor:pointer}
+.add_box4 ul{ list-style:none; display:block; padding:8px 6px 6px;float:left}
+.add_box4 ul li{ position:relative; background: url(..../images/bullet/bult_sq.gif) no-repeat 0px 6px;float:left;padding:0 0 0 9px;width:213px;}
+.add_box4 ul li, .add_box4 ul li span, .add_box4 ul li p{display:block;}
+.add_box4 ul li span{float:left;width:33px;background: none transparent scroll repeat 0% 0%;border:none;font-weight:normal;color:#565656;padding:2px 0 0 ;margin:0}
+.add_box4 ul li p{float:right;width:180px; position:relative;padding:0;margin:0;height:21px}
+#sidebar .add_box4 ul li p input{ vertical-align:middle;margin:0}
+#sidebar .add_box4 ul li p select, #sidebar .add_box4 ul li p img{ vertical-align:middle;}
+.add_box4 ul li .padi06{padding:0 0 2px 0 }
+.add_box4 ul li table{ width:124px; height:114px; background: #f6f6f6; border: 1px solid #cbcbcb;margin:0 0 2px 0}
+.add_box4 ul li table tr td{height:9px;}
+.add_box4 ul .add_boxBtn{ background: url(..../images/line/dot.gif) repeat-x 0px 0px; text-align: center; padding: 7px 0px 0px; width: 222px; margin:6px 0 0 0}
+
+
+
+
+
+/*컨텐츠영역--메모장 멀티레이어----------------*/
+.accOn_memo{;scrollbar-face-color:#FFEEAA; scrollbar-shadow-color:#FFF0AC; scrollbar-highlight-color:#FFFFFF; scrollbar-3dlight-color:#FFCC00; scrollbar-darkshadow-color:#EABB00; scrollbar-track-color:#FFF9E1; scrollbar-arrow-color:#ED8E0E;width:200px;position:absolute; z-index:1000;top:42px;left:435px;display:none }
+
+.accOn_memo h2{ background: url(..../images/box/memoY_cnTopBg.gif) repeat-x left top;height:20px ; position:relative}
+.accOn_memoTl { background: url(..../images/box/memoY_cnTopLeft.gif) no-repeat left top; padding:1px 0 0 1px; display:block; float:left;height:19px  }
+
+.btnAct2, .accOn_memoTr{position: relative;float:right;top:3px;right:0px;cursor:pointer}
+ .accOn_memoTr{background: url(..../images/box/memoY_cnTopRight.gif) no-repeat right top;padding:3px 4px 0 0; position: relative; float:right;cursor:pointer;height:17px;top:0px ;right:0; }
+.accOn_memo dl {background: #fff8bb url(..../images/box/memoY_bg.gif) repeat-y right;}
+.accOn_memo dl dd{ border-left: 1px solid #d0b960; padding:7px 0 0 9px; margin:0 5px 0 0 ;overflow:auto;height:100px;}
+
+.accOn_memoBb{ height:17px; background: url(..../images/box/memoY_cnBotBg.gif) repeat-x right bottom; position:relative;display:block}
+.accOn_memoBl, .accOn_memoMini span {float:left;}
+.accOn_memoBr, .accOn_memoMini img {float:right; cursor:default}
+
+.accOn_memoMini{ background: url(..../images/box/memoY_mini.gif) no-repeat left bottom; padding:0 0 0 1px;width:155px; height:33px;position:absolute; z-index:1000;top:-10px;left:970px;display:none}
+.accOn_memoMini img, .accOn_memoMini span{ position:relative;}
+.accOn_memoMini span{top:16px;left:4px;width:122px; cursor: default}
+
+/*컨텐츠영역--search box----멀티레이어-------------*/
+.accOn_read, .accOn_tag, .accOn_list, .accOn_cont{position:absolute; z-index:3000;border:1px solid #747474; background: #FFFFFF;display:none}
+.accOn_read dd, .accOn_tag dd, .accOn_tag span, .accOn_list span, .accOn_cont li, .accOn_cont span, #btn_optTag, #btn_optRead{ display:block;}
+#btn_optTag2, #btn_optRead2{display:none;}
+.accOn_read img, .accOn_tag dd img { vertical-align: middle; }
+.accOn_read{left:314px;top:408px;width:83px; padding:4px 6px 0 8px;}
+.accOn_read dl{ margin:3px 0 0 0;}
+.accOn_read dd{ height:20px;padding:4px 0 0 0}
+
+.accOn_tag, .accOn_list, .accOn_cont{padding:5px;}
+.accOn_tag{width:272px;left:208px;top:100px;}
+.accOn_tag dt{ font-weight: bold; padding:0 0 9px 4px; color: #000000; }
+.accOn_tag dd{float:left;width:130px;padding:0 0 0 6px;height:22px;}
+.accOn_tag dd img{ padding:2px; border: 1px solid #dbdbdb;margin:0 3px}
+.accOn_tag dd em{ font-style: normal; color: #ff4545; }
+.accOn_tag span{height:19px; float:left; text-align: center; background: url(..../images/line/dot.gif) repeat-x left top;width:272px;margin:3px 0 0 0;padding:6px 0 0 0 }
+
+.tagImg_nom img{ padding:0 3px; border-style: none; }
+
+.accOn_list span, .accOn_cont span{text-align: center; background: url(..../images/line/dot.gif) repeat-x left top;}
+.accOn_list{left:594px;top:183px;}
+.accOn_list dt{ font-weight: bold; padding:0 0 6px 4px; color: #000000; }
+.accOn_list dd{ padding:0 0 3px 3px; vertical-align: middle;  }
+.accOn_list span{height:19px; width:134px;margin:3px 4px 0 4px;padding:6px 0 0 0 ;float:left; }
+.accOn_list dd input, .accOn_list dd select{margin-left:5px;}
+
+.h01{margin:10px 0 0 0;display:block}
+
+.accOn_cont{left:270px; top:240px; width:311px ;}
+.accOn_cont pre{background: url(..../images/line/dot.gif) repeat-x left bottom;width:299px;padding:12px 3px 7px 3px;margin:0 0 8px 0}
+.accOn_cont ol{ padding:0 9px; }
+.accOn_cont li{height:20px;}
+.accOn_cont li img{margin-right:4px}
+.accOn_cont span{padding:6px 0 1px 3px;margin:5px 0 0 0}
+.accOn_cont span img{margin-right:9px}
+
+/*주소록-----그룹보기----------------------------------------------*/
+.btnGroup_view{ position:absolute;z-index:1010;top:146px;left:432px;}
+.groupView{position:absolute;z-index:1011;top:146px;left:432px;display:none}
+.groupView2{ position:absolute;z-index:1009;top:254px;left:715px;display:none}
+
+#mb .groupView ul.gvList, #mb .groupView2 ul.gvList{ background: none transparent scroll repeat 0% 0%; display:block; padding: 8px; margin:0;width: 150px; border: 1px solid #747474; background: #FFFFFF;}
+.groupView ul li, .groupView2 ul li{list-style:none;}

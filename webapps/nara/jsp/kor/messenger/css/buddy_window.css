@@ -1,0 +1,137 @@
+/*
+ * Ext JS Library 2.0.2
+ * Copyright(c) 2006-2008, Ext JS, LLC.
+ * licensing@extjs.com
+ * 
+ * http://extjs.com/license
+ */
+
+#container {
+    width:600px;
+    height:300px;
+    border:3px solid #c3daf9;
+}
+
+.calendar {
+    background-image:url(../resources../images/default/shared/calendar.gif) !important;
+}
+
+.blist {
+    background-image: url(list-items.gif) !important;
+    background-repeat:no-repeat;
+}
+
+
+.memoStatusIcon {
+    background-image: url(../images/webbuddy/icon_memo_status.gif) !important;
+    background-repeat:no-repeat;
+}
+
+.buddyTitle {
+    background-image: url(../images/webbuddy/buddy_title.gif) !important;
+    background-repeat:no-repeat;
+}
+
+
+.dispMethodIcon {
+    background-image: url(../images/webbuddy/icon_buddy_method.png) !important;
+    background-repeat:no-repeat;
+}
+
+
+.groupMenuIcon {
+    background-image: url(../images/webbuddy/icon_group_menu.gif) !important;
+    background-repeat:no-repeat;
+}
+
+.buddyInfoMenuIcon {
+    background-image: url(../images/webbuddy/icon_buddy_info.gif) !important;
+    background-repeat:no-repeat;
+}
+
+.smsSendMenuIcon {
+    background-image: url(../images/webbuddy/icon_sms_send.gif) !important;
+    background-repeat:no-repeat;
+}
+
+.mailSendMenuIcon {
+    background-image: url(../images/webbuddy/icon_mail_send.gif) !important;
+    background-repeat:no-repeat;
+}
+
+.memoSendMenuIcon {
+    background-image: url(../images/webbuddy/icon_memo_send.gif) !important;
+    background-repeat:no-repeat;
+}
+
+.buddyOff {
+    background-image: url(../images/webbuddy/buddyOff.gif) !important;
+    background-repeat:no-repeat;
+}
+.buddyOn {
+    background-image: url(../images/webbuddy/buddyOn.gif) !important;
+    background-repeat:no-repeat;
+}
+.buddyOut {
+    background-image: url(../images/webbuddy/buddyOut.gif) !important;
+    background-repeat:no-repeat;
+}
+
+.buddyBusy {
+    background-image: url(../images/webbuddy/buddyBusy.gif) !important;
+    background-repeat:no-repeat;
+}
+
+.buddyBusiness {
+    background-image: url(../images/webbuddy/buddyBusiness.gif) !important;
+    background-repeat:no-repeat;
+}
+
+.buddyCall {
+    background-image: url(../images/webbuddy/buddyCall.gif) !important;
+    background-repeat:no-repeat;
+}
+
+.buddyEat {
+    background-image: url(../images/webbuddy/buddyEat.gif) !important;
+    background-repeat:no-repeat;
+}
+.buddyDisc {
+    background-image: url(../images/webbuddy/buddyDisc.gif) !important;
+    background-repeat:no-repeat;
+}
+.buddyBlock {
+    background-image: url(../images/webbuddy/buddyBlock.gif) !important;
+    background-repeat:no-repeat;
+}
+.buddyMemo {
+    background-image: url(../images/webbuddy/buddyMemo.gif) !important;
+    background-repeat:no-repeat;
+}
+
+.messageBox-search {
+    background-image: url(../images/ico/ico_review.gif) !important;
+    background-repeat:no-repeat;
+}
+
+
+.menu-title{
+    background: #ebeadb url(../resources../images/default/grid/grid3-hrow.gif) repeat-x;
+    border-bottom:1px solid #99bbe8;
+    color:#15428b;
+    font:bold 10px tahoma,arial,verdana,sans-serif;
+    display:block;
+    padding:3px;
+}
+
+
+
+.dispName_box{position:absolute; z-index:1000;padding:0px;display:none}
+.dispName_box{width:160px;}
+.dispName_box span{width:160px;}
+.dispName_box ul{ list-style: none;padding:5px 0 1px 0; }
+.dispName_box li img{vertical-align: middle;float:left}
+.dispName_box li b{ float:right;font-weight: normal;width:70px }
+
+.p_kebiMessage	.x-panel{border-style:solid;border-color:#99bbe8;border-width:1px;}
+.t_kebiMessage	.x-tree .x-panel-body{background-color:#fff;margine:0 0 0 0;}

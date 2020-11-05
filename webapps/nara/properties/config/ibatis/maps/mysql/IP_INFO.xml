@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+
+<sqlMap namespace="IP_INFO"> 
+	<select id="select_ip_info"
+	        parameterClass="java.util.Map"
+	        resultClass="java.util.HashMap">
+	    <![CDATA[	        
+		SELECT 
+		    IP_START,
+			IP_END,
+			BW_START,
+			BW_END,
+			NATION_CODE,
+			NATION_NAME 
+        FROM IP_INFO
+        WHERE BW_START <= #CURRENT_IP# AND BW_END >= #CURRENT_IP#
+        ]]>    	
+	</select> 
+</sqlMap>

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="MAIL_LOG"> 
+  	
+  	
+  	<select id="select_mail_log_day"
+	        parameterClass="java.util.Map"
+	        resultClass="com.nara.jdf.db.entity.MailLogEntity">	        
+		SELECT 
+			MAIL_LOG_DATE_DAY, 
+        	SUM(MAIL_LOG_RECEIVE_COUNT) MAIL_LOG_RECEIVE_COUNT, 
+            SUM(MAIL_LOG_SEND_COUNT) MAIL_LOG_SEND_COUNT, 
+            SUM(MAIL_LOG_RECEIVE_VOLUME) MAIL_LOG_RECEIVE_VOLUME, 
+            SUM(MAIL_LOG_SEND_VOLUME) MAIL_LOG_SEND_VOLUME, 
+            SUM(MAIL_LOG_ERROR_COUNT) MAIL_LOG_ERROR_COUNT 	
+		FROM TABLE ( MULTISET (		
+						SELECT 
+							TO_CHAR(MAIL_LOG_DATE, '%Y-%m-%d %H') MAIL_LOG_DATE_DAY, 
+				        	MAIL_LOG_RECEIVE_COUNT, 
+				            MAIL_LOG_SEND_COUNT, 
+				            MAIL_LOG_RECEIVE_VOLUME, 
+				            MAIL_LOG_SEND_VOLUME, 
+				            MAIL_LOG_ERROR_COUNT 
+				        FROM MAIL_LOG 
+				        WHERE (MAIL_LOG_DATE BETWEEN TO_DATE(#startCal#,'%Y-%m-%d %H') AND TO_DATE(#endCal#,'%Y-%m-%d %H')) 
+				      	<dynamic prepend="">
+							<isNotNull prepend="AND" property="DOMAIN" >
+								MAIL_LOG_DOMAIN = #DOMAIN#
+							</isNotNull>
+						</dynamic>
+		))
+		GROUP BY MAIL_LOG_DATE_DAY	  	
+	</select>
+	
+	<select id="select_mail_log_week"
+	        parameterClass="java.util.Map"
+	        resultClass="com.nara.jdf.db.entity.MailLogEntity">	        
+		SELECT 
+			MAIL_LOG_DATE_WEEK, 
+        	SUM(MAIL_LOG_RECEIVE_COUNT) MAIL_LOG_RECEIVE_COUNT, 
+            SUM(MAIL_LOG_SEND_COUNT) MAIL_LOG_SEND_COUNT, 
+            SUM(MAIL_LOG_RECEIVE_VOLUME) MAIL_LOG_RECEIVE_VOLUME, 
+            SUM(MAIL_LOG_SEND_VOLUME) MAIL_LOG_SEND_VOLUME, 
+            SUM(MAIL_LOG_ERROR_COUNT) MAIL_LOG_ERROR_COUNT 	
+		FROM TABLE ( MULTISET (				
+						SELECT 
+							TO_CHAR(MAIL_LOG_DATE, '%Y-%m-%d') MAIL_LOG_DATE_WEEK, 
+				        	MAIL_LOG_RECEIVE_COUNT, 
+				            MAIL_LOG_SEND_COUNT, 
+				            MAIL_LOG_RECEIVE_VOLUME, 
+				            MAIL_LOG_SEND_VOLUME, 
+				            MAIL_LOG_ERROR_COUNT 
+				        FROM MAIL_LOG 
+				        WHERE (MAIL_LOG_DATE BETWEEN TO_DATE(#startCal#,'%Y-%m-%d %H') AND TO_DATE(#endCal#,'%Y-%m-%d %H')) 
+				        <dynamic prepend="">
+							<isNotNull prepend="AND" property="DOMAIN" >
+								MAIL_LOG_DOMAIN = #DOMAIN#
+							</isNotNull>
+						</dynamic>	
+		))				
+		GROUP BY MAIL_LOG_DATE_WEEK	  	
+	</select>
+	
+	<select id="select_mail_log_month"
+	        parameterClass="java.util.Map"
+	        resultClass="com.nara.jdf.db.entity.MailLogEntity">	        
+		SELECT 
+			MAIL_LOG_DATE_MONTH, 
+        	SUM(MAIL_LOG_RECEIVE_COUNT) MAIL_LOG_RECEIVE_COUNT, 
+            SUM(MAIL_LOG_SEND_COUNT) MAIL_LOG_SEND_COUNT, 
+            SUM(MAIL_LOG_RECEIVE_VOLUME) MAIL_LOG_RECEIVE_VOLUME, 
+            SUM(MAIL_LOG_SEND_VOLUME) MAIL_LOG_SEND_VOLUME, 
+            SUM(MAIL_LOG_ERROR_COUNT) MAIL_LOG_ERROR_COUNT 	
+		FROM TABLE ( MULTISET (            		
+						SELECT 
+							TO_CHAR(MAIL_LOG_DATE, '%Y-%m ')||WEEKDAY(MAIL_LOG_DATE) MAIL_LOG_DATE_MONTH, 
+				        	MAIL_LOG_RECEIVE_COUNT, 
+				            MAIL_LOG_SEND_COUNT, 
+				            MAIL_LOG_RECEIVE_VOLUME, 
+				            MAIL_LOG_SEND_VOLUME, 
+				            MAIL_LOG_ERROR_COUNT 
+				        FROM MAIL_LOG 
+				        WHERE (MAIL_LOG_DATE BETWEEN TO_DATE(#startCal#,'%Y-%m-%d %H') AND TO_DATE(#endCal#,'%Y-%m-%d %H')) 
+				        <dynamic prepend="">
+							<isNotNull prepend="AND" property="DOMAIN" >
+								MAIL_LOG_DOMAIN = #DOMAIN#
+							</isNotNull>
+						</dynamic>
+		))
+		GROUP BY MAIL_LOG_DATE_MONTH	  	
+	</select>
+	
+	<select id="select_mail_log_year"
+	        parameterClass="java.util.Map"
+	        resultClass="com.nara.jdf.db.entity.MailLogEntity">	  
+		SELECT 
+			MAIL_LOG_DATE_YEAR, 
+        	SUM(MAIL_LOG_RECEIVE_COUNT) MAIL_LOG_RECEIVE_COUNT, 
+            SUM(MAIL_LOG_SEND_COUNT) MAIL_LOG_SEND_COUNT, 
+            SUM(MAIL_LOG_RECEIVE_VOLUME) MAIL_LOG_RECEIVE_VOLUME, 
+            SUM(MAIL_LOG_SEND_VOLUME) MAIL_LOG_SEND_VOLUME, 
+            SUM(MAIL_LOG_ERROR_COUNT) MAIL_LOG_ERROR_COUNT 	
+		FROM TABLE ( MULTISET (		              
+						SELECT 
+							TO_CHAR(MAIL_LOG_DATE, '%Y-%m') MAIL_LOG_DATE_YEAR, 
+				        	MAIL_LOG_RECEIVE_COUNT, 
+				            MAIL_LOG_SEND_COUNT, 
+				            MAIL_LOG_RECEIVE_VOLUME, 
+				            MAIL_LOG_SEND_VOLUME, 
+				            MAIL_LOG_ERROR_COUNT  
+				        FROM MAIL_LOG 
+				        WHERE (MAIL_LOG_DATE BETWEEN TO_DATE(#startCal#,'%Y-%m-%d %H') AND TO_DATE(#endCal#,'%Y-%m-%d %H')) 
+				        <dynamic prepend="">
+							<isNotNull prepend="AND" property="DOMAIN" >
+								MAIL_LOG_DOMAIN = #DOMAIN#
+							</isNotNull>
+						</dynamic>
+		))					
+		GROUP BY MAIL_LOG_DATE_YEAR	  	
+	</select>
+</sqlMap>
+
+
+

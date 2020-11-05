@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="LOGIN_LOG">
+	<select id="select_login_log"
+	        parameterClass="java.util.HashMap"
+	        resultClass="com.nara.jdf.db.entity.LoginLogEntity">
+		SELECT
+			LOGIN_LOG_IDX,
+			CONNECT_IDX,
+			CONNECT_ID,
+			DOMAIN,
+			CONNECT_IP,
+			DATE_FORMAT(CONNECT_TIME,'%Y-%m-%d %T') CONNECT_TIME,
+			LOGIN_YN,
+			CERTIY_YN,
+			ERROR_CODE,
+			DESCRIPTION
+		FROM LOGIN_LOG
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "DOMAIN">
+				LOGIN_LOG_IDX = #LOGIN_LOG_IDX#
+			</isNotNull>
+		</dynamic>
+	</select>
+	
+	<select id="select_login_log_list" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="com.nara.jdf.db.entity.LoginLogEntity">				
+        SELECT
+        	A.LOGIN_LOG_IDX, 
+			A.CONNECT_IDX,
+			A.CONNECT_ID,
+			A.DOMAIN,
+			A.CONNECT_IP,
+			DATE_FORMAT(A.CONNECT_TIME,'%Y-%m-%d %T') CONNECT_TIME,
+			A.LOGIN_YN,
+			A.CERTIY_YN,
+			A.ERROR_CODE,
+			A.DESCRIPTION,
+			B.USERS_NAME
+    	FROM LOGIN_LOG A, USERS B
+    	WHERE A.CONNECT_IDX=B.USERS_IDX
+    	<isEqual prepend="AND" property= "strIndex" compareValue="">
+			A.CONNECT_TIME BETWEEN STR_TO_DATE(#sCal#,'%Y-%m-%d') AND DATE_ADD(DATE_ADD(STR_TO_DATE(#eCal#,'%Y-%m-%d'), INTERVAL 1 DAY), INTERVAL -1 SECOND)
+		</isEqual>
+		<isEqual prepend="AND" property= "strIndex" compareValue="CERTIY_YN">
+			A.CERTIY_YN LIKE CONCAT(#strKeyword#,'%')
+		</isEqual>
+		<isEqual prepend="AND" property= "strIndex" compareValue="CONNECT_ID">
+  			A.CONNECT_ID LIKE CONCAT(#strKeyword#,'%')
+		</isEqual>
+		<isEqual prepend="AND" property= "strIndex" compareValue="USERS_NAME">
+  			B.USERS_NAME LIKE CONCAT(#strKeyword#,'%')
+		</isEqual>
+		<isEqual prepend="AND" property= "strIndex" compareValue="LOGIN_YN">
+  			A.LOGIN_YN LIKE CONCAT(#strKeyword#,'%')
+		</isEqual>
+		<isEqual prepend="AND" property= "strIndex" compareValue="CONNECT_IP">
+  			A.CONNECT_IP LIKE CONCAT(#strKeyword#,'%')
+		</isEqual>
+		<isEqual prepend="AND" property= "strIndex" compareValue="CONNECT_TIME">
+      		A.CONNECT_TIME BETWEEN STR_TO_DATE(#S_CONNECT_DATE#,'%Y-%m-%d') AND DATE_ADD(DATE_ADD(STR_TO_DATE(#E_CONNECT_TIME#,'%Y-%m-%d'), INTERVAL 1 DAY), INTERVAL -1 SECOND) 			
+ 		</isEqual>
+		ORDER BY $orderCol$ $orderType$
+		LIMIT $SKIP$, $USERS_LISTNUM$
+  	</select>
+  	
+  	<select id="count_login_log_list" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="java.lang.Integer">				
+        SELECT
+        	COUNT(A.LOGIN_LOG_IDX) CNT
+    	FROM LOGIN_LOG A, USERS B
+		WHERE A.CONNECT_IDX=B.USERS_IDX
+			<isEqual prepend="AND" property= "strIndex" compareValue="">
+				A.CONNECT_TIME BETWEEN STR_TO_DATE(#sCal#,'%Y-%m-%d') AND DATE_ADD(DATE_ADD(STR_TO_DATE(#eCal#,'%Y-%m-%d'), INTERVAL 1 DAY), INTERVAL -1 SECOND)
+			</isEqual>
+			<isEqual prepend="AND" property= "strIndex" compareValue="CERTIY_YN">
+				A.CERTIY_YN LIKE CONCAT(#strKeyword#,'%')
+			</isEqual>
+			<isEqual prepend="AND" property= "strIndex" compareValue="CONNECT_ID">
+      			A.CONNECT_ID LIKE CONCAT(#strKeyword#,'%')
+			</isEqual>
+			<isEqual prepend="AND" property= "strIndex" compareValue="USERS_NAME">
+      			B.USERS_NAME LIKE CONCAT(#strKeyword#,'%')
+			</isEqual>
+			<isEqual prepend="AND" property= "strIndex" compareValue="CONNECT_IP">
+      			A.CONNECT_IP LIKE CONCAT(#strKeyword#,'%')
+ 			</isEqual>
+ 			<isEqual prepend="AND" property= "strIndex" compareValue="LOGIN_YN">
+      			A.LOGIN_YN LIKE CONCAT(#strKeyword#,'%') 
+ 			</isEqual>
+ 			<isEqual prepend="AND" property= "strIndex" compareValue="CONNECT_TIME">
+      			A.CONNECT_TIME BETWEEN STR_TO_DATE(#S_CONNECT_DATE#,'%Y-%m-%d') AND DATE_ADD(DATE_ADD(STR_TO_DATE(#E_CONNECT_TIME#,'%Y-%m-%d'), INTERVAL 1 DAY), INTERVAL -1 SECOND)
+ 			</isEqual>		
+  	</select>
+  	
+	<insert id="insert_login_log"
+	        parameterClass="com.nara.jdf.db.entity.LoginLogEntity">
+		INSERT INTO LOGIN_LOG
+		(
+			LOGIN_LOG_IDX,
+			CONNECT_IDX,
+			CONNECT_ID,
+			DOMAIN,
+			CONNECT_IP,
+			CONNECT_TIME,
+			LOGIN_YN,
+			CERTIY_YN,
+			ERROR_CODE,
+			DESCRIPTION
+		)
+		VALUES
+		(
+			<dynamic prepend="">
+  				<isGreaterEqual prepend="" property="LOGIN_LOG_IDX" compareValue="1">
+					#LOGIN_LOG_IDX#,
+				</isGreaterEqual>
+				<isLessEqual prepend="" property="LOGIN_LOG_IDX" compareValue="0">
+					NEXTVAL('LOGIN_LOG'),
+				</isLessEqual>
+  			</dynamic>
+			#CONNECT_IDX#,
+			#CONNECT_ID#,
+			#DOMAIN#,
+			#CONNECT_IP#,
+			SYSDATE(),
+			#LOGIN_YN#,
+			#CERTIY_YN#,
+			#ERROR_CODE#,
+			#DESCRIPTION#
+		)
+	</insert>  	
+	   <delete id="delete_logidx_type_01"
+  				parameterClass="java.util.HashMap">
+  		DELETE FROM LOGIN_LOG
+  		WHERE  LOGIN_LOG_IDX = #LOGIN_LOG_IDX#
+  		</delete>
+</sqlMap>

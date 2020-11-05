@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="IP_BLOCKING"> 
+   	<select id="select_ipblocking_list_type_01"
+	        parameterClass="java.util.Map"
+	        resultClass="com.nara.jdf.db.entity.IPBlockingEntity">	        
+		
+		SELECT 
+	     	IP,
+	     	WHITE_IP,
+	     	BLACK_IP,
+	     	DYNAMIC_IP,
+	     	DATE_FORMAT(REGISTER_DATE,'%Y-%m-%d %T') REGISTER_DATE, 
+			DATE_FORMAT(VALID_DATE,'%Y-%m-%d %T') VALID_DATE 
+	     FROM IP_BLOCKING
+		 <dynamic prepend="WHERE ">
+			<isNotEqual prepend="" property= "IP" compareValue="">
+				IP = #IP#	
+			</isNotEqual>		
+		</dynamic>  	
+	</select>	
+	
+	<delete id="delete_ipblocking_type_01"
+  				parameterClass="java.util.HashMap">
+  		DELETE FROM IP_BLOCKING
+  		WHERE  IP = #IP#
+  	</delete>
+  	
+  	
+  	<statement id="insert_ipblocking_type_01"
+  				   parameterClass="com.nara.jdf.db.entity.IPBlockingEntity">
+        INSERT INTO IP_BLOCKING
+        (
+            IP, 
+			WHITE_IP, 
+			BLACK_IP, 
+			DYNAMIC_IP,
+			REGISTER_DATE,
+			VALID_DATE  
+        )
+        VALUES
+        (
+            #IP#, 
+			#WHITE_IP#, 
+			#BLACK_IP#, 
+			#DYNAMIC_IP#,
+			SYSDATE(),
+			STR_TO_DATE(#VALID_DATE# ,'%Y/%m/%d %T')
+        )
+  	</statement>
+  	
+  	<update id="update_ipblocking_type_01"
+            parameterClass="com.nara.jdf.db.entity.IPBlockingEntity">
+    	UPDATE IP_BLOCKING
+    	SET	
+			WHITE_IP = #WHITE_IP#,
+			BLACK_IP = #BLACK_IP#,
+			DYNAMIC_IP=#DYNAMIC_IP#,
+			REGISTER_DATE = SYSDATE(),
+			VALID_DATE = STR_TO_DATE(#VALID_DATE# ,'%Y/%m/%d %T')
+		WHERE IP =	#IP#
+	</update>
+</sqlMap>

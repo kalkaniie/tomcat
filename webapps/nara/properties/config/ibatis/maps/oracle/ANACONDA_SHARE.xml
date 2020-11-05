@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="ANACONDA_SHARE">
+	<select id="select_anaconda_share_type_01"
+	        parameterClass="java.util.HashMap"
+	        resultClass="com.nara.jdf.db.entity.AnaShareEntity">
+		SELECT
+			AA.FILE_KEY FILE_KEY,
+			AA.USERS_IDX USERS_IDX,
+			AA.DIR_PERMISSION DIR_PERMISSION,
+			AA.CREATE_DATE CREATE_DATE,
+			AA.UPDATE_DATE UPDATE_DATE,
+			BB.FILE_NAME FILE_NAME
+		FROM ANACONDA_SHARE AA, ANACONDA_FILE BB
+		WHERE AA.FILE_KEY = BB.FILE_KEY
+		AND   AA.USERS_IDX = #USERS_IDX#
+	</select>
+	
+	<select id="select_anaconda_share_type_02"
+	        parameterClass="java.util.HashMap"
+	        resultClass="com.nara.jdf.db.entity.AnaShareEntity">
+		SELECT
+			AA.FILE_KEY FILE_KEY,
+			AA.USERS_IDX USERS_IDX,
+			AA.DIR_PERMISSION DIR_PERMISSION,
+			AA.CREATE_DATE CREATE_DATE,
+			AA.UPDATE_DATE UPDATE_DATE,
+			BB.FILE_NAME FILE_NAME
+		FROM ANACONDA_SHARE AA, ANACONDA_FILE BB
+		WHERE AA.FILE_KEY = BB.FILE_KEY
+		AND   AA.USERS_IDX = #USERS_IDX#
+		AND   BB.FILE_NAME = #FILE_NAME#
+	</select>
+	
+	<delete id="delete_anaconda_share_type_01"
+	        parameterClass="java.util.HashMap">
+		DELETE FROM ANACONDA_SHARE
+	    <dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "DOMAIN">
+				SUBSTR(USERS_IDX, INSTR(USERS_IDX, '@')) = '@'||#DOMAIN#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "FILE_KEY">
+				FILE_KEY = #FILE_KEY#
+			</isNotNull>
+		</dynamic>
+	</delete>
+	
+	<delete id="delete_anaconda_share_type_02"
+	        parameterClass="java.util.HashMap">
+		DELETE FROM ANACONDA_SHARE
+		WHERE FILE_KEY = #FILE_KEY#
+		AND   USERS_IDX = #USERS_IDX#
+	</delete>
+	
+	<insert id="insert_anaconda_share"
+	        parameterClass="com.nara.jdf.db.entity.AnaShareEntity">
+		INSERT INTO ANACONDA_SHARE
+		(
+			FILE_KEY,
+			USERS_IDX,
+			DIR_PERMISSION,
+			CREATE_DATE,
+			SHARED_USERS_IDX
+		)
+		VALUES
+		(
+			#FILE_KEY#,
+			#USERS_IDX#,
+			#DIR_PERMISSION#,
+			#CREATE_DATE#,
+			#SHARED_USERS_IDX#
+		)
+	</insert>
+	
+	<update id="update_anaconda_share"
+	        parameterClass="com.nara.jdf.db.entity.AnaShareEntity">
+		UPDATE ANACONDA_SHARE
+		SET	DIR_PERMISSION = #DIR_PERMISSION#,
+			UPDATE_DATE = SYSDATE
+		WHERE FILE_KEY = #FILE_KEY#
+		AND	  USERS_IDX = #USERS_IDX#
+	</update>
+</sqlMap>

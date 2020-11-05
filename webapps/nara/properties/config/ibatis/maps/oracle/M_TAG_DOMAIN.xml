@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="M_TAG_DOMAIN"> 
+	<select id="select_m_tag_domain_type_01"
+			parameterClass="java.util.HashMap"
+			resultClass="com.nara.jdf.db.entity.UserTagEntity">
+		SELECT 
+			USERS_IDX,
+			TAG_TYPE,
+			TAG_NAME,
+			TAG_IMG_NAME,
+			TAG_ORD
+		FROM $TAG_TABLE$
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "TAG_TYPE">
+				TAG_TYPE = #TAG_TYPE#
+			</isNotNull>
+		</dynamic>
+		
+		ORDER BY TAG_ORD
+	</select>			
+
+	<select id="select_m_tag_domain_type_02"
+			parameterClass="java.util.HashMap"
+			resultClass="com.nara.jdf.db.entity.UserTagEntity">
+		SELECT 
+			USERS_IDX,
+			TAG_TYPE,
+			TAG_NAME,
+			TAG_IMG_NAME,
+			TAG_ORD
+		FROM $TAG_TABLE$
+		WHERE USERS_IDX = #USERS_IDX#
+		AND   TAG_TYPE > 0
+		AND   TAG_NAME IS NOT NULL
+		
+		ORDER BY TAG_ORD
+	</select>	
+	
+   	<insert id="insert_m_tag_domain_default_data"
+   	        parameterClass="java.util.HashMap">
+		INSERT INTO $TAG_TABLE$ (USERS_IDX, TAG_TYPE, TAG_NAME, TAG_IMG_NAME, TAG_ORD)
+		SELECT #USERS_IDX#,  0, 'clear', 'ico_tag00.gif', 20 FROM DUAL UNION ALL
+		SELECT #USERS_IDX#,  1, '', 'ico_tag01.gif', 01 FROM DUAL UNION ALL
+		SELECT #USERS_IDX#,  2, '', 'ico_tag02.gif', 02 FROM DUAL UNION ALL
+		SELECT #USERS_IDX#,  3, '', 'ico_tag03.gif', 03 FROM DUAL UNION ALL
+		SELECT #USERS_IDX#,  4, '', 'ico_tag04.gif', 04 FROM DUAL UNION ALL
+		SELECT #USERS_IDX#,  5, '', 'ico_tag05.gif', 05 FROM DUAL UNION ALL
+		SELECT #USERS_IDX#,  6, '', 'ico_tag06.gif', 06 FROM DUAL UNION ALL
+		SELECT #USERS_IDX#,  7, '', 'ico_tag07.gif', 07 FROM DUAL UNION ALL
+		SELECT #USERS_IDX#,  8, '', 'ico_tag08.gif', 08 FROM DUAL UNION ALL
+		SELECT #USERS_IDX#,  9, '', 'ico_tag09.gif', 09 FROM DUAL UNION ALL
+		SELECT #USERS_IDX#, 10, '', 'ico_tag10.gif', 10 FROM DUAL UNION ALL
+		SELECT #USERS_IDX#, 11, '', 'ico_tag11.gif', 11 FROM DUAL UNION ALL
+		SELECT #USERS_IDX#, 12, '', 'ico_tag12.gif', 12 FROM DUAL UNION ALL
+		SELECT #USERS_IDX#, 13, '', 'ico_tag13.gif', 13 FROM DUAL UNION ALL
+		SELECT #USERS_IDX#, 14, '', 'ico_tag14.gif', 14 FROM DUAL UNION ALL
+		SELECT #USERS_IDX#, 15, '', 'ico_tag15.gif', 15 FROM DUAL UNION ALL
+		SELECT #USERS_IDX#, 16, '', 'ico_tag16.gif', 16 FROM DUAL UNION ALL
+		SELECT #USERS_IDX#, 17, '', 'ico_tag17.gif', 17 FROM DUAL UNION ALL
+		SELECT #USERS_IDX#, 18, '', 'ico_tag18.gif', 18 FROM DUAL UNION ALL
+		SELECT #USERS_IDX#, 19, '', 'ico_tag19.gif', 19 FROM DUAL   	
+   	</insert>
+   	
+   	<update id="update_m_tag_domain_tag_name"
+   	        parameterClass="java.util.HashMap">
+		UPDATE $TAG_TABLE$
+		SET TAG_NAME = #TAG_NAME#
+		WHERE USERS_IDX = #USERS_IDX#
+		AND TAG_TYPE = #TAG_TYPE#  
+   	</update>
+   	
+   	
+   	<select id="select_m_tag_domain_type_03"
+			parameterClass="java.util.HashMap"
+			resultClass="java.util.HashMap">
+		SELECT 
+			USERS_IDX,
+			TAG_TYPE,
+			TAG_NAME,
+			TAG_IMG_NAME,
+			TAG_ORD
+		FROM $TAG_TABLE$
+		WHERE USERS_IDX = #USERS_IDX#
+		AND   TAG_TYPE > 0
+		AND   TAG_NAME IS NOT NULL
+		
+		ORDER BY TAG_ORD
+	</select>
+	
+	<delete id="delete_m_tag_domain_users_idx"
+  				parameterClass="java.util.HashMap">
+  		DELETE FROM $TAG_TABLE$
+  		WHERE  USERS_IDX = #USERS_IDX#
+  	</delete>	
+  	
+  	<insert id="copy_tag_info"
+			parameterClass="java.util.HashMap">
+  		INSERT INTO $TAG_TABLE$
+  		(
+			USERS_IDX,
+			TAG_TYPE,
+			TAG_NAME,
+			TAG_IMG_NAME,
+			TAG_ORD  		
+  		)
+  		SELECT 
+			#AFTER_USERS_IDX#,
+			TAG_TYPE,
+			TAG_NAME,
+			TAG_IMG_NAME,
+			TAG_ORD
+		FROM $TAG_TABLE$
+		WHERE USERS_IDX = #BEFORE_USERS_IDX#
+	</insert>
+</sqlMap>

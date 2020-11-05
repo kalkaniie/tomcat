@@ -1,0 +1,417 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="ORGANIZE"> 
+
+  <select id="select_organize_type_01" 
+  				parameterClass="java.util.HashMap"
+					resultClass="com.nara.jdf.db.entity.OrganizeEntity">
+	 	SELECT
+            B.ORGANIZE_IDX ,
+            B.ORGANIZE_REF ,
+			B.ORGANIZE_STEP ,
+			B.ORGANIZE_LEVEL ,
+			B.ORGANIZE_DEF ,
+			B.ORGANIZE_NAME,
+			B.ORGANIZE_ADMIN,
+			B.ORGANIZE_SCHEDULE
+		FROM MEMBER A, ORGANIZE B 
+		WHERE B.ORGANIZE_IDX = A.ORGANIZE_IDX
+		<dynamic prepend="">
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				A.USERS_IDX= #USERS_IDX#
+			</isNotNull> 			
+		</dynamic>
+		ORDER BY B.ORGANIZE_NAME
+  </select>
+  
+    <select id="select_organize_list_type_02" 
+  				parameterClass="java.util.HashMap"
+					resultClass="com.nara.jdf.db.entity.OrganizeEntity">
+    	SELECT 
+	           ORGANIZE_IDX ,
+	           DOMAIN ,
+	           ORGANIZE_REF , 
+	           ORGANIZE_STEP , 
+	           ORGANIZE_LEVEL ,
+	           ORGANIZE_DEF ,
+	           ORGANIZE_ADMIN ,
+	           ORGANIZE_NAME ,
+	           ORGANIZE_TITLE ,
+	           ORGANIZE_OPERATION ,
+	           ORGANIZE_STMT, 
+	           ORGANIZE_SCHEDULE,
+	           ORGANIZE_SCHEDULE_HIGHER,
+	           ORGANIZE_SCHEDULE_LOWER,
+	           ORGANIZE_SCHEDULE_EQUALTY,
+	           NVL(ORGANIZE_NUM,0) ORGANIZE_NUM
+		FROM TABLE ( MULTISET (
+		 	 SELECT 
+	           B.ORGANIZE_IDX ,
+	           B.DOMAIN ,
+	           B.ORGANIZE_REF , 
+	           B.ORGANIZE_STEP , 
+	           B.ORGANIZE_LEVEL ,
+	           B.ORGANIZE_DEF ,
+	           B.ORGANIZE_ADMIN ,
+	           B.ORGANIZE_NAME ,
+	           B.ORGANIZE_TITLE ,
+	           B.ORGANIZE_OPERATION ,
+	           B.ORGANIZE_STMT, 
+	           B.ORGANIZE_SCHEDULE,
+	           B.ORGANIZE_SCHEDULE_HIGHER,
+	           B.ORGANIZE_SCHEDULE_LOWER,
+	           B.ORGANIZE_SCHEDULE_EQUALTY,
+	           (SELECT COUNT(MEMBER_IDX) ORGANIZE_NUM FROM MEMBER SUB_A WHERE SUB_A.ORGANIZE_IDX = B.ORGANIZE_IDX GROUP BY ORGANIZE_IDX ) ORGANIZE_NUM
+	        FROM ORGANIZE B
+	       <dynamic prepend="">
+				<isNotNull prepend="AND" property= "DOMAIN">
+					DOMAIN= #DOMAIN#
+				</isNotNull> 			
+			</dynamic>
+	        ORDER BY B.ORGANIZE_REF, B.ORGANIZE_STEP
+		))
+  	</select>
+  
+  	<select id="select_organize_list_type_03" 
+  				parameterClass="java.util.HashMap"
+					resultClass="java.util.HashMap">
+	 	SELECT 
+	     	ORGANIZE_IDX,
+	     	DOMAIN,
+	     	ORGANIZE_REF,
+	     	ORGANIZE_STEP,
+	     	ORGANIZE_LEVEL,
+	     	ORGANIZE_DEF,
+	     	ORGANIZE_ADMIN,
+	     	ORGANIZE_NAME,
+	     	ORGANIZE_TITLE,
+	     	ORGANIZE_OPERATION,
+	     	ORGANIZE_STMT, 
+	     	ORGANIZE_SCHEDULE, 
+	     	ORGANIZE_SCHEDULE_HIGHER, 
+	     	ORGANIZE_SCHEDULE_LOWER, 
+	    	ORGANIZE_SCHEDULE_EQUALTY 
+    	FROM ORGANIZE 
+    	WHERE DOMAIN= #DOMAIN#
+     	ORDER BY ORGANIZE_REF, ORGANIZE_LEVEL
+	</select>
+  	
+  	
+  	<select id="select_organize_cur_seq" 
+  				parameterClass="java.util.HashMap" 
+  				resultClass="java.lang.Integer">
+		SELECT SEQ_ORGANIZE.CURRVAL FROM DUAL
+	</select>
+  	
+  	<select id="select_organize_info_type_01" 
+					parameterClass="java.util.HashMap" 
+					resultClass="com.nara.jdf.db.entity.OrganizeEntity">
+		SELECT 
+           B.ORGANIZE_IDX ,
+           B.DOMAIN ,
+           B.ORGANIZE_REF , 
+           B.ORGANIZE_STEP , 
+           B.ORGANIZE_LEVEL ,
+           B.ORGANIZE_DEF ,
+           B.ORGANIZE_ADMIN ,
+           B.ORGANIZE_NAME ,
+           B.ORGANIZE_TITLE ,
+           B.ORGANIZE_OPERATION ,
+           B.ORGANIZE_STMT, 
+           B.ORGANIZE_SCHEDULE, 
+           B.ORGANIZE_SCHEDULE_HIGHER, 
+           B.ORGANIZE_SCHEDULE_LOWER, 
+           B.ORGANIZE_SCHEDULE_EQUALTY, 
+           A.ORGANIZE_NUM 
+		FROM 
+           ( 
+           SELECT 
+           /*+ INDEX(MEMBER MEMBER_IDX) */ COUNT(MEMBER_IDX) ORGANIZE_NUM 
+           FROM MEMBER 
+           WHERE 
+           ORGANIZE_IDX =  #ORGANIZE_IDX# 
+           ) A, 
+           ORGANIZE B 
+        WHERE  B.ORGANIZE_IDX =  #ORGANIZE_IDX# 
+        
+    	SELECT 
+			ORGANIZE_IDX ,
+			DOMAIN ,
+			ORGANIZE_REF , 
+			ORGANIZE_STEP , 
+			ORGANIZE_LEVEL ,
+			ORGANIZE_DEF ,
+			ORGANIZE_ADMIN ,
+			ORGANIZE_NAME ,
+			ORGANIZE_TITLE ,
+			ORGANIZE_OPERATION ,
+			ORGANIZE_STMT, 
+			ORGANIZE_SCHEDULE, 
+			ORGANIZE_SCHEDULE_HIGHER, 
+			ORGANIZE_SCHEDULE_LOWER, 
+			ORGANIZE_SCHEDULE_EQUALTY,
+		FROM TABLE ( MULTISET (
+		 	 SELECT 
+				B.ORGANIZE_IDX ,
+				B.DOMAIN ,
+				B.ORGANIZE_REF , 
+				B.ORGANIZE_STEP , 
+				B.ORGANIZE_LEVEL ,
+				B.ORGANIZE_DEF ,
+				B.ORGANIZE_ADMIN ,
+				B.ORGANIZE_NAME ,
+				B.ORGANIZE_TITLE ,
+				B.ORGANIZE_OPERATION ,
+				B.ORGANIZE_STMT, 
+				B.ORGANIZE_SCHEDULE, 
+				B.ORGANIZE_SCHEDULE_HIGHER, 
+				B.ORGANIZE_SCHEDULE_LOWER, 
+				B.ORGANIZE_SCHEDULE_EQUALTY,
+	           (SELECT COUNT(MEMBER_IDX) ORGANIZE_NUM FROM MEMBER SUB_A WHERE SUB_A.ORGANIZE_IDX = B.ORGANIZE_IDX GROUP BY ORGANIZE_IDX ) ORGANIZE_NUM
+	        FROM ORGANIZE B
+	        WHERE  B.ORGANIZE_IDX =  #ORGANIZE_IDX#
+		))        
+	</select>
+	
+	
+	<select id="select_organize_list_type_04" 
+  				parameterClass="java.util.HashMap"
+					resultClass="java.util.HashMap">
+	 	 SELECT 
+            B.ORGANIZE_IDX ,
+            B.ORGANIZE_REF ,
+            B.ORGANIZE_STEP ,
+            B.ORGANIZE_LEVEL ,
+            B.ORGANIZE_DEF ,
+            B.ORGANIZE_NAME, 
+            B.ORGANIZE_ADMIN, 
+            B.ORGANIZE_SCHEDULE 
+       	FROM 
+            MEMBER A, ORGANIZE B  
+        WHERE A.USERS_IDX= #USERS_IDX# 
+            AND B.ORGANIZE_IDX = A.ORGANIZE_IDX 
+        ORDER BY B.ORGANIZE_NAME 
+	</select>
+	
+	
+	<select id="select_organize_max_step" 
+  				parameterClass="java.util.HashMap" 
+  				resultClass="java.lang.Integer">
+		<![CDATA[
+		SELECT NVL(MAX(ORGANIZE_STEP),0) 
+		FROM ORGANIZE 
+        WHERE DOMAIN = #DOMAIN# 
+          AND ORGANIZE_REF   = 	#ORGANIZE_REF# 
+          AND ORGANIZE_STEP  > 	#ORGANIZE_STEP#
+          AND ORGANIZE_LEVEL > 	#ORGANIZE_LEVEL#
+      	]]>
+      	<dynamic prepend="">
+			<isGreaterEqual prepend="AND" property="nMinStep" compareValue="1">
+				<![CDATA[
+				ORGANIZE_STEP < #nMinStep#
+				]]>
+			</isGreaterEqual>
+		</dynamic>	
+	</select>
+	
+	
+	<select id="select_organize_min_step" 
+  				parameterClass="java.util.HashMap" 
+  				resultClass="java.lang.Integer">
+		<![CDATA[
+		SELECT NVL(MIN(ORGANIZE_STEP),0) 
+		FROM ORGANIZE 
+        WHERE DOMAIN = #DOMAIN# 
+          AND ORGANIZE_REF   = 	#ORGANIZE_REF# 
+          AND ORGANIZE_STEP  > 	#ORGANIZE_STEP#
+          AND ORGANIZE_LEVEL <=	#ORGANIZE_LEVEL#
+      	]]>
+    </select>
+	
+	<select id="select_organize_count_type01" 
+  				parameterClass="java.util.HashMap" 
+  				resultClass="java.lang.Integer">
+		SELECT count(ORGANIZE_IDX)
+		FROM ORGANIZE 
+        WHERE DOMAIN = #DOMAIN# 
+          AND ORGANIZE_NAME   = 	#ORGANIZE_NAME#
+          <dynamic prepend="">
+			<isNotNull prepend="AND" property="ORGANIZE_IDX">
+				<![CDATA[
+				ORGANIZE_IDX <> #ORGANIZE_IDX#
+				]]>
+			</isNotNull>
+		</dynamic> 
+    </select>
+    
+    <update id="update_organize_type_01"
+            parameterClass="com.nara.jdf.db.entity.OrganizeEntity">
+     	UPDATE ORGANIZE SET 
+          	ORGANIZE_REF 		= #ORGANIZE_REF# ,
+          	ORGANIZE_STEP 		= #ORGANIZE_STEP# ,
+          	ORGANIZE_LEVEL 		= #ORGANIZE_LEVEL# ,
+          	ORGANIZE_DEF 		= #ORGANIZE_DEF# ,
+          	ORGANIZE_ADMIN 		= #ORGANIZE_ADMIN# ,
+          	ORGANIZE_NAME 		= #ORGANIZE_NAME# ,
+          	ORGANIZE_TITLE 		= #ORGANIZE_TITLE# ,
+          	ORGANIZE_OPERATION 	= #ORGANIZE_OPERATION# ,
+          	ORGANIZE_STMT 		= #ORGANIZE_STMT# ,
+          	ORGANIZE_SCHEDULE 	= #ORGANIZE_SCHEDULE#, 
+          	ORGANIZE_SCHEDULE_HIGHER = #ORGANIZE_SCHEDULE_HIGHER#, 
+          	ORGANIZE_SCHEDULE_LOWER	 = #ORGANIZE_SCHEDULE_LOWER#, 
+          	ORGANIZE_SCHEDULE_EQUALTY= #ORGANIZE_SCHEDULE_EQUALTY# 
+        WHERE ORGANIZE_IDX 	= #ORGANIZE_IDX# 
+    </update>
+    
+    <update id="update_organize_type_02"
+            parameterClass="com.nara.jdf.db.entity.OrganizeEntity">
+     	UPDATE ORGANIZE SET 
+        	ORGANIZE_NAME = #ORGANIZE_NAME# ,
+          	ORGANIZE_TITLE = #ORGANIZE_TITLE# ,
+          	ORGANIZE_OPERATION = #ORGANIZE_OPERATION# ,
+          	ORGANIZE_STMT = #ORGANIZE_STMT# ,
+          	ORGANIZE_SCHEDULE = #ORGANIZE_SCHEDULE#,
+          	ORGANIZE_SCHEDULE_HIGHER = #ORGANIZE_SCHEDULE_HIGHER#,
+          	ORGANIZE_SCHEDULE_LOWER = #ORGANIZE_SCHEDULE_LOWER#, 
+          	ORGANIZE_SCHEDULE_EQUALTY = #ORGANIZE_SCHEDULE_EQUALTY#
+        WHERE ORGANIZE_IDX 	= #ORGANIZE_IDX# 
+    </update>
+    
+    <insert id="insert_organize_type_01"
+            parameterClass="com.nara.jdf.db.entity.OrganizeEntity">
+        INSERT INTO ORGANIZE( 
+          	ORGANIZE_IDX,
+          	DOMAIN,
+          	ORGANIZE_REF,
+          	ORGANIZE_STEP,
+          	ORGANIZE_LEVEL,
+          	ORGANIZE_DEF,
+          	ORGANIZE_ADMIN,
+          	ORGANIZE_NAME,
+          	ORGANIZE_TITLE,
+          	ORGANIZE_OPERATION,
+          	ORGANIZE_STMT, 
+          	ORGANIZE_SCHEDULE,
+          	ORGANIZE_SCHEDULE_HIGHER,
+          	ORGANIZE_SCHEDULE_LOWER,
+          	ORGANIZE_SCHEDULE_EQUALTY
+         ) VALUES (
+         	SEQ_ORGANIZE.NEXTVAL,
+         	#DOMAIN#,
+          	#ORGANIZE_REF#,
+          	#ORGANIZE_STEP#,
+          	#ORGANIZE_LEVEL#,
+          	#ORGANIZE_DEF#,
+          	#ORGANIZE_ADMIN#,
+          	#ORGANIZE_NAME#,
+          	#ORGANIZE_TITLE#,
+          	#ORGANIZE_OPERATION#,
+          	#ORGANIZE_STMT#, 
+          	#ORGANIZE_SCHEDULE#,
+          	#ORGANIZE_SCHEDULE_HIGHER#,
+          	#ORGANIZE_SCHEDULE_LOWER#,
+          	#ORGANIZE_SCHEDULE_EQUALTY#
+         ) 	
+    </insert>
+    
+    <delete id="delete_organize_type_01"
+  				parameterClass="java.util.HashMap">
+   		DELETE FROM ORGANIZE
+  		WHERE	ORGANIZE_IDX = #ORGANIZE_IDX#
+	</delete>
+	
+	
+	<update id="update_organize_step"
+            parameterClass="java.util.HashMap">
+     	UPDATE ORGANIZE SET 
+        	ORGANIZE_STEP = ORGANIZE_STEP+1 
+        WHERE DOMAIN 	= #DOMAIN# 
+        	AND ORGANIZE_REF 	= #ORGANIZE_REF#
+        	<![CDATA[
+			AND	ORGANIZE_STEP > #ORGANIZE_STEP#
+			]]>
+	</update>
+	
+	<update id="update_organize_tree"
+            parameterClass="com.nara.jdf.db.entity.OrganizeEntity">
+     	UPDATE ORGANIZE SET 
+          	ORGANIZE_REF 	= #ORGANIZE_REF# ,
+          	ORGANIZE_STEP 	= #ORGANIZE_STEP# ,
+          	ORGANIZE_LEVEL 	= #ORGANIZE_LEVEL# ,
+          	ORGANIZE_DEF 	= #ORGANIZE_DEF# 
+        WHERE ORGANIZE_IDX 	= #ORGANIZE_IDX# 
+	</update>
+	
+	<select id="select_organize_list_type_05" 
+  				parameterClass="java.util.HashMap"
+					resultClass="com.nara.jdf.db.entity.OrganizeEntity">
+	 	SELECT 
+	     	AA.ORGANIZE_IDX,
+	     	AA.DOMAIN,
+	     	AA.ORGANIZE_REF,
+	     	AA.ORGANIZE_STEP,
+	     	AA.ORGANIZE_LEVEL,
+	     	AA.ORGANIZE_DEF,
+	     	AA.ORGANIZE_ADMIN,
+	     	AA.ORGANIZE_NAME,
+	     	AA.ORGANIZE_TITLE,
+	     	AA.ORGANIZE_OPERATION,
+	     	AA.ORGANIZE_STMT, 
+	     	AA.ORGANIZE_SCHEDULE, 
+	     	AA.ORGANIZE_SCHEDULE_HIGHER, 
+	     	AA.ORGANIZE_SCHEDULE_LOWER, 
+	    	AA.ORGANIZE_SCHEDULE_EQUALTY,
+  			(SELECT COUNT(BB.ORGANIZE_IDX) FROM ORGANIZE BB WHERE AA.ORGANIZE_IDX = BB.ORGANIZE_DEF) SUB_ORANIZE_CNT 
+    	FROM ORGANIZE AA
+    	WHERE AA.DOMAIN= #DOMAIN#
+     	<dynamic prepend="">
+			<isNotNull prepend="AND" property= "ORGANIZE_IDX">
+				AA.ORGANIZE_DEF= #ORGANIZE_IDX#
+			</isNotNull> 			
+			
+		</dynamic>
+     	ORDER BY AA.ORGANIZE_LEVEL
+	</select>
+	
+	<select id="select_organize_count_type02" 
+  				parameterClass="java.util.HashMap" 
+  				resultClass="java.lang.Integer">
+		SELECT count(ORGANIZE_IDX)
+		FROM ORGANIZE 
+         <dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property="ORGANIZE_DEF">
+				ORGANIZE_DEF = #ORGANIZE_DEF#
+			</isNotNull>
+			<isNotNull prepend="AND" property="DOMAIN">
+				DOMAIN = #DOMAIN#
+			</isNotNull>
+		</dynamic> 
+    </select>
+    
+
+    <select id="select_organize_idx_by_organize_name"
+            parameterClass="java.util.HashMap"
+            resultClass="java.lang.Integer">
+        SELECT ORGANIZE_IDX
+        FROM ORGANIZE
+        WHERE
+            DOMAIN = #DOMAIN#
+            AND
+            ORGANIZE_NAME = #ORGANIZE_NAME#
+            <isNull prepend="AND" property="ORGANIZE_DEF">
+            ORGANIZE_DEF = 0
+            </isNull>
+            <isNotNull prepend="AND" property="ORGANIZE_DEF">
+            ORGANIZE_DEF = #ORGANIZE_DEF#
+            </isNotNull>
+    </select>
+    
+    <select id="select_organize_idx_list"
+            parameterClass="java.lang.Integer"
+            resultClass="java.lang.Integer">
+        SELECT ORGANIZE_IDX
+        FROM ORGANIZE
+        WHERE ORGANIZE_DEF = #ORGANIZE_DEF#
+    </select>
+</sqlMap>

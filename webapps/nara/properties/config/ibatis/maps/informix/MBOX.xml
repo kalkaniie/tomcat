@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="MBOX">
+	<select id="select_mbox_count_type_01"
+	            parameterClass="java.util.HashMap"
+	            resultClass="java.lang.Integer">
+	    SELECT 
+	    	COUNT(*) CNT
+	    FROM MBOX
+	    <dynamic prepend="WHERE">
+	  		<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+	  		<isNotNull prepend="AND" property= "MBOX_NAME">
+				MBOX_NAME = #MBOX_NAME#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "MBOX_REF">
+				MBOX_REF = #MBOX_REF#
+			</isNotNull>
+		</dynamic> 
+	</select>
+	<select id="select_mbox_type_01"
+					parameterClass="java.util.HashMap"
+					resultClass="com.nara.jdf.db.entity.WebMailBoxEntity"> 
+		SELECT
+			  MBOX.MBOX_IDX , 
+			  MBOX.USERS_IDX ,
+			  MBOX.MBOX_TYPE ,
+			  MBOX.MBOX_REF, 
+			  MBOX.MBOX_NAME , 
+			  NVL(SUM($MAIL_TABLE$.M_SIZE), 0) AS MBOX_SIZE ,
+			  SUM(CASE WHEN (($MAIL_TABLE$.M_ORDER = 0) AND ($MAIL_TABLE$.M_ISREAD IN ('N', 'P'))) THEN 1 ELSE 0 END) AS  MBOX_NEW_MAILCOUNT,
+			  SUM(CASE WHEN $MAIL_TABLE$.M_ORDER = 0 THEN 1 ELSE 0 END) AS  MBOX_MAILCOUNT
+		FROM MBOX LEFT JOIN $MAIL_TABLE$ ON MBOX.MBOX_IDX= $MAIL_TABLE$.MBOX_IDX
+		WHERE MBOX.USERS_IDX = #USERS_IDX#
+		GROUP BY MBOX.MBOX_IDX, MBOX.USERS_IDX, MBOX.MBOX_TYPE, MBOX.MBOX_REF, MBOX.MBOX_NAME
+		ORDER BY MBOX.MBOX_TYPE, MBOX.MBOX_IDX
+	</select> 
+	<select id="select_mbox_type_02"
+					parameterClass="java.util.HashMap"
+					resultClass="com.nara.jdf.db.entity.WebMailBoxEntity"> 
+		SELECT
+			  AA.MBOX_IDX , 
+			  AA.USERS_IDX ,
+			  AA.MBOX_TYPE ,
+			  AA.MBOX_REF, 
+			  AA.MBOX_NAME , 
+			  AA.MBOX_SIZE ,
+			  AA.MBOX_MAILCOUNT
+		FROM MBOX AA
+		WHERE AA.USERS_IDX = #USERS_IDX#
+		ORDER by MBOX_TYPE, MBOX_IDX, MBOX_REF
+	</select> 
+	<select id="isPrivateMBox"
+				parameterClass="java.lang.String"
+				resultClass="java.lang.Integer" >
+		SELECT
+			COUNT(*) CNT
+		FROM MBOX
+		WHERE USERS_IDX = #USERS_IDX#
+		AND   MBOX_TYPE = 6 	
+	</select>
+<!--	
+	<select id="getPrivateMBox"
+				parameterClass="java.lang.String"
+				resultClass="com.nara.jdf.db.entity.WebMailBoxEntity" >
+        SELECT 
+            MBOX_IDX,
+            USERS_IDX,
+            MBOX_TYPE,
+            LPAD(' ', (LEVEL-1)*4)||MBOX_NAME MBOX_NAME,
+            MBOX_SIZE,
+            MBOX_MAILCOUNT,
+            MBOX_REF,
+            MBOX_SUBSCRIBE
+        FROM MBOX
+        WHERE MBOX_TYPE = 6
+          AND USERS_IDX = #USERS_IDX# 
+        CONNECT BY PRIOR MBOX_IDX = MBOX_REF START WITH MBOX_REF = 0
+    </select>
+-->    
+  	<insert id="insert_mbox_type_01"
+  				parameterClass="com.nara.jdf.db.entity.WebMailBoxEntity">
+		INSERT INTO MBOX
+		(
+			MBOX_IDX,
+			USERS_IDX,
+			MBOX_TYPE,
+			MBOX_REF,
+			MBOX_NAME,
+			MBOX_SIZE,
+			MBOX_MAILCOUNT
+		)
+		VALUES
+		(
+			<dynamic prepend="">
+				<isGreaterEqual prepend="" property="MBOX_IDX" compareValue="1">
+					#MBOX_IDX#,
+				</isGreaterEqual>
+				<isLessEqual prepend="" property="MBOX_IDX" compareValue="0">
+					SEQ_MBOX.NEXTVAL,
+				</isLessEqual>
+			</dynamic>
+			#USERS_IDX#,
+			#MBOX_TYPE#,
+			#MBOX_REF#,
+			#MBOX_NAME#,
+			#MBOX_SIZE#,
+			#MBOX_MAILCOUNT#
+		)
+  	</insert>
+  	
+  	<delete id="delete_mbox_type_01"
+  				parameterClass="java.util.HashMap">
+  		DELETE FROM MBOX
+  		<dynamic prepend="WHERE">
+  			<isNotNull prepend="AND" property= "MBOX_IDX">
+				MBOX_IDX = #MBOX_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "DOMAIN">
+				SUBSTR(USERS_IDX, INSTR(USERS_IDX, '@')) = '@$DOMAIN$'
+			</isNotNull>
+  		</dynamic>
+  	</delete>
+  	
+  	<select id="getMBoxIdxByMboxType"
+    			resultClass="java.lang.Integer">
+    	SELECT 
+    		MBOX_IDX 
+    	FROM MBOX
+    	
+    	<dynamic prepend="WHERE">
+	  		<isNotNull prepend="AND" property= "USERS_IDX">
+	  			USERS_IDX = #USERS_IDX#
+	  		</isNotNull>
+	  		<isNotNull prepend="AND" property= "MBOX_TYPE">
+	  			MBOX_TYPE = #MBOX_TYPE#
+	  		</isNotNull>
+	  	</dynamic>
+    </select>
+    
+    
+    <update id="update_mbox_type_01"
+            parameterClass="java.util.HashMap">
+    	UPDATE MBOX SET
+	    	MBOX_MAILCOUNT = 0,
+	    	MBOX_SIZE = 0
+        <dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "MBOX_IDX">
+				MBOX_IDX = #MBOX_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+		</dynamic>
+	</update>
+    <update id="update_mbox_type_02"
+            parameterClass="java.util.HashMap">
+    	UPDATE MBOX SET
+	    	MBOX_NAME = #MBOX_NAME#
+        <dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "MBOX_IDX">
+				MBOX_IDX = #MBOX_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+		</dynamic>
+	</update>
+	
+	<select id="select_mbox_info_type_01" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="com.nara.jdf.db.entity.WebMailBoxEntity">	   	
+	   	SELECT 
+	   		B.MBOX_IDX ,
+	   		B.USERS_IDX , 
+	   		B.MBOX_TYPE , 
+	   		B.MBOX_REF , 
+	   		B.MBOX_NAME , 
+	   		A.MBOX_SIZE ,
+	   		A.MBOX_MAILCOUNT 
+		FROM TABLE 
+			( MULTISET (
+			 SELECT MBOX_IDX, 
+					COUNT(MBOX_IDX) MBOX_MAILCOUNT, 
+					SUM(M_SIZE) MBOX_SIZE 
+			 FROM $MAIL_TABLE$
+			 WHERE MBOX_IDX = #MBOX_IDX# 
+			 GROUP BY MBOX_IDX 
+			)) A, MBOX B 
+		<dynamic prepend="WHERE">
+	  		<isNotNull prepend="AND" property= "USERS_IDX">
+				B.USERS_IDX = #USERS_IDX#
+			</isNotNull>
+	  		AND B.MBOX_IDX = A.MBOX_IDX
+		</dynamic>
+	   	
+  	</select>
+  	
+</sqlMap>

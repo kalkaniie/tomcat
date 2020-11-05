@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="BBS_USERLOG"> 
+  	<select id="select_bbs_userlog_type_01" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="java.util.HashMap">
+  		 SELECT
+           	BBS_USERLOG_IDX,
+           	USERS_IDX,
+           	BBS_USERLOG_DATE
+         FROM BBS_USERLOG
+         <dynamic prepend="WHERE">
+  			<isNotNull prepend="AND" property= "BBS_USERLOG_IDX">
+				BBS_USERLOG_IDX = #BBS_USERLOG_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+		</dynamic>
+	</select>	
+
+	<delete id="delete_bbs_userlog_type_01" 
+  				parameterClass="java.util.HashMap">
+		DELETE FROM BBS_USERLOG
+		
+		<dynamic prepend="WHERE">
+  			<isNotNull prepend="AND" property= "BBS_USERLOG_IDX">
+				BBS_USERLOG_IDX = #BBS_USERLOG_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+		</dynamic>
+	</delete>
+	
+	<delete id="delete_bbs_userlog_type_02" 
+  				parameterClass="java.util.HashMap">
+		<![CDATA[
+		DELETE FROM BBS_USERLOG
+		WHERE TO_DATE(BBS_USERLOG_DATE,'%Y-%m-%d %T') < TO_DATE(?,'%Y-%m-%d %T')
+		]]>
+	</delete>
+
+	<insert id="insert_bbs_userlog_type_01"
+            parameterClass="java.util.HashMap">
+    	INSERT INTO BBS_USERLOG( 
+	        BBS_USERLOG_IDX,
+	        USERS_IDX,
+	        BBS_USERLOG_DATE
+	  	) VALUES (
+	  		#BBS_USERLOG_IDX#,
+	  		#USERS_IDX# ,
+	        #BBS_USERLOG_DATE# 
+	  	)      
+	</insert>
+</sqlMap>

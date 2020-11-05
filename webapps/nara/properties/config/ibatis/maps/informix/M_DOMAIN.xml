@@ -1,0 +1,1017 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="M_DOMAIN"> 
+ 	<resultMap id="result_lob_map" class="java.util.HashMap">
+		<result property="idx_key" column="idx_key" />			
+		<result property="content" column="content" jdbcType="CLOB"/>
+	</resultMap>
+   	
+   	<resultMap id="result_mlist_01" class="java.util.HashMap">
+		<result property="M_IDX" column="M_IDX" />
+		<result property="M_ORDER" column="M_ORDER" />
+		<result property="MBOX_IDX" column="MBOX_IDX" />
+		<result property="M_SENDER" column="M_SENDER" />
+		<result property="M_SENDERNM" column="M_SENDERNM" />
+		<result property="M_TO" column="M_TO" javaType="java.lang.String"/>
+		<result property="M_TITLE" column="M_TITLE" />
+		<result property="M_TIME" column="M_TIME" />
+		
+		<result property="M_SIZE" column="M_SIZE" />
+		<result property="M_ATTACHE" column="M_ATTACHE" />				
+		<result property="M_ISREAD" column="M_ISREAD" />
+		<result property="TAG_TYPE" column="TAG_TYPE" />
+	</resultMap>
+	
+   	<select id="select_m_domain_type_01" 
+  				parameterClass="java.util.HashMap"
+  				resultMap="result_mlist_01">
+  	 	SELECT SKIP $SKIP$ FIRST $USERS_LISTNUM$
+			M_IDX, 
+			M_ORDER, 
+			MBOX_IDX, 
+			USERS_IDX, 
+			M_SENDER, 
+			M_SENDERNM, 
+			M_RETURN, 
+			M_TO, 
+			M_TITLE, 
+			TO_CHAR(M_TIME, '%Y-%m-%d %H:%M:%S') M_TIME,
+			M_SIZE, 
+			M_ATTACHE, 
+			M_ISREAD, 
+			TAG_TYPE
+  	 	FROM $MAIL_TABLE$
+  	 	<dynamic prepend="WHERE">
+  	 		<isNotNull prepend="AND" property= "M_ORDER">
+				M_ORDER = #M_ORDER#
+			</isNotNull>
+  	 		<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "MBOX_IDX">
+				MBOX_IDX = #MBOX_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "M_IDX">
+				M_IDX = #M_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "TAG_TYPE">
+				TAG_TYPE = #TAG_TYPE#
+			</isNotNull>
+			<isEqual prepend="AND" property= "READ_MODE" compareValue="NEW">
+				M_ISREAD IN ('N', 'P')
+			</isEqual>
+			<isEqual prepend="AND" property= "READ_MODE" compareValue="READ">
+				M_ISREAD IN ('Y', 'O', 'F', 'R')
+			</isEqual>
+		</dynamic>
+		ORDER BY $orderCol$ $orderType$, M_IDX DESC
+  	</select>
+  	
+  	<select id="select_m_domain_type_02" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="java.lang.String">
+  		<dynamic prepend="">
+  			<isEqual prepend="" property= "method" compareValue="getM_SENDER">
+  				SELECT
+  					M_SENDER
+  				FROM $MAIL_TABLE$
+  				WHERE M_IDX = #M_IDX#
+  			</isEqual>
+  		</dynamic>
+  	</select>
+  	
+  	<select id="select_m_domain_type_03" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="com.nara.jdf.db.entity.WebMailEntity">
+	   	SELECT
+			M_IDX, 
+			M_ORDER, 
+			M_GROUP, 
+			MBOX_IDX, 
+			USERS_IDX, 
+			M_SENDER, 
+			M_SENDERNM, 
+			M_RETURN, 
+			M_TO, 
+			M_CC, 
+			M_BCC, 
+			M_TITLE, 
+			<!-- M_CONTENT, --> 
+			M_TYPE, 
+			TO_CHAR(M_TIME, '%Y-%m-%d %H:%M:%S') M_TIME,
+			M_SIZE, 
+			M_ATTACHE, 
+			M_ATTACH_NUM, 
+			M_ATTACH_NAME, 
+			M_ATTACH_SIZE, 
+			M_ATTACH_TYPE, 
+			M_ISREAD, 
+			M_PRIORITY, 
+			M_INJURIOUSE, 
+			M_DELETED, 
+			M_KIND, 
+			M_FILENAME, 
+			M_FILEPATH, 
+			M_ISPARSED, 
+			TAG_TYPE
+	  	FROM $MAIL_TABLE$
+	  	<dynamic prepend="WHERE">
+	  		<isNotNull prepend="AND" property= "M_IDX">
+				M_IDX = #M_IDX#
+			</isNotNull>
+	  		<isNotNull prepend="AND" property= "M_ORDER">
+				M_ORDER = #M_ORDER#
+			</isNotNull>
+		</dynamic>
+  	</select>
+  	
+  	<select id="select_m_domain_type_04" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="com.nara.jdf.db.entity.WebMailEntity">
+	   	SELECT
+			A.M_IDX, 
+			A.M_ORDER, 
+			M_GROUP, 
+			MBOX_IDX, 
+			USERS_IDX, 
+			M_SENDER, 
+			M_SENDERNM, 
+			M_RETURN, 
+			M_TO, 
+			M_CC, 
+			M_BCC, 
+			M_TITLE, 
+			M_CONTENT, 
+			M_TYPE, 
+			TO_CHAR(M_TIME, '%Y-%m-%d %H:%M:%S') M_TIME,
+			M_SIZE, 
+			M_ATTACHE, 
+			M_ATTACH_NUM, 
+			M_ATTACH_NAME, 
+			M_ATTACH_SIZE, 
+			M_ATTACH_TYPE, 
+			M_ISREAD, 
+			M_PRIORITY, 
+			M_INJURIOUSE, 
+			M_DELETED, 
+			M_KIND, 
+			M_FILENAME, 
+			M_FILEPATH, 
+			M_ISPARSED, 
+			TAG_TYPE
+	  	FROM $MAIL_TABLE$ A, $MAIL_TABLE$_CONTENT B
+	  	WHERE A.M_IDX = B.M_IDX and A.M_ORDER = B.M_ORDER
+	  	<dynamic>
+	  		<isNotNull prepend="AND" property= "M_IDX">
+				A.M_IDX = #M_IDX#
+			</isNotNull>
+	  		<isNotNull prepend="AND" property= "M_ORDER">
+				A.M_ORDER = #M_ORDER#
+			</isNotNull>
+		</dynamic>
+		
+		ORDER BY A.M_ORDER, M_GROUP
+  	</select>
+  	
+  	<select id="select_m_domain_type_05" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="com.nara.jdf.db.entity.WebMailEntity">
+	   	SELECT
+			M_IDX, 
+			M_ORDER, 
+			M_GROUP, 
+			MBOX_IDX, 
+			USERS_IDX, 
+			M_SENDER, 
+			M_SENDERNM, 
+			M_RETURN, 
+			M_TO, 
+			M_CC, 
+			M_BCC, 
+			M_TITLE, 
+			M_TYPE, 
+			TO_CHAR(M_TIME, '%Y-%m-%d %H:%M:%S') M_TIME,
+			M_SIZE, 
+			M_ATTACHE, 
+			M_ATTACH_NUM, 
+			M_ATTACH_NAME, 
+			M_ATTACH_SIZE, 
+			M_ATTACH_TYPE, 
+			M_ISREAD, 
+			M_PRIORITY, 
+			M_INJURIOUSE, 
+			M_DELETED, 
+			M_KIND, 
+			M_FILENAME, 
+			M_FILEPATH, 
+			M_ISPARSED, 
+			TAG_TYPE
+	  	FROM $MAIL_TABLE$
+	  	<dynamic prepend="WHERE">
+	  		<isNotNull prepend="AND" property= "M_IDX">
+				M_IDX = #M_IDX#
+			</isNotNull>
+	  		<isNotNull prepend="AND" property= "M_ORDER">
+				M_ORDER = #M_ORDER#
+			</isNotNull>
+		</dynamic>
+		
+		ORDER BY M_ORDER, M_GROUP
+  	</select>
+  	
+  	<select id="getMailIdxFromBox" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="com.nara.jdf.db.entity.WebMailEntity">
+		SELECT
+  			M_IDX
+		FROM $MAIL_TABLE$
+		WHERE MBOX_IDX = #MBOX_IDX#
+		AND USERS_IDX = #USERS_IDX#
+  	</select>
+  	
+  	<select id="select_mail_count_type_01" 
+   				parameterClass="java.util.HashMap"
+  				resultClass="java.lang.Integer">
+    	SELECT
+			COUNT(*) cnt
+    	FROM $MAIL_TABLE$
+    	<dynamic prepend="WHERE">
+	  		<isNotNull prepend="AND" property= "M_ORDER">
+				M_ORDER = #M_ORDER#
+			</isNotNull>
+	  		<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "MBOX_IDX">
+				MBOX_IDX = #MBOX_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "M_IDX">
+				M_IDX = #M_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "TAG_TYPE">
+				TAG_TYPE = #TAG_TYPE#
+			</isNotNull>
+			<isEqual prepend="AND" property= "READ_MODE" compareValue="NEW">
+				M_ISREAD IN ('N', 'P')
+			</isEqual>
+			<isEqual prepend="AND" property= "READ_MODE" compareValue="READ">
+				M_ISREAD IN ('Y', 'O', 'F', 'R')
+			</isEqual>
+		</dynamic>
+  	</select>
+  	
+  	<select id="select_mail_uid" 
+   				parameterClass="java.util.HashMap"
+  				resultClass="java.lang.String">
+  		SELECT M_FILENAME
+  		FROM $MAIL_TABLE$
+  		WHERE USERS_IDX = #USERS_IDX#
+  		AND M_FILENAME IS NOT NULL
+  	</select>
+  	
+	<update id="update_mail_move_type_01"
+			parameterClass="java.util.HashMap">
+		UPDATE $MAIL_TABLE$ 
+		SET	MBOX_IDX = #MBOX_IDX#
+		WHERE M_IDX =  #M_IDX#
+	</update>
+	
+
+  	
+  	<select id="select_m_domain_content_type_01" 
+  				parameterClass="java.util.HashMap"
+  				resultMap="result_lob_map">
+		SELECT
+			M_IDX idx_key,
+			M_CONTENT content
+		FROM $MAIL_TABLE$
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "M_IDX">
+				M_IDX = #M_IDX#
+			</isNotNull>
+		</dynamic>  				
+  	</select>
+  	
+  	<delete id="delete_m_domain_type_01"
+  				parameterClass="java.util.HashMap">
+  		DELETE FROM $MAIL_TABLE$
+  		<dynamic prepend="WHERE">
+  			<isNotNull prepend="AND" property= "M_IDX">
+				M_IDX = #M_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "MBOX_IDX">
+				MBOX_IDX = #MBOX_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+  		</dynamic>
+  	</delete>
+    <delete id="delete_m_domain_content_type_01"
+  				parameterClass="java.util.HashMap">
+  		DELETE FROM $MAIL_TABLE$_CONTENT
+  		<dynamic prepend="WHERE">
+  			<isNotNull prepend="AND" property= "M_IDX">
+				M_IDX = #M_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "MBOX_IDX">
+				M_IDX IN (SELECT M_IDX FROM $MAIL_TABLE$ WHERE MBOX_IDX = #MBOX_IDX#)
+			</isNotNull>
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				M_IDX IN (SELECT M_IDX FROM $MAIL_TABLE$ WHERE USERS_IDX = #USERS_IDX#)
+			</isNotNull>
+  		</dynamic>
+  	</delete>
+
+    <update id="update_m_domain_type_01"
+            parameterClass="java.util.HashMap">
+    	UPDATE $MAIL_TABLE$
+    	
+    	<dynamic prepend="">
+			<isEqual prepend="SET " property="UPDATE_TYPE" compareValue="TAG_TYPE">
+				TAG_TYPE = #TAG_TYPE#
+			</isEqual>
+			<isEqual prepend="SET " property="UPDATE_TYPE" compareValue="M_ISREAD">
+				M_ISREAD = #M_ISREAD#
+			</isEqual>
+			<isEqual prepend="SET " property="UPDATE_TYPE" compareValue="MBOX_IDX">
+				MBOX_IDX = #MBOX_IDX#
+			</isEqual>
+            <isEqual prepend="SET " property="UPDATE_TYPE" compareValue="M_INJURIOUSE">
+                M_INJURIOUSE = #M_INJURIOUSE#
+            </isEqual>
+            <isEqual prepend="SET " property="UPDATE_TYPE" compareValue="M_PRIORITY">
+                M_PRIORITY = #M_PRIORITY#
+            </isEqual>
+		</dynamic>
+		
+		WHERE M_IDX = #M_IDX#
+    </update>
+    
+    <select id="select_last_m_idx" 
+            parameterClass="java.lang.String"
+            resultClass="java.lang.Integer">
+        SELECT SEQ_$MAIL_TABLE$.CURRVAL FROM SYS.DUAL
+    </select>
+    
+    <select id="get_pre_m_idx" 
+            parameterClass="java.util.HashMap"
+            resultClass="java.lang.Integer">
+		<![CDATA[
+			SELECT NVL(MAX(M_IDX), 0) M_IDX
+			FROM $MAIL_TABLE$
+			WHERE M_IDX < #M_IDX#
+		]]>
+		<dynamic prepend="">
+			<isEqual prepend="AND" property= "VIEW_TYPE" compareValue="tag">
+				TAG_TYPE = #TAG_TYPE#
+			</isEqual>
+			<isNotEqual prepend="AND" property= "VIEW_TYPE" compareValue="tag">
+				MBOX_IDX = #MBOX_IDX#
+			</isNotEqual>
+			<isEqual prepend="AND" property= "READ_MODE" compareValue="NEW">
+				M_ISREAD IN ('N', 'P')
+			</isEqual>
+			<isEqual prepend="AND" property= "READ_MODE" compareValue="READ">
+				M_ISREAD IN ('Y', 'O', 'F', 'R')
+			</isEqual>
+			
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+		</dynamic>
+    </select>
+    
+    <select id="get_next_m_idx" 
+            parameterClass="java.util.HashMap"
+            resultClass="java.lang.Integer">
+		<![CDATA[
+			SELECT NVL(MIN(M_IDX), 0) M_IDX
+			FROM $MAIL_TABLE$
+			WHERE M_IDX > #M_IDX#
+		]]>
+		<dynamic prepend="">
+			<isEqual prepend="AND" property= "VIEW_TYPE" compareValue="tag">
+				TAG_TYPE = #TAG_TYPE#
+			</isEqual>
+			<isNotEqual prepend="AND" property= "VIEW_TYPE" compareValue="tag">
+				MBOX_IDX = #MBOX_IDX#
+			</isNotEqual>
+			<isEqual prepend="AND" property= "READ_MODE" compareValue="NEW">
+				M_ISREAD IN ('N', 'P')
+			</isEqual>
+			<isEqual prepend="AND" property= "READ_MODE" compareValue="READ">
+				M_ISREAD IN ('Y', 'O', 'F', 'R')
+			</isEqual>
+			
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+		</dynamic>
+    </select>
+    
+     <resultMap id="result_mlist_02" class="java.util.HashMap">
+		<result property="M_IDX" column="M_IDX" />
+		<result property="M_TITLE" column="M_TITLE" />
+		<result property="M_TIME" column="M_TIME" />				
+		<result property="M_TO" column="M_TO" javaType="java.lang.String"/>
+		<result property="M_ISREAD" column="M_ISREAD"/>
+	</resultMap>
+    <select id="select_m_domain_type_ajax" 
+  				parameterClass="java.util.HashMap"
+  				resultMap="result_mlist_02">
+  	 	SELECT SKIP $SKIP$ FIRST $USERS_LISTNUM$
+			M_IDX, 
+			M_ORDER, 
+			M_GROUP, 
+			MBOX_IDX, 
+			USERS_IDX, 
+			M_SENDER, 
+			M_SENDERNM, 
+			M_RETURN, 
+			M_TO, 
+			M_CC, 
+			M_BCC, 
+			M_TITLE, 
+			M_TYPE, 
+			TO_CHAR(M_TIME, '%Y-%m-%d %H:%M:%S') M_TIME,
+			M_SIZE, 
+			M_ATTACHE, 
+			M_ATTACH_NUM, 
+			M_ATTACH_NAME, 
+			M_ATTACH_SIZE, 
+			M_ATTACH_TYPE, 
+			M_ISREAD, 
+			M_PRIORITY, 
+			M_INJURIOUSE, 
+			M_DELETED, 
+			M_KIND, 
+			M_FILENAME, 
+			M_FILEPATH, 
+			M_ISPARSED, 
+			TAG_TYPE
+  	 	FROM $MAIL_TABLE$
+  	 	<dynamic prepend="WHERE">
+  	 		<isNotNull prepend="AND" property= "M_ORDER">
+				M_ORDER = #M_ORDER#
+			</isNotNull>
+  	 		<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "MBOX_IDX">
+				MBOX_IDX = #MBOX_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "M_IDX">
+				M_IDX = #M_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "TAG_TYPE">
+				TAG_TYPE = #TAG_TYPE#
+			</isNotNull>
+			<isEqual prepend="AND" property= "READ_MODE" compareValue="NEW">
+				M_ISREAD IN ('N', 'P')
+			</isEqual>
+			<isEqual prepend="AND" property= "READ_MODE" compareValue="READ">
+				M_ISREAD IN ('Y', 'O', 'F', 'R')
+			</isEqual>
+		</dynamic>
+		ORDER BY $orderCol$ $orderType$
+  	</select>
+  	
+  	<resultMap id="result_mlist_02" class="java.util.HashMap">
+		<result property="M_IDX" column="M_IDX" />
+		<result property="M_ORDER" column="M_ORDER" />
+		<result property="MBOX_IDX" column="MBOX_IDX" />
+		<result property="MBOX_NAME" column="MBOX_NAME" />
+		<result property="M_SENDER" column="M_SENDER" />
+		<result property="M_SENDERNM" column="M_SENDERNM" />
+		<result property="M_TO" column="M_TO" javaType="java.lang.String"/>
+		<result property="M_TITLE" column="M_TITLE" />
+		<result property="M_TIME" column="M_TIME" />
+		
+		<result property="M_SIZE" column="M_SIZE" />
+		<result property="M_ATTACHE" column="M_ATTACHE" />				
+		<result property="M_ISREAD" column="M_ISREAD" />
+		<result property="TAG_TYPE" column="TAG_TYPE" />
+	</resultMap>
+  	<select id="select_m_domain_type_search" 
+  				parameterClass="java.util.HashMap"
+  				resultMap="result_mlist_02">
+  	 	SELECT SKIP $SKIP$ FIRST $USERS_LISTNUM$
+			M_IDX, 
+			M_ORDER, 
+			MBOX_IDX, 
+			(SELECT MBOX_NAME FROM MBOX WHERE MBOX_IDX = V.MBOX_IDX) AS MBOX_NAME,
+			USERS_IDX, 
+			M_SENDER, 
+			M_SENDERNM, 
+			M_RETURN, 
+			M_TO, 
+			M_TITLE, 
+			TO_CHAR(M_TIME, '%Y-%m-%d %H:%M:%S') M_TIME,
+			M_SIZE, 
+			M_ATTACHE, 
+			M_ISREAD, 
+			TAG_TYPE
+  	 	FROM $MAIL_TABLE$
+  	 	<dynamic prepend="WHERE">
+  	 		<isNotNull prepend="AND" property= "M_ORDER">
+				M_ORDER = #M_ORDER#
+			</isNotNull>
+  	 		<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			
+			<isNotEqual prepend="AND" property= "MBOX_IDX" compareValue="0">
+				MBOX_IDX = #MBOX_IDX#
+			</isNotEqual>
+			
+			<isNotNull prepend="AND" property= "M_IDX">
+				M_IDX = #M_IDX#
+			</isNotNull>
+			
+			<isEqual prepend="AND" property= "READ_MODE" compareValue="NEW">
+				M_ISREAD IN ('N', 'P')
+			</isEqual>
+			<isEqual prepend="AND" property= "READ_MODE" compareValue="READ">
+				M_ISREAD IN ('Y', 'O', 'F', 'R')
+			</isEqual>
+			
+			<isEqual prepend="AND" property= "VIEW_TYPE" compareValue="tag">
+				TAG_TYPE = #TAG_TYPE#
+			</isEqual>
+			
+			AND ( 1 !=1				
+				<isNotEqual prepend="OR" property= "M_TITLE" compareValue="">
+					M_TITLE like '%$strKeyword$%'
+				</isNotEqual>
+				
+				<isNotEqual prepend="OR" property= "M_SENDER" compareValue="">
+					M_SENDER like '%$strKeyword$%'
+				</isNotEqual>
+				
+				<isNotEqual prepend="OR" property= "M_SENDERNM" compareValue="">
+					M_SENDERNM like '%$strKeyword$%'
+				</isNotEqual>
+				
+				<isNotEqual prepend="OR" property= "M_TO" compareValue="">
+					M_TO like '%$strKeyword$%'
+				</isNotEqual>
+			)
+			
+			<isNotEqual prepend="AND" property= "startdt" compareValue="">
+				M_TIME between TO_DATE(#startdt#,'%Y-%m-%d') and TO_DATE(#enddt#,'%Y-%m-%d')+ 23 UNITS HOUR + 59 UNITS MINUTE + 59 UNITS SECOND
+			</isNotEqual>	
+		</dynamic>
+		ORDER BY $orderCol$ $orderType$	
+  	</select>
+  	
+  	
+  	<select id="select_m_domain_type_search_count" 
+   				parameterClass="java.util.HashMap"
+  				resultClass="java.lang.Integer">
+    	SELECT
+			COUNT(*) cnt
+    	FROM $MAIL_TABLE$
+    	<dynamic prepend="WHERE">
+	  	 		<isNotNull prepend="AND" property= "M_ORDER">
+					M_ORDER = #M_ORDER#
+				</isNotNull>
+	  	 		<isNotNull prepend="AND" property= "USERS_IDX">
+					USERS_IDX = #USERS_IDX#
+				</isNotNull>
+				
+				<isNotEqual prepend="AND" property= "MBOX_IDX" compareValue="0">
+					MBOX_IDX = #MBOX_IDX#
+				</isNotEqual>
+				
+				<isNotNull prepend="AND" property= "M_IDX">
+					M_IDX = #M_IDX#
+				</isNotNull>
+				
+				<isEqual prepend="AND" property= "READ_MODE" compareValue="NEW">
+					M_ISREAD IN ('N', 'P')
+				</isEqual>
+				<isEqual prepend="AND" property= "READ_MODE" compareValue="READ">
+					M_ISREAD IN ('Y', 'O', 'F', 'R')
+				</isEqual>
+				
+				<isEqual prepend="AND" property= "VIEW_TYPE" compareValue="tag">
+					TAG_TYPE = #TAG_TYPE#
+				</isEqual>
+				
+				AND ( 1 !=1				
+					<isNotEqual prepend="OR" property= "M_TITLE" compareValue="">
+						M_TITLE like '%$strKeyword$%'
+					</isNotEqual>
+					
+					<isNotEqual prepend="OR" property= "M_SENDER" compareValue="">
+						M_SENDER like '%$strKeyword$%'
+					</isNotEqual>
+					
+					<isNotEqual prepend="OR" property= "M_SENDERNM" compareValue="">
+						M_SENDERNM like '%$strKeyword$%'
+					</isNotEqual>
+					
+					<isNotEqual prepend="OR" property= "M_TO" compareValue="">
+						M_TO like '%$strKeyword$%'
+					</isNotEqual>
+				)
+				
+				<isNotEqual prepend="AND" property= "startdt" compareValue="">
+					M_TIME between TO_DATE(#startdt#,'%Y-%m-%d') and TO_DATE(#enddt#,'%Y-%m-%d')+ 23 UNITS HOUR + 59 UNITS MINUTE + 59 UNITS SECOND
+				</isNotEqual>
+			</dynamic>	
+  	</select>
+  	
+    <update id="update_isread"
+            parameterClass="java.util.HashMap">
+        UPDATE $MAIL_TABLE$ SET M_ISREAD = #M_ISREAD# WHERE M_IDX = #M_IDX#
+    </update>
+    
+    <update id="update_m_injuriouse"
+            parameterClass="java.util.HashMap">
+        UPDATE $MAIL_TABLE$ SET M_INJURIOUSE = #M_INJURIOUSE#
+        WHERE M_IDX = #M_IDX#
+    </update>
+    
+    <update id="update_m_priority"
+            parameterClass="java.util.HashMap">
+        UPDATE $MAIL_TABLE$ SET M_PRIORITY = #M_PRIORITY#
+        WHERE M_IDX = #M_IDX#
+    </update>
+    
+    <select id="select_m_domain_m_idx" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="java.lang.String">
+  	 	SELECT	M_IDX
+  	 	FROM $MAIL_TABLE$
+  	 	WHERE M_ORDER = 0
+		AND USERS_IDX = #USERS_IDX#
+  	</select>
+  	
+  	<select id="select_m_domain_m_idx_by_reconf" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="java.util.HashMap">
+  	 	SELECT	M_IDX, USERS_IDX
+  	 	FROM $MAIL_TABLE$
+  	 	WHERE M_ORDER = 0
+  	 	<dynamic prepend="">
+			<isEqual prepend="AND" property= "RECONF_KEY" compareValue="MAIL_RECONF_MESSAGE_ID">
+				MAIL_RECONF_MESSAGE_ID = #RECONF_VALUE#
+			</isEqual>
+			<isEqual prepend="AND" property= "RECONF_KEY" compareValue="MAIL_RECONF_GROUP">
+				MAIL_RECONF_MESSAGE_ID IN (SELECT MAIL_RECONF_MESSAGE_ID FROM MAIL_RECONF WHERE MAIL_RECONF_GROUP = #RECONF_VALUE#)
+			</isEqual>
+  	 	</dynamic>
+  	 	AND #RECONF_KEY# IS NOT NULL
+  	</select>
+  	
+  	<select id="select_m_title_by_m_idx"
+  	        parameterClass="java.util.HashMap"
+  	        resultClass="java.lang.String">
+  	    SELECT M_TITLE FROM $MAIL_TABLE$ WHERE M_IDX = #M_IDX# AND M_ORDER = 0
+  	</select>
+  	
+    <insert id="insert_mail"
+            parameterClass="com.nara.jdf.db.entity.WebMailEntity">
+        <selectKey resultClass="int" keyProperty="M_IDX">
+            SELECT SEQ_$MAIL_TABLE$.NEXTVAL FROM DUAL
+        </selectKey>
+        INSERT INTO $MAIL_TABLE$
+        (
+            M_IDX,
+            M_ORDER,
+            M_GROUP,
+            MBOX_IDX,
+            USERS_IDX,
+            
+            M_SENDER,
+            M_SENDERNM,
+            M_RETURN,
+            M_TO,
+            M_CC,
+            
+            M_BCC,
+            M_TITLE,
+            M_TYPE,
+            M_TIME,
+            
+            M_SIZE,
+            M_ATTACHE,
+            M_ATTACH_NUM,
+            M_ATTACH_NAME,
+            M_ATTACH_SIZE,
+            
+            M_ATTACH_TYPE,
+            M_ISREAD,
+            M_PRIORITY,
+            M_INJURIOUSE,
+            M_DELETED,
+
+            M_KIND,
+            M_FILENAME,
+            M_FILEPATH,
+            M_ISPARSED,
+            TAG_TYPE
+
+        ) VALUES (
+            #M_IDX#,
+            #M_ORDER#,
+            #M_GROUP#,
+            #MBOX_IDX#,
+            #USERS_IDX#,
+            
+            #M_SENDER#,
+            #M_SENDERNM#,
+            #M_RETURN#,
+            #M_TO#,
+            #M_CC#,
+            
+            #M_BCC#,
+            #M_TITLE#,    
+            #M_TYPE#,
+            TO_DATE(#M_TIME#, '%Y-%m-%d %H:%M:%S'),
+            
+            #M_SIZE#,
+            #M_ATTACHE#,
+            #M_ATTACH_NUM#,
+            #M_ATTACH_NAME#,
+            #M_ATTACH_SIZE#,
+            
+            #M_ATTACH_TYPE#,
+            #M_ISREAD#,
+            #M_PRIORITY#,
+            #M_INJURIOUSE#,
+            #M_DELETED#,
+            
+            #M_KIND#,
+            #M_FILENAME#,
+            #M_FILEPATH#,
+            #M_ISPARSED#,
+            #TAG_TYPE#
+        )
+    </insert>
+    <insert id="insert_sub_mail"
+            parameterClass="com.nara.jdf.db.entity.WebMailEntity">
+        INSERT INTO $MAIL_TABLE$
+        (
+            M_IDX,
+            M_ORDER,
+            M_GROUP,
+            MBOX_IDX,
+            USERS_IDX,
+            
+            M_SENDER,
+            M_SENDERNM,
+            M_RETURN,
+            M_TO,
+            M_CC,
+            
+            M_BCC,
+            M_TITLE,
+            M_TYPE,
+            M_TIME,
+            
+            M_SIZE,
+            M_ATTACHE,
+            M_ATTACH_NUM,
+            M_ATTACH_NAME,
+            M_ATTACH_SIZE,
+            
+            M_ATTACH_TYPE,
+            M_ISREAD,
+            M_PRIORITY,
+            M_INJURIOUSE,
+            M_DELETED,
+
+            M_KIND,
+            M_FILENAME,
+            M_FILEPATH,
+            M_ISPARSED,
+            TAG_TYPE
+
+        ) VALUES (
+            #M_IDX#,
+            #M_ORDER#,
+            #M_GROUP#,
+            #MBOX_IDX#,
+            #USERS_IDX#,
+            
+            #M_SENDER#,
+            #M_SENDERNM#,
+            #M_RETURN#,
+            #M_TO#,
+            #M_CC#,
+            
+            #M_BCC#,
+            #M_TITLE#,
+            #M_TYPE#,
+            TO_DATE(#M_TIME#, '%Y-%m-%d %H:%M:%S'),
+            
+            #M_SIZE#,
+            #M_ATTACHE#,
+            #M_ATTACH_NUM#,
+            #M_ATTACH_NAME#,
+            #M_ATTACH_SIZE#,
+            
+            #M_ATTACH_TYPE#,
+            #M_ISREAD#,
+            #M_PRIORITY#,
+            #M_INJURIOUSE#,
+            #M_DELETED#,
+            
+            #M_KIND#,
+            #M_FILENAME#,
+            #M_FILEPATH#,
+            #M_ISPARSED#,
+            #TAG_TYPE#
+        )
+    </insert>
+    <insert id="insert_mail_content"
+            parameterClass="com.nara.jdf.db.entity.WebMailEntity">
+        INSERT INTO $MAIL_TABLE$_CONTENT
+        (
+            M_IDX,
+            M_ORDER,
+            M_CONTENT,
+            M_CONTENT_TYPE
+        ) VALUES (
+            #M_IDX#,
+            #M_ORDER#,
+            #M_CONTENT,javaType=java.lang.String,jdbcType=NCLOB#,      
+            #M_TYPE#
+        )
+    </insert>
+  	<select id="get_m_sender_info" 
+   				parameterClass="java.util.HashMap"
+  				resultClass="java.util.HashMap">
+    	SELECT
+			M_SENDER, M_SENDERNM
+    	FROM $MAIL_TABLE$
+    	WHERE USERS_IDX = #USERS_IDX#
+    	AND MBOX_IDX = #MBOX_IDX#
+  	</select>    
+  	
+  	<select id="get_newmail_noti_list"
+  			parameterClass="java.util.HashMap"
+  			resultMap="result_mlist_01">
+  		SELECT 
+			M_IDX, 
+			M_ORDER, 
+			MBOX_IDX, 
+			USERS_IDX, 
+			M_SENDER, 
+			M_SENDERNM, 
+			M_RETURN, 
+			M_TO, 
+			M_TITLE, 
+			TO_CHAR(M_TIME, '%Y-%m-%d %H:%M:%S') M_TIME,
+			M_SIZE, 
+			M_ATTACHE, 
+			M_ISREAD, 
+			TAG_TYPE
+  		FROM $MAIL_TABLE$
+  		<dynamic prepend="WHERE">
+  	 		<isNotNull prepend="AND" property= "M_ORDER">
+				M_ORDER = #M_ORDER#
+			</isNotNull>
+  	 		<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "M_NOTICE">
+				M_NOTICE = #M_NOTICE#
+			</isNotNull>
+  		</dynamic>
+  		
+  		ORDER BY M_TIME
+  	</select>
+  	
+  	<update id="update_m_notice"
+            parameterClass="java.util.HashMap">
+    	UPDATE $MAIL_TABLE$
+        SET    M_NOTICE = #M_NOTICE#
+		WHERE USERS_IDX = #USERS_IDX#
+		AND   M_NOTICE = 'N'
+    </update>
+    
+    
+    <select id="select_mail_count_toMe" 
+   				parameterClass="java.util.HashMap"
+  				resultClass="java.lang.Integer">
+    	SELECT
+			COUNT(*) cnt
+    	FROM $MAIL_TABLE$
+    	<dynamic prepend="WHERE">
+	  		<isNotNull prepend="AND" property= "M_ORDER">
+				M_ORDER = #M_ORDER#
+			</isNotNull>
+	  		<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			
+			<isNotNull prepend="AND" property= "M_IDX">
+				M_IDX = #M_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "TAG_TYPE">
+				TAG_TYPE = #TAG_TYPE#
+			</isNotNull>
+			<isEqual prepend="AND" property= "READ_MODE" compareValue="NEW">
+				M_ISREAD IN ('N', 'P')
+			</isEqual>
+			<isEqual prepend="AND" property= "READ_MODE" compareValue="READ">
+				M_ISREAD IN ('Y', 'O', 'F', 'R')
+			</isEqual>
+		</dynamic>
+		AND M_SENDER IN ( #USERS_IDX# )
+  	</select>
+  	
+    <select id="select_m_domain_toMe" 
+  				parameterClass="java.util.HashMap"
+  				resultMap="result_mlist_01">
+	  	 	SELECT SKIP $SKIP$ FIRST $USERS_LISTNUM$
+				M_IDX, 
+				M_ORDER, 
+				MBOX_IDX, 
+				USERS_IDX, 
+				M_SENDER, 
+				M_SENDERNM, 
+				M_RETURN, 
+				M_TO, 
+				M_TITLE, 
+				TO_CHAR(M_TIME, '%Y-%m-%d %H:%M:%S') M_TIME,
+				M_SIZE, 
+				M_ATTACHE, 
+				M_ISREAD, 
+				TAG_TYPE
+	  	 	FROM $MAIL_TABLE$
+	  	 	<dynamic prepend="WHERE">
+	  	 		<isNotNull prepend="AND" property= "M_ORDER">
+					M_ORDER = #M_ORDER#
+				</isNotNull>
+	  	 		<isNotNull prepend="AND" property= "USERS_IDX">
+					USERS_IDX = #USERS_IDX#
+				</isNotNull>
+				<isNotNull prepend="AND" property= "M_IDX">
+					M_IDX = #M_IDX#
+				</isNotNull>
+				<isNotNull prepend="AND" property= "TAG_TYPE">
+					TAG_TYPE = #TAG_TYPE#
+				</isNotNull>
+				<isEqual prepend="AND" property= "READ_MODE" compareValue="NEW">
+					M_ISREAD IN ('N', 'P')
+				</isEqual>
+				<isEqual prepend="AND" property= "READ_MODE" compareValue="READ">
+					M_ISREAD IN ('Y', 'O', 'F', 'R')
+				</isEqual>
+			</dynamic>
+			AND M_SENDER IN ( #USERS_IDX# )
+			ORDER BY $orderCol$ $orderType$, M_IDX DESC
+  	</select>
+  	
+  	
+  	<select id="get_pre_m_idx_toMe" 
+            parameterClass="java.util.HashMap"
+            resultClass="java.lang.Integer">
+		<![CDATA[
+			SELECT NVL(MAX(M_IDX), 0) M_IDX
+			FROM $MAIL_TABLE$
+			WHERE M_IDX < #M_IDX#
+		]]>
+		<dynamic prepend="">
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isEqual prepend="AND" property= "READ_MODE" compareValue="NEW">
+				M_ISREAD IN ('N', 'P')
+			</isEqual>
+			<isEqual prepend="AND" property= "READ_MODE" compareValue="READ">
+				M_ISREAD IN ('Y', 'O', 'F', 'R')
+			</isEqual>
+			AND M_SENDER IN ( #USERS_IDX# )
+		</dynamic>
+    </select>
+    
+    <select id="get_next_m_idx_toMe" 
+            parameterClass="java.util.HashMap"
+            resultClass="java.lang.Integer">
+		<![CDATA[
+			SELECT NVL(MIN(M_IDX), 0) M_IDX
+			FROM $MAIL_TABLE$
+			WHERE M_IDX > #M_IDX#
+		]]>
+		<dynamic prepend="">
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isEqual prepend="AND" property= "READ_MODE" compareValue="NEW">
+				M_ISREAD IN ('N', 'P')
+			</isEqual>
+			<isEqual prepend="AND" property= "READ_MODE" compareValue="READ">
+				M_ISREAD IN ('Y', 'O', 'F', 'R')
+			</isEqual>
+			AND M_SENDER IN ( #USERS_IDX# )
+			
+		</dynamic>
+    </select>
+</sqlMap>

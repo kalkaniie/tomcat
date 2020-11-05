@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="USER_GROUP_LIST">
+  	<insert id="insert_user_group_list_type_01"
+  				parameterClass="com.nara.jdf.db.entity.UserGroupListEntity">
+		INSERT INTO USER_GROUP_LIST
+		(
+			USER_GROUP_LIST_IDX,
+			USERS_IDX,
+			USER_GROUP_SORT_NO,
+			DOMAIN,
+			USER_GROUP_IDX,
+			DUTY
+		) 
+		VALUES 
+		(
+			SEQ_USER_GROUP_LIST.NEXTVAL,
+			#USERS_IDX#,
+			#USER_GROUP_SORT_NO#,
+			#DOMAIN#,
+			#USER_GROUP_IDX#,
+			#DUTY#
+		)
+	</insert>
+  
+  	<delete id="delete_user_group_list_type_01"
+	        parameterClass="java.util.Map">
+	    DELETE FROM USER_GROUP_LIST
+	    <dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "DOMAIN">
+				DOMAIN = #DOMAIN#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "USER_GROUP_IDX">
+				USER_GROUP_IDX = #USER_GROUP_IDX#
+			</isNotNull>
+		</dynamic>
+	</delete>
+	
+	<select id="select_usergroup_list_type_01" 
+  				parameterClass="java.util.HashMap" 
+  				resultClass="com.nara.jdf.db.entity.UserGroupListEntity">
+		SELECT 
+		 	A.USERS_IDX 
+		FROM USER_GROUP_LIST A, USER_GROUP B 
+		WHERE A.USER_GROUP_IDX = B.USER_GROUP_IDX 
+			<dynamic prepend="WHERE">
+				<isNotNull prepend="AND" property= "DOMAIN">
+					B.DOMAIN = #DOMAIN#
+				</isNotNull> 
+				<isNotNull prepend="AND" property= "P_USER_GROUP_IDX">
+					B.P_USER_GROUP_IDX = #P_USER_GROUP_IDX#
+				</isNotNull>
+				<isNotNull prepend="AND" property= "USER_GROUP_IDX">
+					B.USER_GROUP_IDX = #USER_GROUP_IDX#
+				</isNotNull>
+			</dynamic>
+	</select>
+	
+	<select id="count_usergroup_group_list_type_02"
+	        parameterClass="java.util.HashMap"
+	        resultClass="java.lang.Integer">
+		SELECT COUNT(*)					 
+	 	FROM USER_GROUP_LIST UG 
+		  	LEFT OUTER JOIN USERS_MASTER UM ON UG.USERS_IDX = UM.USERS_IDX 
+  		  	LEFT OUTER JOIN USERS_DETAIL UD ON UG.USERS_IDX = UD.USERS_IDX 
+	 	WHERE UM.DOMAIN = #DOMAIN#
+	    <dynamic prepend="">
+			<isGreaterEqual prepend="AND" property="USER_GROUP_IDX" compareValue="1">
+				UG.USER_GROUP_IDX = #USER_GROUP_IDX#
+			</isGreaterEqual>
+			<isNotEqual prepend="" property= "strKeyword" compareValue="">
+				<isEqual prepend="AND" property= "strIndex" compareValue="USERS_ID">
+					UM.USERS_ID LIKE '%$USERS_ID$%'
+				</isEqual>
+				<isEqual prepend="AND" property= "strIndex" compareValue="USERS_NAME">
+					UM.USERS_NAME LIKE '%$USERS_NAME$%'
+				</isEqual>
+			</isNotEqual>
+		</dynamic>
+ 
+	</select>
+	
+	<select id="select_usergroup_list_type_02" 
+  				parameterClass="java.util.HashMap" 
+  				resultClass="com.nara.jdf.db.entity.UserGroupListExtendUserEntity"> 
+		 SELECT SKIP $SKIP$ FIRST $USERS_LISTNUM$ 
+			 B.USER_GROUP_LIST_IDX, 
+			 B.DOMAIN, B.USERS_IDX, B.USER_GROUP_IDX, B.USERS_ID, 
+			 B.USERS_NAME, B.USERS_JUMIN1, B.USERS_JUMIN2, B.USERS_LICENCENUM, 
+			 B.USERS_PERMIT, B.USERS_CELLNO, B.USERS_ISOPEN 
+		 FROM TABLE ( MULTISET ( 
+			 SELECT 
+				 UG.USER_GROUP_LIST_IDX, UM.DOMAIN, UM.USERS_IDX, UG.USER_GROUP_IDX, 
+				 UM.USERS_ID, UM.USERS_NAME, UD.USERS_JUMIN1, UD.USERS_JUMIN2, UD.USERS_LICENCENUM, 
+				 UD.USERS_PERMIT, UD.USERS_CELLNO, UD.USERS_ISOPEN,UG.USER_GROUP_SORT_NO
+		 	FROM USER_GROUP_LIST UG 
+			  	LEFT OUTER JOIN USERS_MASTER UM ON UG.USERS_IDX = UM.USERS_IDX 
+	  		  	LEFT OUTER JOIN USERS_DETAIL UD ON UG.USERS_IDX = UD.USERS_IDX 
+		 	WHERE UM.DOMAIN = #DOMAIN#
+		    <dynamic prepend="">
+				<isGreaterEqual prepend="AND" property="USER_GROUP_IDX" compareValue="1">
+					UG.USER_GROUP_IDX = #USER_GROUP_IDX#
+				</isGreaterEqual>
+				<isNotEqual prepend="" property= "strKeyword" compareValue="">
+					<isEqual prepend="AND" property= "strIndex" compareValue="USERS_ID">
+						UM.USERS_ID LIKE '%$strKeyword$%'
+					</isEqual>
+					<isEqual prepend="AND" property= "strIndex" compareValue="USERS_NAME">
+						UM.USERS_NAME LIKE '%$strKeyword$%'
+					</isEqual>
+				</isNotEqual>
+			</dynamic>
+			)) B
+
+		ORDER BY B.USER_GROUP_SORT_NO ASC
+	</select>
+			
+	<select id="get_user_group_idx" 
+  				parameterClass="java.util.HashMap" 
+  				resultClass="java.lang.Integer">
+		SELECT 
+		 	NVL(USER_GROUP_IDX, 0) USER_GROUP_IDX
+		FROM USER_GROUP_LIST  
+		
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "DOMAIN">
+				DOMAIN = #DOMAIN#
+			</isNotNull> 
+			<isNotNull prepend="AND" property= "P_USER_GROUP_IDX">
+				P_USER_GROUP_IDX = #P_USER_GROUP_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+		</dynamic>
+	</select>			
+	
+	<select id="select_usergroup_list_type_03" 
+  				parameterClass="java.util.HashMap" 
+  				resultClass="java.util.HashMap">
+		 SELECT 
+			 B.USER_GROUP_LIST_IDX, 
+			 B.DOMAIN, B.USERS_IDX, B.USER_GROUP_IDX, B.USERS_ID, 
+			 B.USERS_NAME, B.USERS_JUMIN1, B.USERS_JUMIN2, B.USERS_LICENCENUM, 
+			 B.USERS_PERMIT, B.USERS_CELLNO, B.USERS_ISOPEN
+			 
+		FROM TABLE ( MULTISET ( 
+			 SELECT 
+				 UG.USER_GROUP_LIST_IDX, UM.DOMAIN, UM.USERS_IDX, UG.USER_GROUP_IDX, 
+				 UM.USERS_ID, UM.USERS_NAME, UD.USERS_JUMIN1, UD.USERS_JUMIN2, UD.USERS_LICENCENUM, 
+				 UD.USERS_PERMIT, UD.USERS_CELLNO, UD.USERS_ISOPEN,UG.USER_GROUP_SORT_NO
+		 	FROM USER_GROUP_LIST UG 
+			  	LEFT OUTER JOIN USERS_MASTER UM ON UG.USERS_IDX = UM.USERS_IDX 
+	  		  	LEFT OUTER JOIN USERS_DETAIL UD ON UG.USERS_IDX = UD.USERS_IDX 
+		 	WHERE UM.DOMAIN = #DOMAIN#
+		    <dynamic prepend="">
+				<isGreaterEqual prepend="AND" property="USER_GROUP_IDX" compareValue="1">
+					UG.USER_GROUP_IDX = #USER_GROUP_IDX#
+				</isGreaterEqual>
+				<isNotEqual prepend="" property= "strKeyword" compareValue="">
+					<isEqual prepend="AND" property= "strIndex" compareValue="USERS_ID">
+						UM.USERS_ID LIKE '%$strKeyword$%'
+					</isEqual>
+					<isEqual prepend="AND" property= "strIndex" compareValue="USERS_NAME">
+						UM.USERS_NAME LIKE '%$strKeyword$%'
+					</isEqual>
+				</isNotEqual>
+			</dynamic>
+			ORDER BY UG.USER_GROUP_SORT_NO ASC, UG.USER_GROUP_LIST_IDX ASC
+			)) B
+	</select>
+	
+	
+	<procedure id="update_user_group_list_sort" parameterClass="java.util.HashMap" >
+        { call pkg_kebi_mail.sp_usergrouplist_sort_setting(#USER_GROUP_IDX# , #TARGET_USER_GROUP_LIST_IDX#, #USER_GROUP_LIST_IDX#) }
+    </procedure>
+    
+    
+    <update id="update_user_group_idx"
+	        parameterClass="java.util.Map">
+	    UPDATE USER_GROUP_LIST SET
+	    USER_GROUP_IDX = #USER_GROUP_IDX# 
+	    <dynamic prepend="">
+	    	<isNotNull prepend="" property= "USER_GROUP_LIST_IDX">
+				<iterate property="USER_GROUP_LIST_IDX" prepend=" WHERE USER_GROUP_LIST_IDX IN " open="(" close=")" conjunction="," >
+          			#USER_GROUP_LIST_IDX[]#
+ 				</iterate>
+			</isNotNull>
+		</dynamic>
+	</update>
+	
+	
+	<select id="select_usergroup_list_type_04" 
+  				parameterClass="java.util.HashMap" 
+  				resultClass="java.util.HashMap">
+		 SELECT SKIP $SKIP$ FIRST $USERS_LISTNUM$ 
+			 UG.USER_GROUP_LIST_IDX, UM.DOMAIN, UM.USERS_IDX, UG.USER_GROUP_IDX, 
+			 UM.USERS_ID, UM.USERS_NAME, UD.USERS_JUMIN1, UD.USERS_JUMIN2, UD.USERS_LICENCENUM, 
+			 UD.USERS_PERMIT, UD.USERS_CELLNO, UD.USERS_ISOPEN,UG.USER_GROUP_SORT_NO
+	 	FROM USER_GROUP_LIST UG 
+		  	LEFT OUTER JOIN USERS_MASTER UM ON UG.USERS_IDX = UM.USERS_IDX 
+  		  	LEFT OUTER JOIN USERS_DETAIL UD ON UG.USERS_IDX = UD.USERS_IDX 
+	 	WHERE UM.DOMAIN = #DOMAIN#
+	    <dynamic prepend="">
+			<isGreaterEqual prepend="AND" property="USER_GROUP_IDX" compareValue="1">
+				UG.USER_GROUP_IDX = #USER_GROUP_IDX#
+			</isGreaterEqual>
+			
+			<isNotEqual prepend="AND" open=" SUBSTR($strField$,0,1) IN (" close=")" property="strKey" compareValue="">
+				$strKey$
+			</isNotEqual>
+			<isNotEqual prepend="" property= "strKeyword" compareValue="">
+				<isEqual prepend="AND" property= "strIndex" compareValue="USERS_ID">
+					UM.USERS_ID LIKE '%$strKeyword$%'
+				</isEqual>
+				<isEqual prepend="AND" property= "strIndex" compareValue="USERS_NAME">
+					UM.USERS_NAME LIKE '%$strKeyword$%'
+				</isEqual>
+			</isNotEqual>
+		</dynamic>
+		ORDER BY UG.USER_GROUP_SORT_NO ASC, UG.USER_GROUP_LIST_IDX ASC
+	</select>
+	
+    <select id="select_users_idx_list"
+            parameterClass="java.lang.Integer"
+            resultClass="java.lang.String">
+        SELECT USERS_IDX FROM USER_GROUP_LIST
+        WHERE USER_GROUP_IDX = #USER_GROUP_IDX#
+    </select>
+</sqlMap>

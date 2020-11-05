@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="ANACONDA_USERS">
+	<insert id="insert_anaconda_users_type_01"
+  				parameterClass="com.nara.jdf.db.entity.AnaUserEntity">
+		INSERT INTO ANACONDA_USERS 
+		(
+			USERS_IDX,
+			USERS_PERMIT,
+			PERIOD_LIMIT_YN,
+			DOWN_LIMIT_YN,
+			DOWN_CNT,
+			USERS_MAXQUOTA,
+			USERS_PERIOD,
+			EXPIRE_DEL_YN,
+			FILE_HOMEDIR
+		)
+		VALUES
+		(
+			#USERS_IDX#,
+			#USERS_PERMIT#,
+			#PERIOD_LIMIT_YN#,
+			#DOWN_LIMIT_YN#,
+			#DOWN_CNT#,
+			#USERS_MAXQUOTA#,
+			#USERS_PERIOD#,
+			#EXPIRE_DEL_YN#,
+			#FILE_HOMEDIR#
+		)
+	</insert>
+	
+	<select id="select_anaconda_users_type_01"
+	        parameterClass="java.util.HashMap"
+	        resultClass="com.nara.jdf.db.entity.AnaUserEntity">
+		SELECT
+			USERS_IDX,
+			USERS_PERMIT,
+			PERIOD_LIMIT_YN,
+			DOWN_LIMIT_YN,
+			DOWN_CNT,
+			USERS_MAXQUOTA,
+			USERS_PERIOD,
+			EXPIRE_DEL_YN,
+			FILE_WRITE_MODE,
+			FILE_USE_MODE
+		FROM ANACONDA_USERS
+		WHERE USERS_IDX = #USERS_IDX#
+	</select>
+	
+	<select id="select_anaconda_users_type_02"
+	        parameterClass="java.util.HashMap"
+	        resultClass="com.nara.jdf.db.entity.AnaUserEntity">
+		SELECT
+			BB.USERS_PASSWD,
+			AA.USERS_IDX,
+			AA.USERS_PERMIT,
+			AA.USERS_MAXQUOTA,
+			AA.PERIOD_LIMIT_YN,
+			AA.DOWN_CNT,
+			AA.DOWN_LIMIT_YN,
+			AA.USERS_PERIOD,
+			AA.EXPIRE_DEL_YN,
+			AA.FILE_HOMEDIR,
+			AA.FILE_WRITE_MODE,
+			AA.FILE_USE_MODE
+		FROM ANACONDA_USERS AA, USERS_MASTER BB
+		WHERE AA.USERS_IDX = BB.USERS_IDX
+		AND   AA.USERS_IDX = #USERS_IDX#
+	</select>
+	
+	<update id="update_anaconda_users_by_admin"
+	        parameterClass="com.nara.jdf.db.entity.AnaUserEntity">
+		UPDATE ANACONDA_USERS
+		SET	USERS_PERMIT = #USERS_PERMIT#,
+		    PERIOD_LIMIT_YN = #PERIOD_LIMIT_YN#,
+		    DOWN_LIMIT_YN = #DOWN_LIMIT_YN#,
+		    DOWN_CNT = #DOWN_CNT#,
+		    USERS_MAXQUOTA = #USERS_MAXQUOTA#,
+		    USERS_PERIOD = #USERS_PERIOD#,
+		    EXPIRE_DEL_YN = #EXPIRE_DEL_YN#
+		WHERE USERS_IDX = #USERS_IDX# 
+	</update>
+
+	<update id="update_anaconda_users_config"
+	        parameterClass="java.util.HashMap">
+		UPDATE ANACONDA_USERS
+		
+		<dynamic prepend="">
+			<isEqual prepend="SET " property= "UPDATE_TYPE" compareValue="USERS_PERMIT">
+				USERS_PERMIT = #USERS_PERMIT#
+			</isEqual>
+			<isEqual prepend="SET " property= "UPDATE_TYPE" compareValue="USERS_ENVIRON">
+				PERIOD_LIMIT_YN = #PERIOD_LIMIT_YN#,
+				DOWN_LIMIT_YN = #DOWN_LIMIT_YN#,
+				DOWN_CNT = #DOWN_CNT#,
+				USERS_PERIOD = #USERS_PERIOD#,
+				FILE_WRITE_MODE = #FILE_WRITE_MODE#,
+				FILE_USE_MODE = #FILE_USE_MODE#
+			</isEqual>
+			<isEqual prepend="SET " property= "UPDATE_TYPE" compareValue="USERS_MAXQUOTA">
+				USERS_MAXQUOTA = #USERS_MAXQUOTA#
+			</isEqual>
+		</dynamic>
+		
+		WHERE USERS_IDX = #USERS_IDX# 
+	</update>
+	
+	<delete id="delete_anaconda_users_type_01"
+	        parameterClass="java.util.HashMap">
+		DELETE FROM ANACONDA_USERS
+	    <dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property="DOMAIN">
+				SUBSTR(USERS_IDX, INSTR(USERS_IDX, '@')) = '@$DOMAIN$'
+			</isNotNull>
+		</dynamic>
+	</delete>
+	
+	<update id="update_anaconda_users_by_domain"
+	        parameterClass="java.util.HashMap">
+		UPDATE ANACONDA_USERS
+		
+		<dynamic prepend="">
+			<isEqual prepend="SET " property= "UPDATE_TYPE" compareValue="USERS_PERMIT">
+				USERS_PERMIT = #USERS_PERMIT#
+			</isEqual>
+			<isEqual prepend="SET " property= "UPDATE_TYPE" compareValue="USERS_ENVIRON">
+				PERIOD_LIMIT_YN = #PERIOD_LIMIT_YN#,
+				DOWN_LIMIT_YN = #DOWN_LIMIT_YN#,
+				DOWN_CNT = #DOWN_CNT#,
+				USERS_PERIOD = #USERS_PERIOD#,
+				FILE_WRITE_MODE = #FILE_WRITE_MODE#,
+				FILE_USE_MODE = #FILE_USE_MODE#
+			</isEqual>
+			<isEqual prepend="SET " property= "UPDATE_TYPE" compareValue="USERS_MAXQUOTA">
+				USERS_MAXQUOTA = #USERS_MAXQUOTA#
+			</isEqual>
+		</dynamic>
+		
+		WHERE DOMAIN = #DOMAIN# 
+	</update>
+</sqlMap>

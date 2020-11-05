@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="ANACONDA_FILE_DEL">
+
+	<resultMap id="BaseInfoEntity" class="com.nara.jdf.db.entity.BaseInfoEntity">
+		<result property="BASEINFO_TYPE" column="BASEINFO_TYPE" columnIndex="1"/>
+		<result property="BASEINFO_ID" column="BASEINFO_ID" columnIndex="2"/>
+		<result property="BASEINFO_VALUE" column="BASEINFO_VALUE" columnIndex="3"/>
+	</resultMap>
+  	
+  	<select id="selece_baseinfo_info_type_01" 
+  	 	 	 	parameterClass="java.util.HashMap"
+  				resultClass="com.nara.jdf.db.entity.BaseInfoEntity">
+    	SELECT
+			BASEINFO_TYPE,
+			BASEINFO_ID ,
+			BASEINFO_VALUE
+    	FROM BASEINFO
+    	
+		
+		
+	</select>   
+	
+	<delete id="delete_anaconda_file_del_type_01"
+	        parameterClass="java.util.Map">
+	    DELETE FROM ANACONDA_FILE_DEL
+	    <dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "DOMAIN">
+				SUBSTR(USERS_IDX, INSTR(USERS_IDX, '@')) = '@'||#DOMAIN#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "FILE_KEY">
+				FILE_KEY = #FILE_KEY#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "FILE_SEQ">
+				FILE_SEQ = #FILE_SEQ#
+			</isNotNull>
+		</dynamic>
+	</delete> 
+</sqlMap>

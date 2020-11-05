@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="MAIL_RECONF"> 
+   	<select id="select_mail_reconf_type_01" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="java.util.HashMap">
+ 		SELECT 
+ 			A.MAIL_RECONF_IDX,
+			A.MAIL_RECONF_GROUP,
+			A.USERS_IDX,
+			A.MAIL_RECONF_TO,
+			A.MAIL_RECONF_SUBJECT,
+			A.MAIL_RECONF_STATE,
+			A.MAIL_RECONF_SDATE,
+			A.MAIL_RECONF_RDATE,
+			A.MAIL_RECONF_MESSAGE_ID,
+			A.M_IDX,
+			A.MAIL_RECONF_SEND
+			
+			<dynamic prepend=",">
+				<isEqual prepend="" property="MAIL_RECONF_GROUP" compareValue="-1">
+					(
+						SELECT 
+							COUNT(R.MAIL_RECONF_GROUP) 
+				 		FROM MAIL_RECONF R 
+				 		WHERE R.MAIL_RECONF_GROUP = A.MAIL_RECONF_GROUP 
+				 		AND   R.USERS_IDX = #USERS_IDX#
+				 		GROUP BY MAIL_RECONF_GROUP 
+				 	) 
+				 	MAIL_RECONF_CNT 
+				</isEqual>
+				<isGreaterEqual prepend="" property="MAIL_RECONF_GROUP" compareValue="0">
+					1 MAIL_RECONF_CNT 
+				</isGreaterEqual>
+			</dynamic>
+			
+  	 	FROM 
+  	 	(
+	  	 	SELECT
+  	 			B.MAIL_RECONF_IDX,
+  	 			B.MAIL_RECONF_GROUP,
+  	 			B.USERS_IDX,
+				B.MAIL_RECONF_TO,
+				B.MAIL_RECONF_SUBJECT,
+				B.MAIL_RECONF_STATE,
+				B.MAIL_RECONF_SDATE, 
+				B.MAIL_RECONF_RDATE, 
+				B.MAIL_RECONF_MESSAGE_ID,
+		  		B.M_IDX, 
+		  		B.MAIL_RECONF_SEND
+			FROM (
+					SELECT 
+						C.MAIL_RECONF_IDX,
+						C.MAIL_RECONF_GROUP,
+						C.USERS_IDX,
+						C.MAIL_RECONF_TO, 
+						C.MAIL_RECONF_SUBJECT,
+						C.MAIL_RECONF_STATE,
+						C.MAIL_RECONF_SDATE, 
+						C.MAIL_RECONF_RDATE, 
+						C.MAIL_RECONF_MESSAGE_ID,
+						C.M_IDX AS M_IDX, 
+						C.MAIL_RECONF_SEND
+		 			FROM MAIL_RECONF C
+		 			
+						<dynamic prepend=", ">
+						<isEqual prepend="" open="(" close=")BB" property="MAIL_RECONF_GROUP" compareValue="-1">
+							 SELECT MAX(MAIL_RECONF_IDX) MAIL_RECONF_IDX
+							 FROM MAIL_RECONF
+							 WHERE USERS_IDX = #USERS_IDX#
+							 GROUP BY MAIL_RECONF_GROUP
+						</isEqual>
+						<isGreaterEqual prepend="" open="(" close=")BB" property="MAIL_RECONF_GROUP" compareValue="0">
+							SELECT MAIL_RECONF_IDX
+							 FROM MAIL_RECONF
+							 WHERE USERS_IDX = #USERS_IDX#
+							 AND MAIL_RECONF_GROUP = #MAIL_RECONF_GROUP#
+						</isGreaterEqual>
+						</dynamic>
+					WHERE C.MAIL_RECONF_IDX = BB.MAIL_RECONF_IDX
+					ORDER BY $orderCol$ $orderType$
+			) B
+		) A
+		LIMIT $SKIP$, $USERS_LISTNUM$
+  	</select>
+  	
+  	<select id="select_mail_reconf_type_02" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="com.nara.jdf.db.entity.WebMailReConfirmEntity">
+ 		SELECT 
+			MAIL_RECONF_STATE, 
+			COUNT(MAIL_RECONF_STATE) 
+		FROM MAIL_RECONF 
+		WHERE USERS_IDX =  #USERS_IDX# 
+		AND MAIL_RECONF_GROUP = #MAIL_RECONF_GROUP#  
+		GROUP BY MAIL_RECONF_STATE 
+  	</select>
+  	
+  	<select id="select_mail_reconf_count_type_01" 
+   				parameterClass="java.util.HashMap"
+  				resultClass="java.lang.Integer">
+    	<dynamic prepend="">
+    	<isEqual prepend="" property="MAIL_RECONF_GROUP" compareValue="-1">
+    			SELECT
+					COUNT(DISTINCT MAIL_RECONF_GROUP) CNT
+				FROM MAIL_RECONF 
+				WHERE USERS_IDX =  #USERS_IDX#
+		</isEqual>
+		<isGreaterEqual prepend="" property="MAIL_RECONF_GROUP" compareValue="0">
+				SELECT 
+					COUNT(MAIL_RECONF_GROUP) CNT
+				FROM MAIL_RECONF 
+				WHERE 	USERS_IDX =  #USERS_IDX#
+				AND MAIL_RECONF_GROUP = #MAIL_RECONF_GROUP#
+		</isGreaterEqual>
+		</dynamic>
+  	</select>
+  	
+  	<delete id="delete_mail_reconf_type_01"
+	        parameterClass="java.util.Map">
+		DELETE FROM MAIL_RECONF 
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property="USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property="MAIL_RECONF_GROUP">
+				MAIL_RECONF_GROUP = #MAIL_RECONF_GROUP#
+			</isNotNull>
+			<isNotNull prepend="AND" property="MAIL_RECONF_IDX">
+				MAIL_RECONF_IDX = #MAIL_RECONF_IDX#
+			</isNotNull>
+		</dynamic>
+	</delete>
+	
+  	<select id="select_mail_reconf_type_03" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="com.nara.jdf.db.entity.WebMailReConfirmEntity">
+  			SELECT                                        
+				MAIL_RECONF_IDX,                              
+				MAIL_RECONF_GROUP,                            
+				USERS_IDX,                                    
+				MAIL_RECONF_TO,                               
+				MAIL_RECONF_SUBJECT,                          
+				MAIL_RECONF_STATE,                            
+				MAIL_RECONF_SDATE,                            
+				MAIL_RECONF_RDATE,                            
+				MAIL_RECONF_MESSAGE_ID                       
+			FROM MAIL_RECONF    
+			<dynamic prepend="WHERE">
+				<isNotNull prepend="AND" property="USERS_IDX">                         
+					USERS_IDX =  #USERS_IDX# 
+				</isNotNull>
+				<isNotNull prepend="AND" property="MAIL_RECONF_IDX">
+					MAIL_RECONF_IDX = #MAIL_RECONF_IDX#
+				</isNotNull>	
+			</dynamic>	 
+	</select>
+	
+	<select id="select_mail_reconf_type_04" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="java.util.HashMap">
+  		SELECT 
+			MAIL_RECONF.MAIL_RECONF_IDX,
+			MAIL_RECONF.MAIL_RECONF_GROUP,
+			MAIL_RECONF.USERS_IDX,
+			MAIL_RECONF.MAIL_RECONF_TO,
+			MAIL_RECONF.MAIL_RECONF_SUBJECT,
+			MAIL_RECONF.MAIL_RECONF_STATE,
+			MAIL_RECONF.MAIL_RECONF_SDATE,
+			MAIL_RECONF.MAIL_RECONF_RDATE, 
+			MAIL_RECONF.MAIL_RECONF_MESSAGE_ID, 
+			MAIL_RECONF.MAIL_RECONF_SEND,
+			MAIL_RECONF.M_IDX,	
+			<dynamic prepend="">
+				<isEqual prepend="" property="MAIL_RECONF_GROUP" compareValue="-1">
+					COUNT(MAIL_RECONF.MAIL_RECONF_GROUP) MAIL_RECONF_CNT
+				</isEqual>
+				<isGreaterEqual prepend="" property="MAIL_RECONF_GROUP" compareValue="0">
+					1 MAIL_RECONF_CNT
+				</isGreaterEqual>
+			</dynamic>			
+			FROM MAIL_RECONF LEFT JOIN $MAIL_TABLE$ ON MAIL_RECONF.M_IDX = $MAIL_TABLE$.M_IDX 			
+			<dynamic prepend="WHERE">
+				<isNotNull prepend="AND" property="USERS_IDX">                         
+					MAIL_RECONF.USERS_IDX =  #USERS_IDX# 
+				</isNotNull>				
+			</dynamic>	 
+			<dynamic prepend="">
+				<isEqual prepend="" property="MAIL_RECONF_GROUP" compareValue="-1">
+					GROUP BY MAIL_RECONF_GROUP
+				</isEqual>
+				<isGreaterEqual prepend="" property="MAIL_RECONF_GROUP" compareValue="0">
+					AND MAIL_RECONF_GROUP = #MAIL_RECONF_GROUP#
+				</isGreaterEqual>
+			</dynamic>	
+				
+			ORDER BY $orderCol$ $orderType$ 
+			LIMIT $SKIP$, $USERS_LISTNUM$
+  	</select>				
+	
+	<update id="update_mail_reconf_type_01"
+	        parameterClass="java.util.Map">
+	    UPDATE MAIL_RECONF
+	    SET	MAIL_RECONF_RDATE = DATE_FORMAT(SYSDATE(),'%Y-%m-%d %H:%i'), 
+			MAIL_RECONF_STATE = #MAIL_RECONF_STATE# 
+		<dynamic prepend="WHERE">
+			<isEqual prepend="AND " property="UPDATE_KEY" compareValue="MAIL_RECONF_IDX">
+				MAIL_RECONF_IDX = #MAIL_RECONF_IDX#
+			</isEqual>
+			<isEqual prepend="AND " property="UPDATE_KEY" compareValue="MAIL_RECONF_GROUP">
+				MAIL_RECONF_GROUP = #MAIL_RECONF_GROUP#
+			</isEqual>
+			<isEqual prepend="AND " property="UPDATE_KEY" compareValue="MAIL_RECONF_MESSAGE_ID">
+				MAIL_RECONF_MESSAGE_ID = #MAIL_RECONF_MESSAGE_ID#
+			</isEqual>
+			<isNotNull prepend="AND" property="USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+		</dynamic>
+	</update>
+	
+	<insert id="insert_mail_reconf"
+			parameterClass="com.nara.jdf.db.entity.WebMailReConfirmEntity">
+		INSERT INTO MAIL_RECONF (
+			MAIL_RECONF_IDX,
+			MAIL_RECONF_GROUP,
+			USERS_IDX,
+			MAIL_RECONF_TO,
+			MAIL_RECONF_SUBJECT,
+			MAIL_RECONF_STATE,
+			MAIL_RECONF_SDATE,
+			MAIL_RECONF_RDATE,
+			MAIL_RECONF_MESSAGE_ID,
+			M_IDX,
+			MAIL_RECONF_SEND,
+			MAIL_RECONF_SEND_DATE
+		) VALUES (
+			#MAIL_RECONF_IDX#,
+			#MAIL_RECONF_GROUP#,
+			#USERS_IDX#,
+			#MAIL_RECONF_TO#,
+			#MAIL_RECONF_SUBJECT#,
+			#MAIL_RECONF_STATE#,
+			#MAIL_RECONF_SDATE#,
+			#MAIL_RECONF_RDATE#,
+			#MAIL_RECONF_MESSAGE_ID#,
+			#M_IDX#,
+			#MAIL_RECONF_SEND#,
+			#MAIL_RECONF_SEND_DATE#
+		)
+	</insert>
+	
+	<update id="update_mail_reconf"
+			parameterClass="java.util.Map">
+		UPDATE MAIL_RECONF
+		SET MAIL_RECONF_RDATE = #MAIL_RECONF_RDATE#,
+			MAIL_RECONF_STATE = 1
+		WHERE MAIL_RECONF_IDX = #MAIL_RECONF_IDX#
+		AND MAIL_RECONF_STATE != 1
+	</update>
+	
+	<update id="update_mail_reconf_type_02"
+	        parameterClass="java.util.Map">
+	    UPDATE MAIL_RECONF
+	    SET	MAIL_RECONF_RDATE = DATE_FORMAT(SYSDATE(),'%Y-%m-%d %H:%i'), 
+			MAIL_RECONF_STATE = #MAIL_RECONF_STATE# 
+		WHERE 	MAIL_RECONF_GROUP = #MAIL_RECONF_GROUP#
+		AND MAIL_RECONF_STATE = 0
+		AND MAIL_RECONF_TO LIKE CONCAT('%@',#DOMAIN#,'%')
+	</update>
+</sqlMap>

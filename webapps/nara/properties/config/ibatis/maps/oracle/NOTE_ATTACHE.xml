@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="NOTE_ATTACHE">
+	<select id="select_note_attache_type_01"
+	        parameterClass="java.util.HashMap"
+	        resultClass="com.nara.jdf.db.entity.NoteAttacheEntity">
+		SELECT
+			AA.NOTE_ATTACHE_IDX,
+			AA.NOTE_ATTACHE_LOCATION,
+			AA.NOTE_ATTACHE_LOGICAL_NM,
+			AA.NOTE_ATTACHE_PHYSICAL_NM,
+			AA.NOTE_ATTACHE_SIZE
+		FROM NOTE_ATTACHE AA
+		WHERE AA.NOTE_ATTACHE_IDX IN (
+										SELECT NOTE_ATTACHE_IDX
+										FROM REL_NOTE_ATTACHE
+										WHERE NOTE_IDX = #NOTE_IDX#
+									)
+	</select>
+	
+	<select id="select_note_attache_type_02"
+	        parameterClass="java.util.HashMap"
+	        resultClass="com.nara.jdf.db.entity.NoteAttacheEntity">
+		SELECT
+			NOTE_ATTACHE_IDX,
+			NOTE_ATTACHE_LOCATION,
+			NOTE_ATTACHE_LOGICAL_NM,
+			NOTE_ATTACHE_PHYSICAL_NM,
+			NOTE_ATTACHE_SIZE
+		FROM NOTE_ATTACHE
+		WHERE NOTE_ATTACHE_IDX = #NOTE_ATTACHE_IDX#
+	</select>
+		
+	<insert id="insert_note_attache_type_01"
+			parameterClass="com.nara.jdf.db.entity.NoteAttacheEntity">
+		INSERT INTO NOTE_ATTACHE
+		(
+			NOTE_ATTACHE_IDX,
+			NOTE_ATTACHE_LOCATION,
+			NOTE_ATTACHE_LOGICAL_NM,
+			NOTE_ATTACHE_PHYSICAL_NM,
+			NOTE_ATTACHE_SIZE	
+		)
+		VALUES
+		(
+			<dynamic prepend="">
+				<isGreaterEqual prepend="" property="NOTE_ATTACHE_IDX" compareValue="1">
+					#NOTE_ATTACHE_IDX#,
+				</isGreaterEqual>
+				<isLessEqual prepend="" property="NOTE_ATTACHE_IDX" compareValue="0">
+					SEQ_NOTE_ATTACHE.NEXTVAL,
+				</isLessEqual>
+			</dynamic>
+			#NOTE_ATTACHE_LOCATION#,
+			#NOTE_ATTACHE_LOGICAL_NM#,
+			#NOTE_ATTACHE_PHYSICAL_NM#,
+			#NOTE_ATTACHE_SIZE#	
+		)
+	</insert>
+	
+	<insert id="insert_note_attache_rel_type_01"
+			parameterClass="java.util.HashMap">
+		INSERT INTO REL_NOTE_ATTACHE
+		(
+			NOTE_IDX,
+			NOTE_ATTACHE_IDX
+		)
+		VALUES
+		(
+			#NOTE_IDX#,
+			#NOTE_ATTACHE_IDX#
+		)
+	</insert>	
+</sqlMap>

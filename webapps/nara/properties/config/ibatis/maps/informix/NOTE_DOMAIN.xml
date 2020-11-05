@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="NOTE_DOMAIN">
+	<select id="count_note_domain_type_01"
+	        parameterClass="java.util.HashMap"
+	        resultClass="java.util.HashMap">
+		SELECT
+		NVL(SUM(CASE WHEN NOTE_ISREAD = 'N' THEN 1 ELSE 0 END),0) NOTE_NEW_COUNT, 
+		COUNT(NOTE_IDX) NOTE_TOTAL_COUNT
+		FROM $TABLE_NAME$
+		
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "NOTE_BOX_TYPE">
+				(NOTE_BOX_TYPE = #NOTE_BOX_TYPE# AND NOTE_SAVE_YN != 'Y')
+			</isNotNull>
+			<isNotNull prepend="AND" property= "NOTE_SAVE_YN">
+				NOTE_SAVE_YN = #NOTE_SAVE_YN#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "strKeyword">
+				<isEqual prepend="" property="strIndex1" compareValue="1">
+					NOTE_BOX_TYPE = #strIndex#
+				</isEqual>
+				<isEqual prepend="" property="strIndex1" compareValue="2">
+					NOTE_BOX_TYPE = #strIndex#
+				</isEqual>
+				<isEqual prepend="" property="strIndex1" compareValue="3">
+					NOTE_SAVE_YN = #NOTE_SAVE_YN#
+				</isEqual>
+				<isEqual prepend="" property="strIndex2" compareValue="0">
+					NOTE_FROM LIKE '%$strKeyword$%'
+				</isEqual>
+				<isEqual prepend="" property="strIndex2" compareValue="1">
+					NOTE_TO LIKE '%$strKeyword$%'
+				</isEqual>
+				<isEqual prepend="" property="strIndex2" compareValue="2">
+					NOTE_CONTENT LIKE '%$strKeyword$%'
+				</isEqual>
+			</isNotNull>
+		</dynamic>
+	</select>
+	
+	<insert id="insert_note_domain_type_01"
+			parameterClass="com.nara.jdf.db.entity.NoteEntity">
+		INSERT INTO $TABLE_NAME$
+		(
+			NOTE_IDX,
+			USERS_IDX,
+			USERS_ID,
+			DOMAIN,
+			NOTE_BOX_TYPE,
+			NOTE_SAVE_YN,
+			NOTE_FROM,
+			NOTE_TO,
+			NOTE_CONTENT,
+			NOTE_TIME,
+			REF_NOTE_IDX,
+			NOTE_ISREAD		
+		)
+		VALUES
+		(
+			<dynamic prepend="">
+				<isGreaterEqual prepend="" property="NOTE_IDX" compareValue="1">
+					#NOTE_IDX#,
+				</isGreaterEqual>
+				<isLessEqual prepend="" property="NOTE_IDX" compareValue="0">
+					SEQ_$TABLE_NAME$.NEXTVAL,
+				</isLessEqual>
+			</dynamic>
+			#USERS_IDX#,
+			#USERS_ID#,
+			#DOMAIN#,
+			#NOTE_BOX_TYPE#,
+			#NOTE_SAVE_YN#,
+			#NOTE_FROM#,
+			#NOTE_TO#,
+			#NOTE_CONTENT#,
+			CURRENT,
+			#REF_NOTE_IDX#,
+			#NOTE_ISREAD#		
+		)
+	</insert>
+	
+	<resultMap id="select_note_list_type_01_map" class="java.util.HashMap">
+		<result property="NOTE_IDX" column="NOTE_IDX" />			
+		<result property="USERS_IDX" column="USERS_IDX" />
+		<result property="USERS_ID" column="USERS_ID" />
+		<result property="DOMAIN" column="DOMAIN" />
+		<result property="NOTE_BOX_TYPE" column="NOTE_BOX_TYPE" />
+		<result property="NOTE_SAVE_YN" column="NOTE_SAVE_YN" />
+		<result property="NOTE_FROM" column="NOTE_FROM" />
+		<result property="NOTE_TO" column="NOTE_TO" />
+		<result property="NOTE_TITLE" column="NOTE_TITLE" javaType="java.lang.String"/>
+		<result property="NOTE_CONTENT" column="NOTE_CONTENT" javaType="java.lang.String"/>
+		<result property="NOTE_TIME" column="NOTE_TIME" />
+		<result property="REF_NOTE_IDX" column="REF_NOTE_IDX" />
+		<result property="NOTE_ISREAD" column="NOTE_ISREAD" />
+		<result property="NOTE_ATTACHE_CNT" column="NOTE_ATTACHE_CNT" />
+		<result property="NOTE_SEND_CNT" column="NOTE_SEND_CNT" />
+		<result property="NOTE_READ_TIME" column="NOTE_READ_TIME" />
+	</resultMap>
+		<select id="select_note_list_type_01"
+	        parameterClass="java.util.HashMap"
+	        resultMap="select_note_list_type_01_map">
+		SELECT NOTE_IDX,
+		  USERS_IDX,
+		  USERS_ID,
+		  DOMAIN,
+		  NOTE_BOX_TYPE,
+		  NOTE_SAVE_YN,
+		  NOTE_FROM,
+		  NOTE_TO,
+		  NOTE_TITLE,
+		  NOTE_CONTENT,
+		  NOTE_TIME,
+		  REF_NOTE_IDX,
+		  NOTE_ISREAD,
+		  NOTE_ATTACHE_CNT,
+		  NOTE_SEND_CNT,
+		  NOTE_READ_TIME
+		FROM (
+		    SELECT AA.NOTE_IDX,
+		      AA.USERS_IDX,
+		      AA.USERS_ID,
+		      AA.DOMAIN,
+		      AA.NOTE_BOX_TYPE,
+		      AA.NOTE_SAVE_YN,
+		      AA.NOTE_FROM,
+		      AA.NOTE_TO,
+		      <![CDATA[ SUBSTR(REPLACE(AA.NOTE_CONTENT,'<BR>',' '),0,50) NOTE_TITLE, ]]> 
+		      AA.NOTE_CONTENT,
+		      TO_CHAR(AA.NOTE_TIME, 'YYYY-MM-DD HH24:MI:SS') NOTE_TIME,
+		      AA.REF_NOTE_IDX,
+		      AA.NOTE_ISREAD,
+		      (
+		        SELECT COUNT(CC.NOTE_IDX)
+		        FROM REL_NOTE_ATTACHE CC
+		        WHERE AA.NOTE_IDX = CC.NOTE_IDX) NOTE_ATTACHE_CNT,
+		      (
+		        SELECT COUNT(DD.NOTE_RECONF_IDX)
+		        FROM NOTE_RECONF DD
+		        WHERE AA.NOTE_IDX = DD.NOTE_SEND_IDX) NOTE_SEND_CNT,
+		      (
+		        SELECT TO_CHAR(DD.NOTE_READ_TIME, 'YYYY-MM-DD HH24:MI:SS') NOTE_READ_TIME
+		        FROM NOTE_RECONF DD
+		        WHERE AA.NOTE_IDX = DD.NOTE_SEND_IDX AND ROWNUM = 1) NOTE_READ_TIME,      
+		      CEIL((ROW_NUMBER() OVER(
+		                ORDER BY AA.$orderCol$ $orderType$))/$USERS_LISTNUM$) PAGENUM
+		    FROM $TABLE_NAME$ AA
+		    
+			<dynamic prepend="WHERE">
+				<isNotNull prepend="AND" property= "USERS_IDX">
+					AA.USERS_IDX = #USERS_IDX#
+				</isNotNull>
+				<isNotNull prepend="AND" property= "NOTE_ISREAD">
+					<isNotEqual prepend="" property="NOTE_ISREAD" compareValue="">
+						AA.NOTE_ISREAD = #NOTE_ISREAD#
+					</isNotEqual>
+				</isNotNull>
+				<isNotNull prepend="AND" property= "NOTE_BOX_TYPE">
+					AA.NOTE_BOX_TYPE = #NOTE_BOX_TYPE#
+				</isNotNull>
+				<isNotNull prepend="AND" property= "NOTE_SAVE_YN">
+					AA.NOTE_SAVE_YN = #NOTE_SAVE_YN#
+				</isNotNull>
+				<isNotNull prepend="AND" property= "strKeyword">
+					<isEqual prepend="" property="strIndex1" compareValue="1">
+						AA.NOTE_BOX_TYPE = #strIndex#
+					</isEqual>
+					<isEqual prepend="" property="strIndex1" compareValue="2">
+						AA.NOTE_BOX_TYPE = #strIndex#
+					</isEqual>
+					<isEqual prepend="" property="strIndex1" compareValue="3">
+						AA.NOTE_SAVE_YN = #NOTE_SAVE_YN#
+					</isEqual>
+					<isEqual prepend="" property="strIndex2" compareValue="0">
+						NOTE_FROM LIKE '%'||#strKeyword#||'%'
+					</isEqual>
+					<isEqual prepend="" property="strIndex2" compareValue="1">
+						NOTE_TO LIKE '%'||#strKeyword#||'%'
+					</isEqual>
+					<isEqual prepend="" property="strIndex2" compareValue="2">
+						NOTE_CONTENT LIKE '%'||#strKeyword#||'%'
+					</isEqual>
+				</isNotNull>
+			</dynamic>		    
+					)
+				)
+			)
+		)
+		WHERE PAGENUM = #nPage#
+	</select>
+	
+	
+	<select id="count_note_list_type_01"
+	        parameterClass="java.util.HashMap"
+	        resultClass="java.lang.Integer">
+	    SELECT 
+			COUNT(NOTE_IDX) CNT
+	    FROM $TABLE_NAME$ AA
+	    WHERE AA.USERS_IDX = #USERS_IDX#
+		<dynamic prepend="">
+			<isNotNull prepend="AND" property= "NOTE_ISREAD">
+				<isNotEqual prepend="" property="NOTE_ISREAD" compareValue="">
+					AA.NOTE_ISREAD = #NOTE_ISREAD#
+				</isNotEqual>
+			</isNotNull>
+			<isNotNull prepend="AND" property= "NOTE_BOX_TYPE">
+				AA.NOTE_BOX_TYPE = #NOTE_BOX_TYPE#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "NOTE_SAVE_YN">
+				AA.NOTE_SAVE_YN = #NOTE_SAVE_YN#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "strKeyword">
+				<isEqual prepend="" property="strIndex1" compareValue="1">
+					AA.NOTE_BOX_TYPE = #strIndex#
+				</isEqual>
+				<isEqual prepend="" property="strIndex1" compareValue="2">
+					AA.NOTE_BOX_TYPE = #strIndex#
+				</isEqual>
+				<isEqual prepend="" property="strIndex1" compareValue="3">
+					AA.NOTE_SAVE_YN = #NOTE_SAVE_YN#
+				</isEqual>
+				<isEqual prepend="" property="strIndex2" compareValue="0">
+					NOTE_FROM LIKE '%$strKeyword$%'
+				</isEqual>
+				<isEqual prepend="" property="strIndex2" compareValue="1">
+					NOTE_TO LIKE '%$strKeyword$%'
+				</isEqual>
+				<isEqual prepend="" property="strIndex2" compareValue="2">
+					NOTE_CONTENT LIKE '%$strKeyword$%'
+				</isEqual>
+			</isNotNull>
+		</dynamic>
+	</select>
+	
+	<delete id="delete_note_domain_type_01"
+	        parameterClass="java.util.HashMap">
+		DELETE FROM $TABLE_NAME$
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "NOTE_IDX">
+				NOTE_IDX = #NOTE_IDX#
+			</isNotNull>
+		</dynamic>
+	</delete>
+	
+	<update id="update_note_domain_type_01"
+	        parameterClass="java.util.HashMap">
+		UPDATE $TABLE_NAME$
+		<dynamic prepend="">
+			<isEqual prepend="SET" property="UPDATE_TYPE" compareValue="NOTE_SAVE_YN">
+				NOTE_SAVE_YN = 'Y'
+			</isEqual>
+			<isEqual prepend="SET" property="UPDATE_TYPE" compareValue="NOTE_ISREAD">
+				NOTE_ISREAD = 'Y'
+			</isEqual>
+		</dynamic>
+
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "NOTE_IDX">
+				NOTE_IDX = #NOTE_IDX#
+			</isNotNull>
+		</dynamic>
+	</update>
+	
+	<select id="select_note_domain_type_02"
+	        parameterClass="java.util.HashMap"
+	        resultClass="com.nara.jdf.db.entity.NoteEntity">
+	    SELECT AA.NOTE_IDX,
+	      AA.USERS_IDX,
+	      AA.USERS_ID,
+	      AA.DOMAIN,
+	      AA.NOTE_BOX_TYPE,
+	      AA.NOTE_SAVE_YN,
+	      AA.NOTE_FROM,
+	      AA.NOTE_TO,
+	      AA.NOTE_CONTENT,
+	      TO_CHAR(AA.NOTE_TIME, '%Y-%m-%d %H:%M:%S') NOTE_TIME,
+	      AA.REF_NOTE_IDX,
+	      AA.NOTE_ISREAD,
+	      (
+	        SELECT COUNT(CC.NOTE_IDX)
+	        FROM REL_NOTE_ATTACHE CC
+	        WHERE AA.NOTE_IDX = CC.NOTE_IDX) NOTE_ATTACHE_CNT
+	    FROM $TABLE_NAME$ AA
+	    
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				AA.USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "NOTE_IDX">
+				AA.NOTE_IDX = #NOTE_IDX#
+			</isNotNull>
+		</dynamic>
+	</select>
+</sqlMap>

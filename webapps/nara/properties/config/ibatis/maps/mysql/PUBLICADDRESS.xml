@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="PUBLICADDRESS">
+	<delete id="delete_publicaddress_type_01"
+	        parameterClass="java.util.HashMap">
+		DELETE FROM PUBLICADDRESS
+		
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "PUBLICADDRESS_IDX">
+				PUBLICADDRESS_IDX = #PUBLICADDRESS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "PUBLICGROUP_IDX">
+				PUBLICGROUP_IDX = #PUBLICGROUP_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "DOMAIN">
+				DOMAIN = #DOMAIN#
+			</isNotNull>
+		</dynamic>
+	</delete>
+	
+	<select id="select_publicaddress_email_list"
+	        parameterClass="java.lang.Integer"
+	        resultClass="java.lang.String">
+	    SELECT 
+	    	PUBLICADDRESS_EMAIL 
+	    FROM PUBLICADDRESS
+	    WHERE PUBLICGROUP_IDX = #PUBLICGROUP_IDX#
+	</select>
+
+
+	
+	<select id="select_publicaddress_type_01" 
+  				parameterClass="java.util.HashMap" 
+  				resultClass="java.util.HashMap">
+		 SELECT 
+            PUBLICADDRESS_IDX,
+            PUBLICGROUP_IDX,
+            DOMAIN,
+            PUBLICADDRESS_NAME,
+            PUBLICADDRESS_DEPT,
+            PUBLICADDRESS_DUTY,
+            PUBLICADDRESS_EMAIL,
+            PUBLICADDRESS_TEL,
+            PUBLICADDRESS_CELLTEL,
+            PUBLICADDRESS_HOMEZIP,
+            PUBLICADDRESS_HOMEADDR,
+           	PUBLICADDRESS_SORT_NO
+        FROM PUBLICADDRESS 
+	 	WHERE DOMAIN = #DOMAIN#
+	    <dynamic prepend="">
+			<isGreaterEqual prepend="AND" property="PUBLICGROUP_IDX" compareValue="1">
+				PUBLICGROUP_IDX = #PUBLICGROUP_IDX#
+			</isGreaterEqual>
+			<isNotEqual prepend="AND" open=" SUBSTRING($strIndex$,1,1) IN (" close=")" property="strKey" compareValue="">
+				$strKey$
+			</isNotEqual>
+					
+			<isNotEqual prepend="" property= "strKeyword" compareValue="">
+				<isEqual prepend="AND" property= "strIndex" compareValue="PUBLICADDRESS_EMAIL">
+					PUBLICADDRESS_EMAIL LIKE CONCAT('%',#strKeyword#,'%')
+				</isEqual>
+				<isEqual prepend="AND" property= "strIndex" compareValue="PUBLICADDRESS_NAME">
+					PUBLICADDRESS_NAME LIKE CONCAT('%',#strKeyword#,'%')
+				</isEqual>
+			</isNotEqual>
+		</dynamic>
+		ORDER BY $orderCol$ $orderType$
+		LIMIT $SKIP$, $USERS_LISTNUM$
+	</select>
+	
+	<select id="select_publicaddress_type_02" 
+  				parameterClass="java.util.HashMap" 
+  				resultClass="com.nara.jdf.db.entity.PublicAddressEntity">
+		
+		 SELECT 
+            PUBLICADDRESS_IDX,
+            PUBLICGROUP_IDX,
+            DOMAIN,
+            PUBLICADDRESS_NAME,
+            PUBLICADDRESS_DEPT,
+            PUBLICADDRESS_DUTY,
+            PUBLICADDRESS_EMAIL,
+            PUBLICADDRESS_TEL,
+            PUBLICADDRESS_CELLTEL,
+            PUBLICADDRESS_HOMEZIP,
+            PUBLICADDRESS_HOMEADDR,
+           	PUBLICADDRESS_SORT_NO
+        FROM PUBLICADDRESS 
+	 	WHERE DOMAIN = #DOMAIN#
+	    <dynamic prepend="">
+			<isNotNull prepend="AND" property= "PUBLICADDRESS_IDX">
+				PUBLICADDRESS_IDX = #PUBLICADDRESS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "PUBLICGROUP_IDX">
+				PUBLICGROUP_IDX = #PUBLICGROUP_IDX#
+			</isNotNull>
+		</dynamic>
+	</select>
+	
+	<insert id="insert_publicaddress_type_01"
+	        parameterClass="com.nara.jdf.db.entity.PublicAddressEntity">
+		INSERT INTO PUBLICADDRESS( 
+        	PUBLICADDRESS_IDX,
+            PUBLICGROUP_IDX,
+            DOMAIN,
+            PUBLICADDRESS_NAME,
+            PUBLICADDRESS_DEPT,
+            PUBLICADDRESS_DUTY,
+            PUBLICADDRESS_EMAIL,
+            PUBLICADDRESS_TEL,
+            PUBLICADDRESS_CELLTEL,
+            PUBLICADDRESS_HOMEZIP,
+            PUBLICADDRESS_HOMEADDR
+        ) VALUES (
+        	NEXTVAL('PUBLICADDRESS'),
+            #PUBLICGROUP_IDX#,
+            #DOMAIN#,
+            #PUBLICADDRESS_NAME#,
+            #PUBLICADDRESS_DEPT#,
+            #PUBLICADDRESS_DUTY#,
+            #PUBLICADDRESS_EMAIL#,
+            #PUBLICADDRESS_TEL#,
+            #PUBLICADDRESS_CELLTEL#,
+            #PUBLICADDRESS_HOMEZIP#,
+            #PUBLICADDRESS_HOMEADDR#            
+		)
+	</insert>  
+	
+	
+	<update id="update_publicaddress_type_01"
+	        parameterClass="com.nara.jdf.db.entity.PublicAddressEntity">
+		UPDATE PUBLICADDRESS SET 
+        	PUBLICADDRESS_NAME = #PUBLICADDRESS_NAME# ,
+            PUBLICADDRESS_DEPT = #PUBLICADDRESS_DEPT# ,
+            PUBLICADDRESS_DUTY = #PUBLICADDRESS_DUTY# ,
+            PUBLICADDRESS_EMAIL = #PUBLICADDRESS_EMAIL# ,
+            PUBLICADDRESS_TEL = #PUBLICADDRESS_TEL# ,
+            PUBLICADDRESS_CELLTEL = #PUBLICADDRESS_CELLTEL# ,
+            PUBLICADDRESS_HOMEZIP = #PUBLICADDRESS_HOMEZIP# ,
+            PUBLICADDRESS_HOMEADDR = #PUBLICADDRESS_HOMEADDR# 
+         WHERE PUBLICADDRESS_IDX = #PUBLICADDRESS_IDX# 
+	</update> 
+	
+	<procedure id="update_publicaddress_sort" parameterClass="java.util.HashMap" >
+        { call sp_publicaddress_sort_setting(#PUBLICGROUP_IDX# , #TARGET_IDX#, #PUBLICADDRESS_IDX#) }
+    </procedure>
+    
+    
+    <update id="update_publicaddress_idx"
+	        parameterClass="java.util.Map">
+	    UPDATE PUBLICADDRESS 
+	    SET PUBLICGROUP_IDX = #PUBLICGROUP_IDX# 
+	    <dynamic prepend="">
+	    	<isNotNull prepend="" property= "PUBLICADDRESS_IDX">
+				<iterate property="PUBLICADDRESS_IDX" prepend=" WHERE PUBLICADDRESS_IDX IN " open="(" close=")" conjunction="," >
+          			#PUBLICADDRESS_IDX[]#
+ 				</iterate>
+			</isNotNull>
+		</dynamic>
+	</update>
+	
+	<select id="count_publicaddress_type_01"
+	        parameterClass="java.util.HashMap"
+	        resultClass="java.lang.Integer">
+		SELECT 
+			COUNT(*)					 
+	 	FROM PUBLICADDRESS
+	 	WHERE DOMAIN = #DOMAIN#
+	    <dynamic prepend="">
+			<isGreaterEqual prepend="AND" property="PUBLICGROUP_IDX" compareValue="1">
+				PUBLICGROUP_IDX = #PUBLICGROUP_IDX#
+			</isGreaterEqual>
+			<isNotEqual prepend="AND" open=" SUBSTR($strIndex$,0,1) IN (" close=")" property="strKey" compareValue="">
+				$strKey$
+			</isNotEqual>
+					
+			<isNotEqual prepend="" property= "strKeyword" compareValue="">
+				<isEqual prepend="AND" property= "strIndex" compareValue="PUBLICADDRESS_EMAIL">
+					PUBLICADDRESS_EMAIL LIKE CONCAT('%',#strKeyword#,'%')
+				</isEqual>
+				<isEqual prepend="AND" property= "strIndex" compareValue="PUBLICADDRESS_NAME">
+					PUBLICADDRESS_NAME LIKE CONCAT('%',#strKeyword#,'%')
+				</isEqual>
+			</isNotEqual>
+		</dynamic>
+	</select>
+</sqlMap>

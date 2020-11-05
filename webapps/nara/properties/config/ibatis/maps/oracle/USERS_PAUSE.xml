@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="USERS_PAUSE">
+	<select id="select_users_pause_type_01"
+	        parameterClass="java.util.HashMap"
+	        resultClass="com.nara.jdf.db.entity.UserPauseEntity">
+	    SELECT 
+	    	*
+	    FROM 
+	    (
+	    	SELECT
+				USERS_PAUSE_IDX,
+				DOMAIN,
+				USERS_PAUSE_ID,
+				USERS_PAUSE_NAME,
+				USERS_PAUSE_PASSWD,
+				USERS_PAUSE_JUMIN1,
+				USERS_PAUSE_JUMIN2,
+				USERS_PAUSE_DEPARTMENT,
+				USERS_PAUSE_LICENCENUM,
+				CEIL((ROW_NUMBER() OVER(ORDER BY $orderCol$ $orderType$))/$USERS_LISTNUM$) PAGENUM
+	    	FROM USERS_PAUSE
+		    
+			<dynamic prepend="WHERE">
+				<isNotEqual prepend="" property= "strKeyword" compareValue="">
+					<isEqual prepend="AND" property= "strIndex" compareValue="USERS_PAUSE_ID">
+						USERS_PAUSE_ID LIKE '%'||#strKeyword#||'%'
+					</isEqual>
+					<isEqual prepend="AND" property= "strIndex" compareValue="USERS_PAUSE_NAME">
+						USERS_PAUSE_NAME LIKE '%'||#strKeyword#||'%'
+					</isEqual>
+					<isEqual prepend="AND" property= "strIndex" compareValue="USERS_PAUSE_JUMIN">
+						USERS_PAUSE_JUMIN1 ||'-'|| USERS_PAUSE_JUMIN2 = #strKeyword#
+					</isEqual>
+					<isEqual prepend="AND" property= "strIndex" compareValue="USERS_PAUSE_DEPARTMENT">
+						USERS_PAUSE_DEPARTMENT LIKE '%'||#strKeyword#||'%'
+					</isEqual>
+					<isEqual prepend="AND" property= "strIndex" compareValue="USERS_PAUSE_LICENCENUM">
+						USERS_PAUSE_LICENCENUM LIKE '%'||#strKeyword#||'%'
+					</isEqual>
+				</isNotEqual>
+  			</dynamic>
+  		) AA
+  		
+  		WHERE AA.PAGENUM = #nPage#
+	</select>
+
+	<select id="select_users_pause_type_02"
+	        parameterClass="java.util.HashMap"
+	        resultClass="com.nara.jdf.db.entity.UserPauseEntity">
+
+	   	SELECT
+			USERS_PAUSE_IDX,
+			DOMAIN,
+			USERS_PAUSE_ID,
+			USERS_PAUSE_NAME,
+			USERS_PAUSE_PASSWD,
+			USERS_PAUSE_JUMIN1,
+			USERS_PAUSE_JUMIN2,
+			USERS_PAUSE_DEPARTMENT,
+			USERS_PAUSE_LICENCENUM
+	   	FROM USERS_PAUSE
+		
+		<dynamic prepend="WHERE">
+  			<isNotNull prepend="AND" property= "USERS_PAUSE_IDX">
+				USERS_PAUSE_IDX = #USERS_PAUSE_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "USERS_PAUSE_ID">
+				USERS_PAUSE_ID = #USERS_PAUSE_ID#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "DOMAIN">
+				DOMAIN = #DOMAIN#
+			</isNotNull>
+  		</dynamic>
+	</select>
+		
+	<select id="count_users_pause_type_01"
+	        parameterClass="java.util.HashMap"
+	        resultClass="java.lang.Integer">
+    	SELECT
+			COUNT(USERS_PAUSE_IDX) CNT
+    	FROM USERS_PAUSE
+	    
+		<dynamic prepend="WHERE">
+			<isNotEqual prepend="" property= "strKeyword" compareValue="">
+				<isEqual prepend="AND" property= "strIndex" compareValue="USERS_PAUSE_ID">
+					USERS_PAUSE_ID LIKE '%'||#strKeyword#||'%'
+				</isEqual>
+				<isEqual prepend="AND" property= "strIndex" compareValue="USERS_PAUSE_NAME">
+					USERS_PAUSE_NAME LIKE '%'||#strKeyword#||'%'
+				</isEqual>
+				<isEqual prepend="AND" property= "strIndex" compareValue="USERS_PAUSE_JUMIN">
+					USERS_PAUSE_JUMIN1 ||'-'|| USERS_PAUSE_JUMIN2 = #strKeyword#
+				</isEqual>
+				<isEqual prepend="AND" property= "strIndex" compareValue="USERS_PAUSE_DEPARTMENT">
+					USERS_PAUSE_DEPARTMENT LIKE '%'||#strKeyword#||'%'
+				</isEqual>
+				<isEqual prepend="AND" property= "strIndex" compareValue="USERS_PAUSE_LICENCENUM">
+					USERS_PAUSE_LICENCENUM LIKE '%'||#strKeyword#||'%'
+				</isEqual>
+			</isNotEqual>
+		</dynamic>
+
+	</select>
+	
+	<insert id="insert_users_pause_type_01"
+	        parameterClass="com.nara.jdf.db.entity.UserPauseEntity">
+		INSERT INTO USERS_PAUSE
+		(
+			USERS_PAUSE_IDX,
+			DOMAIN,
+			USERS_PAUSE_ID,
+			USERS_PAUSE_NAME,
+			USERS_PAUSE_PASSWD,
+			USERS_PAUSE_JUMIN1,
+			USERS_PAUSE_JUMIN2,
+			USERS_PAUSE_DEPARTMENT,
+			USERS_PAUSE_LICENCENUM
+		)
+		VALUES
+		(
+			<dynamic prepend="">
+  				<isGreaterEqual prepend="" property="USERS_PAUSE_IDX" compareValue="1">
+					#USERS_PAUSE_IDX#,
+				</isGreaterEqual>
+				<isLessEqual prepend="" property="USERS_PAUSE_IDX" compareValue="0">
+					SEQ_USERS_PAUSE.NEXTVAL,
+				</isLessEqual>
+  			</dynamic>
+
+			#DOMAIN#,
+			#USERS_PAUSE_ID#,
+			#USERS_PAUSE_NAME#,
+			#USERS_PAUSE_PASSWD#,
+			#USERS_PAUSE_JUMIN1#,
+			#USERS_PAUSE_JUMIN2#,
+			#USERS_PAUSE_DEPARTMENT#,
+			#USERS_PAUSE_LICENCENUM#
+		)
+	</insert>
+	
+	<delete id="delete_users_pause_type_01"
+	        parameterClass="java.util.HashMap">
+		DELETE FROM USERS_PAUSE
+		
+		<dynamic prepend="WHERE">
+  			<isNotNull prepend="AND" property= "USERS_PAUSE_IDX">
+				USERS_PAUSE_IDX = #USERS_PAUSE_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "USERS_PAUSE_ID">
+				USERS_PAUSE_ID = #USERS_PAUSE_ID#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "DOMAIN">
+				DOMAIN = #DOMAIN#
+			</isNotNull>
+  		</dynamic>
+	</delete>
+</sqlMap>

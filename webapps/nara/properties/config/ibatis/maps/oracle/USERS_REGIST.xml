@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="USERS_REGIST">
+	<select id="select_users_regis_type_01"
+	        parameterClass="java.util.HashMap"
+	        resultClass="com.nara.jdf.db.entity.UserRegistEntity">
+	    SELECT 
+	    	*
+	    FROM 
+	    (
+	    	SELECT
+				USERS_REGIST_IDX,
+				DOMAIN,
+				USERS_REGIST_ID,
+				USERS_REGIST_NAME,
+				USERS_REGIST_PASSWD,
+				USERS_REGIST_JUMIN1,
+				USERS_REGIST_JUMIN2,
+				USERS_REGIST_DEPARTMENT,
+				USERS_REGIST_LICENCENUM,
+				CEIL((ROW_NUMBER() OVER(ORDER BY $orderCol$ $orderType$))/$USERS_LISTNUM$) PAGENUM
+	    	FROM USERS_REGIST
+		    
+			<dynamic prepend="WHERE">
+				<isNotEqual prepend="" property= "strKeyword" compareValue="">
+					<isEqual prepend="AND" property= "strIndex" compareValue="USERS_REGIST_ID">
+						USERS_REGIST_ID LIKE '%'||#strKeyword#||'%'
+					</isEqual>
+					<isEqual prepend="AND" property= "strIndex" compareValue="USERS_REGIST_NAME">
+						USERS_REGIST_NAME LIKE '%'||#strKeyword#||'%'
+					</isEqual>
+					<isEqual prepend="AND" property= "strIndex" compareValue="USERS_REGIST_JUMIN">
+						USERS_REGIST_JUMIN1 ||'-'|| USERS_REGIST_JUMIN2 = #strKeyword#
+					</isEqual>
+					<isEqual prepend="AND" property= "strIndex" compareValue="USERS_REGIST_DEPARTMENT">
+						USERS_REGIST_DEPARTMENT LIKE '%'||#strKeyword#||'%'
+					</isEqual>
+					<isEqual prepend="AND" property= "strIndex" compareValue="USERS_REGIST_LICENCENUM">
+						USERS_REGIST_LICENCENUM LIKE '%'||#strKeyword#||'%'
+					</isEqual>
+				</isNotEqual>
+  			</dynamic>
+  		) AA
+  		
+  		WHERE AA.PAGENUM = #nPage#
+	</select>
+
+	<select id="select_users_regis_type_02"
+	        parameterClass="java.util.HashMap"
+	        resultClass="com.nara.jdf.db.entity.UserRegistEntity">
+
+	   	SELECT
+			USERS_REGIST_IDX,
+			DOMAIN,
+			USERS_REGIST_ID,
+			USERS_REGIST_NAME,
+			USERS_REGIST_PASSWD,
+			USERS_REGIST_JUMIN1,
+			USERS_REGIST_JUMIN2,
+			USERS_REGIST_DEPARTMENT,
+			USERS_REGIST_LICENCENUM
+	   	FROM USERS_REGIST
+		
+		<dynamic prepend="WHERE">
+  			<isNotNull prepend="AND" property= "USERS_REGIST_IDX">
+				USERS_REGIST_IDX = #USERS_REGIST_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "USERS_REGIST_ID">
+				USERS_REGIST_ID = #USERS_REGIST_ID#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "DOMAIN">
+				DOMAIN = #DOMAIN#
+			</isNotNull>
+  		</dynamic>
+	</select>
+		
+	<select id="count_users_regis_type_01"
+	        parameterClass="java.util.HashMap"
+	        resultClass="java.lang.Integer">
+    	SELECT
+			COUNT(USERS_REGIST_IDX) CNT
+    	FROM USERS_REGIST
+	    
+		<dynamic prepend="WHERE">
+			<isNotEqual prepend="" property= "strKeyword" compareValue="">
+				<isEqual prepend="AND" property= "strIndex" compareValue="USERS_REGIST_ID">
+					USERS_REGIST_ID LIKE '%'||#strKeyword#||'%'
+				</isEqual>
+				<isEqual prepend="AND" property= "strIndex" compareValue="USERS_REGIST_NAME">
+					USERS_REGIST_NAME LIKE '%'||#strKeyword#||'%'
+				</isEqual>
+				<isEqual prepend="AND" property= "strIndex" compareValue="USERS_REGIST_JUMIN">
+					USERS_REGIST_JUMIN1 ||'-'|| USERS_REGIST_JUMIN2 = #strKeyword#
+				</isEqual>
+				<isEqual prepend="AND" property= "strIndex" compareValue="USERS_REGIST_DEPARTMENT">
+					USERS_REGIST_DEPARTMENT LIKE '%'||#strKeyword#||'%'
+				</isEqual>
+				<isEqual prepend="AND" property= "strIndex" compareValue="USERS_REGIST_LICENCENUM">
+					USERS_REGIST_LICENCENUM LIKE '%'||#strKeyword#||'%'
+				</isEqual>
+			</isNotEqual>
+		</dynamic>
+
+	</select>
+	
+	<insert id="insert_users_regist_type_01"
+	        parameterClass="com.nara.jdf.db.entity.UserRegistEntity">
+		INSERT INTO USERS_REGIST
+		(
+			USERS_REGIST_IDX,
+			DOMAIN,
+			USERS_REGIST_ID,
+			USERS_REGIST_NAME,
+			USERS_REGIST_PASSWD,
+			USERS_REGIST_JUMIN1,
+			USERS_REGIST_JUMIN2,
+			USERS_REGIST_DEPARTMENT,
+			USERS_REGIST_LICENCENUM
+		)
+		VALUES
+		(
+			<dynamic prepend="">
+  				<isGreaterEqual prepend="" property="USERS_REGIST_IDX" compareValue="1">
+					#USERS_REGIST_IDX#,
+				</isGreaterEqual>
+				<isLessEqual prepend="" property="USERS_REGIST_IDX" compareValue="0">
+					SEQ_USERS_REGIST.NEXTVAL,
+				</isLessEqual>
+  			</dynamic>
+
+			#DOMAIN#,
+			#USERS_REGIST_ID#,
+			#USERS_REGIST_NAME#,
+			#USERS_REGIST_PASSWD#,
+			#USERS_REGIST_JUMIN1#,
+			#USERS_REGIST_JUMIN2#,
+			#USERS_REGIST_DEPARTMENT#,
+			#USERS_REGIST_LICENCENUM#
+		)
+	</insert>
+	
+	<delete id="delete_users_regist_type_01"
+	        parameterClass="java.util.HashMap">
+		DELETE FROM USERS_REGIST
+		
+		<dynamic prepend="WHERE">
+  			<isNotNull prepend="AND" property= "USERS_REGIST_IDX">
+				USERS_REGIST_IDX = #USERS_REGIST_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "USERS_REGIST_ID">
+				USERS_REGIST_ID = #USERS_REGIST_ID#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "DOMAIN">
+				DOMAIN = #DOMAIN#
+			</isNotNull>
+  		</dynamic>
+	</delete>
+</sqlMap>

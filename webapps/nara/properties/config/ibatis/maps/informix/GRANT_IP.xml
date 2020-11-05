@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="GRANT_IP">
+	
+	<select id="count_grantip_type_01" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="java.lang.Integer">	
+		SELECT 	COUNT(GRANT_IP_IDX) CNT
+		FROM MANAGER_GRANTIP
+		<dynamic prepend="WHERE">
+			<isNotEqual prepend="AND" property= "strIndex" compareValue="">
+				$strIndex$ LIKE '%$strKeyword$%'
+			</isNotEqual>
+		</dynamic>
+	</select>
+	
+	
+	<select id="select_grantip_type_01"
+	        parameterClass="java.util.HashMap"
+	        resultClass="com.nara.jdf.db.entity.GrantIpEntity">
+		SELECT SKIP $SKIP$ FIRST $USERS_LISTNUM$
+       		GRANT_IP_IDX,
+       		GRANT_IP, 
+      		USERS_IDX, 
+      		UPDATE_DATE, 
+      		INSERT_DATE
+		FROM MANAGER_GRANTIP	
+		<dynamic prepend="WHERE">
+			<isNotEqual prepend="AND" property= "strIndex" compareValue="">
+				$strIndex$ LIKE '%$strKeyword$%'
+			</isNotEqual>
+		</dynamic>
+    	ORDER BY $orderCol$ $orderType$
+	</select>
+	
+	<update id="update_grantip_type_01"
+  	        parameterClass="com.nara.jdf.db.entity.GrantIpEntity">
+        UPDATE MANAGER_GRANTIP
+        SET 
+        	GRANT_IP = #GRANT_IP#,
+        	USERS_IDX = #USERS_IDX#,
+        	UPDATE_DATE = CURRENT
+        WHERE GRANT_IP_IDX = #GRANT_IP_IDX# 
+    </update>
+    
+    <delete id="delete_grantip_type_01"
+  				parameterClass="java.util.HashMap">
+  		DELETE FROM MANAGER_GRANTIP
+  		WHERE  GRANT_IP_IDX = #GRANT_IP_IDX#
+  	</delete>
+  	
+  	<insert id="insert_grantip_type_01"
+          parameterClass="com.nara.jdf.db.entity.GrantIpEntity">
+			INSERT INTO MANAGER_GRANTIP
+			(
+				GRANT_IP_IDX,
+				GRANT_IP,
+				USERS_IDX,
+				INSERT_DATE,
+				UPDATE_DATE
+			)
+			VALUES
+			(
+				SEQ_GRANT_IP_IDX.NEXTVAL,
+				#GRANT_IP#,
+				#USERS_IDX#,
+				CURRENT,
+				CURRENT
+			)
+	</insert> 
+	
+	<select id="select_grantip_type_02" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="java.util.HashMap">	
+		SELECT 	GRANT_IP AS gip
+		FROM MANAGER_GRANTIP
+	</select>
+</sqlMap>

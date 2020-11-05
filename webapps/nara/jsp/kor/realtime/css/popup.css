@@ -1,0 +1,49 @@
+/* CSS Document */
+body { margin: 0px;height:100%}
+
+/*사이드영역---멀티레이어---메신져창----------------*/
+
+.pop_msgWdw1{ background: #333366 url(..../images/box/msgBox_topbg.gif) repeat-x left top; width:100%;}
+.pop_msgWdw, .pop_msgWdw2{width:100%;}
+.pop_msgWdw{height:100%;overflow-y:auto;padding:0;margin:0}
+.pop_msgWdw2 span{display:block}
+.pop_msgWdw1 h2{ position: relative;background: url(..../images/box/msgBox_topside.gif) no-repeat left top; font-weight: bold; color: #000000;padding:10px 0 0 7px;cursor: default;height:25px; }
+.pop_msgWdw1 h2 img{vertical-align: middle;}
+.pop_msgWdw ul{ list-style:none; line-height: 21px;padding:0 10px;margin:0;}
+.pop_msgWdw ul li b{margin:0 4px 0 0}
+.pop_msgWdw_entry{background: #efefef; border-top: 1px solid #d9d9d9; border-bottom: 1px solid #d9d9d9;padding: 5px; margin:5px 0 0 0; }
+.pop_msgWdw_entry span{background: #fff;border: 1px solid #a6a6a6; line-height: 18px; font-weight: normal;overflow-y: auto; height:30px; padding:3px; }
+
+.btnAct{ position: relative;float:right;bottom:17px;right:6px;margin-left:2px; cursor:pointer}
+
+.pop_msgWico{padding:0 6px 0 0}
+
+.pop_msgWdw_opt{ background: #e3e3e3; padding: 5px 0 0 11px; height: 18px; }
+.pop_msgWdw_opt span{float:left; background: url(..../images/bullet/arrow_samllD.gif) no-repeat 29px 40%; border-right: 1px solid #d3d3d3;color: #565656;font-weight: normal;cursor:default;height:10px; margin-right:7px; padding:1px 18px 0 0;  }
+.pop_msgWdw_opt a{width:84px;float:left;margin:1px 0 0 0}
+.pop_msgWdw_opt img{ position: relative; top:7px; float:right; cursor:default;}
+
+
+/*사이드영역---멀티레이어---메신져창2----------------*/
+.pop2_msgWdw{background: #FFFFFF url(..../images/box/msgBox_topbg.gif) repeat-x left top;width:100%; height:35px; position:absolute;top:0}
+
+.pop2_msgWdw h2{ position: relative;background: url(..../images/box/msgBox_topside.gif) no-repeat left top; font-weight: bold; color: #000000;padding:10px 0 0 7px;cursor: default;height:25px; }
+.pop2_msgWdw h2 img{vertical-align: middle;}
+
+.pop2_msgWdw2{ width:100%; height:73%; overflow-y: auto; margin:43px 0 0}
+.pop2_msgWdw2 ul{ list-style:none; line-height: 21px; padding:0 10px; margin:0 2px 0 0;}
+.pop2_msgWdw2 ul li b{margin:0 4px 0 0}
+
+.pop2_msgWdw3 span{display:block}
+.pop2_msgWdw3{ list-style:none; width:100%; line-height: 20px; padding:40 0px; height:425; overflow-y:auto; margin:0 4px 0 0 ;}
+.pop2_msgWdw_entry{background: #efefef; border-top: 1px solid #d9d9d9; border-bottom: 1px solid #d9d9d9;padding: 5px; margin:5px 0 0 0; }
+.pop2_msgWdw_entry span{background: #fff;border: 1px solid #a6a6a6; line-height: 18px; font-weight: normal;overflow-y: auto; height:30px; padding:3px; }
+
+.btnAct{ position: relative;float:right;bottom:17px;right:6px;margin-left:2px; cursor:pointer}
+
+.pop2_msgWico{padding:0 6px 0 0}
+
+.pop2_msgWdw_opt{ background: #e3e3e3; padding: 5px 0 0 11px; height: 16px; }
+.pop2_msgWdw_opt span{float:left; background: url(..../images/bullet/arrow_samllD.gif) no-repeat 29px 40%; border-right: 1px solid #d3d3d3;color: #565656;font-weight: normal;cursor:default;height:10px; margin-right:7px; padding:1px 18px 0 0;  }
+.pop2_msgWdw_opt a{width:184px;float:left;margin:1px 0 0 0}
+.pop2_msgWdw_opt img{ position: relative; top:7px; float:right; cursor:default;}

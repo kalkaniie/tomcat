@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="USERS_RECENT_ADDRESS">
+  	<select id="return_recent_idx" 
+  	 	 	 	parameterClass="java.util.HashMap"
+  				resultClass="java.lang.Long">
+    	SELECT
+			RECENT_ADDRESS_IDX
+    	FROM USERS_RECENT_ADDRESS
+    	WHERE USERS_IDX = #USERS_IDX#
+    	AND   ADDRESS_EMAIL = #ADDRESS_EMAIL#
+	</select>
+	
+	<select id="return_recent_address_cnt" 
+  	 	 	 	parameterClass="java.util.HashMap"
+  				resultClass="java.lang.Integer">
+    	SELECT
+			COUNT(RECENT_ADDRESS_IDX) CNT
+    	FROM USERS_RECENT_ADDRESS
+    	WHERE USERS_IDX = #USERS_IDX#
+	</select>
+	
+	<select id="return_old_recent_address_idx" 
+  	 	 	 	parameterClass="java.util.HashMap"
+  				resultClass="java.lang.Long">
+		SELECT
+			FIRST 1
+			RECENT_ADDRESS_IDX
+		FROM USERS_RECENT_ADDRESS
+		WHERE USERS_IDX = #USERS_IDX#
+		ORDER BY USING_DT ASC, ADDRESS_EMAIL ASC
+	</select>
+	
+	<select id="select_users_recent_address" 
+  	 	 	 	parameterClass="java.util.HashMap"
+  				resultClass="com.nara.jdf.db.entity.UserRecentAddressEntity">
+		SELECT 
+			RECENT_ADDRESS_IDX,
+			USERS_IDX,
+			ORD_IDX,
+			ADDRESS_NAME,
+			ADDRESS_EMAIL,
+			TO_CHAR(USING_DT, '%Y-%m-%d %H:%M:%S') USING_DT
+		FROM USERS_RECENT_ADDRESS
+		WHERE USERS_IDX = #USERS_IDX#
+		ORDER BY ADDRESS_EMAIL ASC
+	</select>
+	
+	<insert id="insert_users_recent_address" 
+  	 	 	 	parameterClass="com.nara.jdf.db.entity.UserRecentAddressEntity">
+    	INSERT INTO USERS_RECENT_ADDRESS
+    	(
+    		RECENT_ADDRESS_IDX,
+    		USERS_IDX,
+    		ORD_IDX,
+    		ADDRESS_NAME,
+    		ADDRESS_EMAIL,
+    		USING_DT
+    	)
+    	VALUES
+    	(
+    		SEQ_USERS_RECENT_ADDRESS.NEXTVAL,
+    		#USERS_IDX#,
+    		#ORD_IDX#,
+    		#ADDRESS_NAME#,
+    		#ADDRESS_EMAIL#,
+    		CURRENT
+    	)
+	</insert>   
+	
+	<update id="update_users_recent_address" 
+  	 	 	 	parameterClass="com.nara.jdf.db.entity.UserRecentAddressEntity">
+  		UPDATE USERS_RECENT_ADDRESS
+  		SET ADDRESS_NAME = #ADDRESS_NAME#,
+  		    USING_DT = CURRENT  		
+  		WHERE RECENT_ADDRESS_IDX = #RECENT_ADDRESS_IDX#
+  	</update>
+  	
+	<delete id="delete_users_recent_address" 
+  	 	 	 	parameterClass="java.util.HashMap">
+    	DELETE FROM USERS_RECENT_ADDRESS
+    	WHERE RECENT_ADDRESS_IDX = #RECENT_ADDRESS_IDX#
+	</delete>
+<!--	
+	<delete id="delete_users_recent_address_by_rowcnt" 
+  	 	 	 	parameterClass="java.util.HashMap">
+    	DELETE FROM USERS_RECENT_ADDRESS
+    	WHERE RECENT_ADDRESS_IDX IN (
+    									SELECT RECENT_ADDRESS_IDX
+    									FROM (
+    										 	SELECT 
+    										 		ROWNUM NUM,
+    										 		RECENT_ADDRESS_IDX
+    										 	FROM (
+    										 			SELECT 
+    										 				RECENT_ADDRESS_IDX
+    										 			FROM USERS_RECENT_ADDRESS
+    										 			WHERE USERS_IDX = #USERS_IDX#
+    										 			ORDER BY USING_DT ASC, ADDRESS_EMAIL ASC
+    										 		 )
+    										 )
+    								    WHERE NUM > #USE_MAX# - 1
+    								)
+	</delete>
+-->	
+</sqlMap>

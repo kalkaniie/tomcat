@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="ANACONDA_MAIL">
+	<insert id="insert_anaconda_mail"
+			parameterClass="com.nara.jdf.db.entity.AnaMailEntity">
+		INSERT INTO ANACONDA_MAIL
+		(
+			MAIL_KEY,
+			MAIL_SEQ,
+			USERS_IDX,
+			M_SENDER,
+			M_TO,
+			M_CC,
+			M_BCC,
+			MAIL_EXPIRE,
+			MAIL_CREATE
+		)
+		VALUES
+		(
+			SEQ_ANACONDA_MAIL.NEXTVAL,
+			#MAIL_SEQ#,
+			#USERS_IDX#,
+			#M_SENDER#,
+			#M_TO#,
+			#M_CC#,
+			#M_BCC#,
+			#MAIL_EXPIRE#,
+			#MAIL_CREATE#
+		)
+	</insert> 
+
+	<select id="select_anaconda_mail_type_01"
+	        parameterClass="java.util.HashMap"
+	        resultClass="com.nara.jdf.db.entity.AnaMailEntity">
+		SELECT
+			MAIL_KEY,
+			MAIL_SEQ,
+			USERS_IDX,
+			M_SENDER,
+			M_TO,
+			M_CC,
+			M_BCC,
+			MAIL_EXPIRE,
+			MAIL_CREATE
+		FROM ANACONDA_MAIL
+		WHERE USERS_IDX = #USERS_IDX#
+		AND   MAIL_SEQ = #MAIL_SEQ#
+	</select> 
+	
+	<select id="select_anaconda_mail_type_02"
+	        parameterClass="java.util.HashMap"
+	        resultClass="java.util.HashMap">
+			SELECT 
+        SKIP $SKIP$ FIRST $USERS_LISTNUM$
+				AA.MAIL_KEY,
+				AA.MAIL_SEQ,
+				AA.USERS_IDX,
+				AA.M_SENDER,
+				AA.M_TO,
+				AA.M_CC,
+				AA.M_BCC,
+				BB.M_TIME MAIL_CREATE,
+				AA.MAIL_EXPIRE
+			FROM ANACONDA_MAIL AA, $MAIL_TABLE$ BB
+		WHERE AA.MAIL_SEQ = BB.M_FILENAME
+		ORDER BY $ORDER_COL$ $ORDER_TYPE$
+	</select>
+	
+	<select id="count_anaconda_mail_type_01"
+	        parameterClass="java.util.HashMap"
+	        resultClass="java.lang.Integer">
+		SELECT
+			COUNT(MAIL_KEY)
+		FROM ANACONDA_MAIL
+	</select>
+	
+	<delete id="delete_anaconda_mail_type_01"
+	        parameterClass="java.util.Map">
+	    DELETE FROM ANACONDA_MAIL
+	    <dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "DOMAIN">
+				SUBSTR(USERS_IDX, INSTR(USERS_IDX, '@')) = '@$DOMAIN$'
+			</isNotNull>
+			<isNotNull prepend="AND" property= "MAIL_KEY">
+				MAIL_KEY = #MAIL_KEY#
+			</isNotNull>
+		</dynamic>
+	</delete>
+</sqlMap>

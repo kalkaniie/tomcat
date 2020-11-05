@@ -1,0 +1,44 @@
+DROP DATABASE IF EXISTS mail;
+-- euckr
+CREATE DATABASE mail DEFAULT CHARACTER SET euckr COLLATE euckr_korean_ci;
+-- utf8
+CREATE DATABASE mail DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+
+use mysql;
+
+update user set password=password('kebi') where user='root';
+flush privileges;
+
+grant all privileges on *.* to 'root'@'127.0.0.1' identified by 'kebi' with grant option;
+grant all privileges on *.* to 'root'@'211.238.156.130' identified by 'kebi' with grant option;
+grant all privileges on *.* to 'kebi'@'127.0.0.1' identified by 'kebi' with grant option;
+grant all privileges on *.* to 'kebi'@'211.238.156.130' identified by 'kebi' with grant option;
+grant all privileges on *.* to 'kebi'@'localhost' identified by 'kebi' with grant option;
+
+insert into user (host, user, password) values('%','kebi',password('kebi'));
+grant all privileges on *.* to 'kebi'@'%' identified by 'kebi' with grant option;
+flush privileges;
+
+use mail;
+
+-- 시퀀스 테이블 생성
+DROP TABLE IF EXISTS SEQUENCE;
+CREATE TABLE SEQUENCE (
+	NAME VARCHAR(155) NOT NULL,
+	STEP NUMERIC NOT NULL DEFAULT 0,
+	NEXT_VAL NUMERIC NOT NULL DEFAULT 1,
+	PRIMARY KEY  (NAME)
+);
+
+DROP FUNCTION IF EXISTS NEXTVAL;
+DELIMITER //
+CREATE FUNCTION NEXTVAL(SEQ_NAME VARCHAR(255)) RETURNS NUMERIC
+BEGIN
+  UPDATE SEQUENCE SET NEXT_VAL=@VAL:=NEXT_VAL+STEP WHERE NAME=SEQ_NAME;   
+  RETURN @VAL;
+END
+//
+
+-- FUNCTION 생성안될 경우 
+show global variables like 'log_bin_trust_function_creators';
+SET GLOBAL log_bin_trust_function_creators = ON;

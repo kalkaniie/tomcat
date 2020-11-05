@@ -1,0 +1,38 @@
+<script language="javascript" src="prototype.js"></script>
+<style>
+.sw {
+	position: relative;
+	width: 312px;
+	margin: 0 auto;
+	left: 636;
+	top: 23;
+	z-index: 50;
+	background: #FFFFFF;
+}
+</style>
+<form name="search" method="post"><input type="text"
+	style="width: 240px;" class="input" id="suggestKeyword" name="requery"
+	value='' tabindex=1 style="ime-mode: active;" autocomplete="off">
+</form>
+
+<script>
+document.forms['search'].requery.onkeyup = function(e)
+{
+	var uri = "/mail/user.address.do?method=get_cached_email";
+	var submitAjax = new Ajax.Request
+	(
+		uri,
+		{
+		requestHeaders : new Array("X-UserAgent-Nongaek","NARAVISION"),
+		contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+		parameters: Form.serialize("search"),  
+		onComplete: submitRecomResult
+		}
+	);
+}
+
+function submitRecomResult(originalRequest)
+{
+	alert(originalRequest.responseText);	
+}
+</script>

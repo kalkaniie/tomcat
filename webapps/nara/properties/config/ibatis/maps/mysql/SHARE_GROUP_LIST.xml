@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="SHARE_GROUP_LIST">
+	<insert id="insert_share_group_list_type_01"
+  				parameterClass="com.nara.jdf.db.entity.ShareGroupListEntity">
+		INSERT INTO SHARE_GROUP_LIST 
+		(
+			SHARE_GROUP_LIST_IDX,
+			DOMAIN,
+			USERS_IDX,
+			SHARE_GROUP_IDX,
+			SHARE_STATUS,
+			SHARE_AUTH
+		)
+		VALUES
+		(
+			NEXTVAL('SHARE_GROUP_LIST'),
+			#DOMAIN#,
+			#USERS_IDX#,
+			#SHARE_GROUP_IDX#,
+			#SHARE_STATUS#,
+			#SHARE_AUTH#
+		)
+	</insert>
+	
+	<select id="count_share_group_list_type_01"
+	        parameterClass="java.util.HashMap"
+	        resultClass="java.lang.Integer">
+		SELECT
+			COUNT(USERS_IDX) CNT
+		FROM SHARE_GROUP_LIST
+		<dynamic prepend="WHERE">
+	  		<isNotNull prepend="AND" property= "DOMAIN">
+				DOMAIN = #DOMAIN#
+			</isNotNull>
+	  		<isNotNull prepend="AND" property= "SHARE_GROUP_IDX">
+				SHARE_GROUP_IDX = #SHARE_GROUP_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+		</dynamic> 
+	</select>
+	
+		
+	<delete id="delete_share_group_list_type_01"
+	        parameterClass="java.util.HashMap">
+		DELETE FROM SHARE_GROUP_LIST
+		<dynamic prepend="WHERE">
+	  		<isNotNull prepend="AND" property= "DOMAIN">
+				DOMAIN = #DOMAIN#
+			</isNotNull>
+	  		<isNotNull prepend="AND" property= "SHARE_GROUP_IDX">
+				SHARE_GROUP_IDX = #SHARE_GROUP_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+		</dynamic> 
+	</delete>
+	
+	<select id="count_share_group_list_type_02"
+	        parameterClass="java.util.HashMap"
+	        resultClass="java.lang.Integer">
+		SELECT 
+			COUNT(SG.USERS_IDX) CNT
+		FROM SHARE_GROUP_LIST SG LEFT OUTER JOIN USERS UM ON SG.USERS_IDX = UM.USERS_IDX 
+		WHERE SG.DOMAIN = #DOMAIN#
+		    AND SG.SHARE_GROUP_IDX = #SHARE_GROUP_IDX#
+			AND UM.USERS_PERMIT !='W' 
+			ORDER BY UM.USERS_NAME 
+	</select>
+	
+	<select id="select_share_group_list_type_02"
+	        parameterClass="java.util.HashMap"
+	        resultClass="com.nara.jdf.db.entity.ShareGroupExtendUserEntity">
+ 		SELECT  
+ 			SG.SHARE_GROUP_LIST_IDX	SHARE_GROUP_LIST_IDX	,
+			UM.DOMAIN				DOMAIN					,
+			UM.USERS_IDX			USERS_IDX				,
+			SG.SHARE_GROUP_IDX		SHARE_GROUP_IDX			,
+ 			UM.USERS_ID				USERS_ID				,
+			UM.USERS_NAME			USERS_NAME				,
+			UM.USERS_JUMIN1			USERS_JUMIN1			,
+ 			UM.USERS_JUMIN2			USERS_JUMIN2			,
+			UM.USERS_LICENCENUM		USERS_LICENCENUM		,
+ 			UM.USERS_PERMIT			USERS_PERMIT			, 
+ 			UM.USERS_CELLNO			USERS_CELLNO			, 
+ 			UM.USERS_ISOPEN 		USERS_ISOPEN			,
+ 			SG.SHARE_AUTH 			SHARE_AUTH				,
+ 			SG.SHARE_STATUS 		SHARE_STATUS			 
+ 		FROM SHARE_GROUP_LIST SG 
+			LEFT OUTER JOIN USERS UM ON SG.USERS_IDX = UM.USERS_IDX 
+		WHERE SG.DOMAIN = #DOMAIN#
+		AND SG.SHARE_GROUP_IDX = #SHARE_GROUP_IDX#
+		AND UM.USERS_PERMIT !='W' 
+		ORDER BY UM.USERS_NAME ASC
+		LIMIT $SKIP$, $USERS_LISTNUM$
+	</select>
+	
+	<update id="update_share_group_list_type_01"
+	        parameterClass="java.util.HashMap">
+	    UPDATE SHARE_GROUP_LIST 
+	    SET SHARE_STATUS = #SHARE_STATUS# ,
+			SHARE_AUTH = #SHARE_AUTH# 
+		WHERE DOMAIN = #DOMAIN#
+		AND SHARE_GROUP_IDX = #SHARE_GROUP_IDX#
+		AND USERS_IDX = #USERS_IDX#
+	</update>
+	
+	<select id="select_share_group_list_type_03"
+	        parameterClass="java.util.HashMap"
+	        resultClass="com.nara.jdf.db.entity.MyClubShareEntity">
+		SELECT
+			A.SHARE_GROUP_IDX, 									
+  			A.DOMAIN,
+  			A.SHARE_GROUP_NAME, 							
+  			B.SHARE_AUTH,
+  			B.SHARE_STATUS
+		FROM SHARE_GROUP A JOIN SHARE_GROUP_LIST B ON A.SHARE_GROUP_IDX = B.SHARE_GROUP_IDX
+		<dynamic prepend="">
+	  		<isNotNull prepend="AND" property= "DOMAIN">
+				A.DOMAIN = #DOMAIN#
+			</isNotNull>
+	  		<isNotNull prepend="AND" property= "SHARE_GROUP_IDX">
+				A.SHARE_GROUP_IDX = #SHARE_GROUP_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				B.USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "SHARE_GROUP_STATUS">
+				A.SHARE_GROUP_STATUS = #SHARE_GROUP_STATUS#
+			</isNotNull>
+		</dynamic> 
+	</select>
+	
+	<update id="update_share_status"
+	        parameterClass="java.util.HashMap">
+	    UPDATE SHARE_GROUP_LIST 
+	    SET SHARE_STATUS = #SHARE_STATUS#
+		WHERE USERS_IDX = #USERS_IDX#
+		AND SHARE_GROUP_IDX = #SHARE_GROUP_IDX#
+	</update>	
+	
+	<update id="update_share_auth"
+	        parameterClass="java.util.HashMap">
+	    UPDATE SHARE_GROUP_LIST 
+	    SET SHARE_AUTH = #SHARE_AUTH#
+		WHERE USERS_IDX = #USERS_IDX#
+		AND SHARE_GROUP_IDX = #SHARE_GROUP_IDX#
+	</update>
+</sqlMap>

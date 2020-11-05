@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="MAIL_LOG"> 
+  	
+  	
+  	<select id="select_mail_log_day"
+	        parameterClass="java.util.Map"
+	        resultClass="com.nara.jdf.db.entity.MailLogEntity">	        
+		SELECT 
+			DATE_FORMAT(MAIL_LOG_DATE, '%Y-%m-%d %H') MAIL_LOG_DATE_DAY, 
+        	SUM(MAIL_LOG_RECEIVE_COUNT) MAIL_LOG_RECEIVE_COUNT, 
+            SUM(MAIL_LOG_SEND_COUNT) MAIL_LOG_SEND_COUNT, 
+            SUM(MAIL_LOG_RECEIVE_VOLUME) MAIL_LOG_RECEIVE_VOLUME, 
+            SUM(MAIL_LOG_SEND_VOLUME) MAIL_LOG_SEND_VOLUME, 
+            SUM(MAIL_LOG_ERROR_COUNT) MAIL_LOG_ERROR_COUNT 
+        FROM MAIL_LOG 
+        WHERE (MAIL_LOG_DATE BETWEEN STR_TO_DATE(#startCal#,'%Y-%m-%d %H') AND STR_TO_DATE(#endCal#,'%Y-%m-%d %H')) 
+      	<dynamic prepend="">
+			<isNotNull prepend="AND" property="DOMAIN" >
+				MAIL_LOG_DOMAIN = #DOMAIN#
+			</isNotNull>
+		</dynamic>					
+		GROUP BY DATE_FORMAT(MAIL_LOG_DATE, '%Y-%m-%d %H')	
+		ORDER BY DATE_FORMAT(MAIL_LOG_DATE, '%Y-%m-%d %H')	    	
+	</select>
+	
+	<select id="select_mail_log_week"
+	        parameterClass="java.util.Map"
+	        resultClass="com.nara.jdf.db.entity.MailLogEntity">	        		
+		SELECT 
+			DATE_FORMAT(MAIL_LOG_DATE, '%Y-%m-%d') MAIL_LOG_DATE_WEEK, 
+        	SUM(MAIL_LOG_RECEIVE_COUNT) MAIL_LOG_RECEIVE_COUNT, 
+            SUM(MAIL_LOG_SEND_COUNT) MAIL_LOG_SEND_COUNT, 
+            SUM(MAIL_LOG_RECEIVE_VOLUME) MAIL_LOG_RECEIVE_VOLUME, 
+            SUM(MAIL_LOG_SEND_VOLUME) MAIL_LOG_SEND_VOLUME, 
+            SUM(MAIL_LOG_ERROR_COUNT) MAIL_LOG_ERROR_COUNT 
+        FROM MAIL_LOG 
+        WHERE (MAIL_LOG_DATE BETWEEN STR_TO_DATE(#startCal#,'%Y-%m-%d %H') AND STR_TO_DATE(#endCal#,'%Y-%m-%d %H')) 
+        <dynamic prepend="">
+			<isNotNull prepend="AND" property="DOMAIN" >
+				MAIL_LOG_DOMAIN = #DOMAIN#
+			</isNotNull>
+		</dynamic>					
+		GROUP BY DATE_FORMAT(MAIL_LOG_DATE, '%Y-%m-%d')
+		ORDER BY DATE_FORMAT(MAIL_LOG_DATE, '%Y-%m-%d')		  	
+	</select>
+	
+	<select id="select_mail_log_month"
+	        parameterClass="java.util.Map"
+	        resultClass="com.nara.jdf.db.entity.MailLogEntity">		
+		SELECT 
+			CONCAT(DATE_FORMAT(MAIL_LOG_DATE, '%Y-%m '),(WEEKOFYEAR(MAIL_LOG_DATE)-WEEKOFYEAR(STR_TO_DATE(#startCal#,'%Y-%m-%d %H'))+1)) MAIL_LOG_DATE_MONTH,
+        	SUM(MAIL_LOG_RECEIVE_COUNT) MAIL_LOG_RECEIVE_COUNT, 
+            SUM(MAIL_LOG_SEND_COUNT) MAIL_LOG_SEND_COUNT, 
+            SUM(MAIL_LOG_RECEIVE_VOLUME) MAIL_LOG_RECEIVE_VOLUME, 
+            SUM(MAIL_LOG_SEND_VOLUME) MAIL_LOG_SEND_VOLUME, 
+            SUM(MAIL_LOG_ERROR_COUNT) MAIL_LOG_ERROR_COUNT 
+        FROM MAIL_LOG 
+        WHERE (MAIL_LOG_DATE BETWEEN STR_TO_DATE(#startCal#,'%Y-%m-%d %H') AND STR_TO_DATE(#endCal#,'%Y-%m-%d %H')) 
+        <dynamic prepend="">
+			<isNotNull prepend="AND" property="DOMAIN" >
+				MAIL_LOG_DOMAIN = #DOMAIN#
+			</isNotNull>
+		</dynamic>					
+		GROUP BY CONCAT(DATE_FORMAT(MAIL_LOG_DATE, '%Y-%m '),(WEEKOFYEAR(MAIL_LOG_DATE)-WEEKOFYEAR(STR_TO_DATE(#startCal#,'%Y-%m-%d %H'))+1))
+		ORDER BY CONCAT(DATE_FORMAT(MAIL_LOG_DATE, '%Y-%m '),(WEEKOFYEAR(MAIL_LOG_DATE)-WEEKOFYEAR(STR_TO_DATE(#startCal#,'%Y-%m-%d %H'))+1))  	
+	</select>
+	
+	<select id="select_mail_log_year"
+	        parameterClass="java.util.Map"
+	        resultClass="com.nara.jdf.db.entity.MailLogEntity">	        
+		
+		SELECT 
+			DATE_FORMAT(MAIL_LOG_DATE, '%Y-%m') MAIL_LOG_DATE_YEAR, 
+        	SUM(MAIL_LOG_RECEIVE_COUNT) MAIL_LOG_RECEIVE_COUNT, 
+            SUM(MAIL_LOG_SEND_COUNT) MAIL_LOG_SEND_COUNT, 
+            SUM(MAIL_LOG_RECEIVE_VOLUME) MAIL_LOG_RECEIVE_VOLUME, 
+            SUM(MAIL_LOG_SEND_VOLUME) MAIL_LOG_SEND_VOLUME, 
+            SUM(MAIL_LOG_ERROR_COUNT) MAIL_LOG_ERROR_COUNT 
+        FROM MAIL_LOG 
+        WHERE (MAIL_LOG_DATE BETWEEN STR_TO_DATE(#startCal#,'%Y-%m-%d %H') AND STR_TO_DATE(#endCal#,'%Y-%m-%d %H')) 
+        <dynamic prepend="">
+			<isNotNull prepend="AND" property="DOMAIN" >
+				MAIL_LOG_DOMAIN = #DOMAIN#
+			</isNotNull>
+		</dynamic>					
+		GROUP BY DATE_FORMAT(MAIL_LOG_DATE, '%Y-%m')
+		ORDER BY DATE_FORMAT(MAIL_LOG_DATE, '%Y-%m')		  	
+	</select>
+</sqlMap>
+
+
+

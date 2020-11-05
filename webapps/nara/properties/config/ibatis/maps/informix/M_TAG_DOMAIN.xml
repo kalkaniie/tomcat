@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="M_TAG_DOMAIN"> 
+	<select id="select_m_tag_domain_type_01"
+			parameterClass="java.util.HashMap"
+			resultClass="com.nara.jdf.db.entity.UserTagEntity">
+		SELECT 
+			USERS_IDX,
+			TAG_TYPE,
+			TAG_NAME,
+			TAG_IMG_NAME,
+			TAG_ORD
+		FROM $TAG_TABLE$
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "TAG_TYPE">
+				TAG_TYPE = #TAG_TYPE#
+			</isNotNull>
+		</dynamic>
+		
+		ORDER BY TAG_ORD
+	</select>			
+
+	<select id="select_m_tag_domain_type_02"
+			parameterClass="java.util.HashMap"
+			resultClass="com.nara.jdf.db.entity.UserTagEntity">
+		SELECT 
+			USERS_IDX,
+			TAG_TYPE,
+			TAG_NAME,
+			TAG_IMG_NAME,
+			TAG_ORD
+		FROM $TAG_TABLE$
+		WHERE USERS_IDX = #USERS_IDX#
+		AND   TAG_TYPE > 0
+		AND   TAG_NAME IS NOT NULL
+		
+		ORDER BY TAG_ORD
+	</select>	
+	
+   	<insert id="insert_m_tag_domain_default_data"
+   	        parameterClass="java.util.HashMap">
+		INSERT INTO $TAG_TABLE$ (USERS_IDX, TAG_TYPE, TAG_NAME, TAG_IMG_NAME, TAG_ORD)
+		SELECT '$USERS_IDX$',  TAG_TYPE, TAG_NAME, TAG_IMG_NAME, TAG_ORD FROM M_TAG_BASE   	
+   	</insert>
+   	
+   	<update id="update_m_tag_domain_tag_name"
+   	        parameterClass="java.util.HashMap">
+		UPDATE $TAG_TABLE$
+		SET TAG_NAME = #TAG_NAME#
+		WHERE USERS_IDX = #USERS_IDX#
+		AND TAG_TYPE = #TAG_TYPE#  
+   	</update>
+   	
+   	
+   	<select id="select_m_tag_domain_type_03"
+			parameterClass="java.util.HashMap"
+			resultClass="java.util.HashMap">
+		SELECT 
+			USERS_IDX,
+			TAG_TYPE,
+			TAG_NAME,
+			TAG_IMG_NAME,
+			TAG_ORD
+		FROM $TAG_TABLE$
+		WHERE USERS_IDX = #USERS_IDX#
+		AND   TAG_TYPE > 0
+		AND   TAG_NAME IS NOT NULL
+		
+		ORDER BY TAG_ORD
+	</select>
+	
+	<delete id="delete_m_tag_domain_users_idx"
+  				parameterClass="java.util.HashMap">
+  		DELETE FROM $TAG_TABLE$
+  		WHERE  USERS_IDX = #USERS_IDX#
+  	</delete>	
+</sqlMap>

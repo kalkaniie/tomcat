@@ -1,0 +1,444 @@
+﻿<%@page import="com.nara.jdf.db.entity.SkUserEntity"%>
+<%@ page language="java" contentType="text/html;charset=utf-8"%>
+<%@page import="java.io.*"%>
+<%@page import="java.util.List"%>
+<%@page import="java.util.Iterator"%>
+<%@page import="com.nara.jdf.db.entity.UserEntity"%>
+<%@page import="com.nara.util.ChkValueUtil"%>
+
+<jsp:useBean id="list" class="java.util.ArrayList" scope="request" />
+<jsp:useBean id="nPage" class="java.lang.String" scope="request" />
+<jsp:useBean id="strIndex" class="java.lang.String" scope="request" />
+<jsp:useBean id="strKeyword" class="java.lang.String" scope="request" />
+<jsp:useBean id="nListNum" class="java.lang.String" scope="request" />
+<jsp:useBean id="pagingInfo" class="com.nara.util.PagingInfo" scope="request" />
+<jsp:useBean id="orderCol" class="java.lang.String" scope="request" />
+<jsp:useBean id="orderType" class="java.lang.String" scope="request" />
+<jsp:useBean id="SK_USERS_CENTER_NAME" class="java.lang.String" scope="request" />
+<jsp:useBean id="SK_USERS_GROUP_NAME" class="java.lang.String" scope="request" />
+<jsp:useBean id="SK_USERS_OFFICE_NAME" class="java.lang.String" scope="request" />
+<jsp:useBean id="detailKeyword" class="java.lang.String" scope="request" />
+<jsp:useBean id="USERS_COMPNAME" class="java.lang.String" scope="request" />
+<script language="javascript">
+<%
+
+	SkUserEntity skUserEntity = new SkUserEntity();
+%>
+<!--
+function aliasInfoDetail(_alias_idx) {
+	var objForm = document.f_alias_info_list;
+	objForm.ALIAS_IDX.value = _alias_idx;
+	objForm.action="user.admin.do?method=sk_alias_info_list";
+	objForm.submit();
+}
+
+function aliasInfoSearch(){
+	var objForm = document.f_alias_info_list;
+	
+  	if(objForm.strIndex.value==""){
+	    alert("검색옵션을 션택하세요.");
+	    objForm.strIndex.focus();
+	    return;
+  	} else if(objForm.strIndex.value == "USERS_IDX" && objForm.strKeyword.value == "") {
+	    alert("메일 계정 을 입력해 주세요. ");
+	    objForm.strKeyword.focus();
+	    return;
+  	}
+  
+  var center_keyword = document.getElementById("center_Keyword");
+  var group_keyword = document.getElementById("group_Keyword");
+  var office_keyword = document.getElementById("office_Keyword");
+   
+  /////		조직정보 키워드 값을 세팅해준다
+  setOrgKeywordValues( center_keyword , group_keyword , office_keyword );
+
+	 if( ( objForm.strIndex.value == "USERS_IDX" || 
+		 objForm.strIndex.value == "SK_USERS_IDX" ) ) {
+	 	 flushCondKeyword( objForm );	//	조직그룹 조회 이후 메일 ID 나 상담실 ID 조회시 기존 값을 비운다.
+ 	}
+  
+  	objForm.action="user.admin.do?method=sk_alias_info_list"; 	
+  	objForm.submit();
+}
+
+function setOrgKeywordValues( center_keyword , group_keyword, office_keyword ) {  /////		조직정보 키워드 값을 세팅해준다
+	var objForm = document.f_alias_info_list;
+	
+	if( center_keyword != null && group_keyword != null && office_keyword != null ) { 
+		
+		  if( center_keyword.value == "센터 명" ||  group_keyword.value == "그룹 명" ||
+					office_keyword.value == "상담실 명") {
+			//	더미 문자열 제거
+			if(center_keyword.value == "센터 명") center_keyword.value ="";
+			if(group_keyword.value == "그룹 명") group_keyword.value ="";
+			if(office_keyword.value == "상담실 명") office_keyword.value ="";
+		  }
+		  
+			//	키워드가 있다면 히든에 세팅한다.
+			objForm.cond_center_keyword.value = center_keyword.value;
+			objForm.cond_group_keyword.value = group_keyword.value;
+			objForm.cond_office_keyword.value = office_keyword.value;
+	  } 
+}
+
+function flushCondKeyword( objForm ) {	//	조직그룹 조회 이후 메일 ID 나 상담실 ID 조회시 기존 값을 비운다.
+	 if( objForm.cond_center_keyword != null) objForm.cond_center_keyword.value ="";
+	 if( objForm.cond_group_keyword != null) objForm.cond_group_keyword.value ="";
+	 if( objForm.cond_office_keyword != null) objForm.cond_office_keyword.value ="";
+}
+
+function registSkUserPop(objForm,pName) {	//	매일계정 분배 등록 창 을 띄운다.
+	var objForm = document.f_alias_info_list;
+	//	SK_USERS_IDX 의 속성값인 users_idx 를 변수에 담는다.
+	var CHK_USERS_IDX = document.getElementsByName("SK_USERS_IDX");
+	
+	/*		체크한 상담실에 이미 메일계정이 등록되어있는지 체크 루틴 .....  start */
+	var USERS_IDX = "";
+	var chkCnt = 0;	//	
+	var nullCnt = 0;
+	var splIdx;
+	var SK_USERS_IDX = "";
+	for( var i = 0; i<CHK_USERS_IDX.length; i++ ) {	
+		if( CHK_USERS_IDX[i].checked ) {//	체크박스가 체크된경우에..
+		chkCnt++;
+		
+		splIdx = CHK_USERS_IDX[i].value.split(",");
+		
+		USERS_IDX = splIdx[1];
+		if( USERS_IDX != "" ) {
+			//	nullCnt == 0 인경우는 체크한 상담실 ID 중 이미 분배된 메일계정이 한건이하일경우..
+			if( nullCnt == 0 ) SK_USERS_IDX = splIdx[0];
+			//	nullCnt > 0 인경우는 체크한 상담실 ID 중 이미 분배된 메일계정이 한건이상일경우..
+			if( nullCnt > 0 )	SK_USERS_IDX +=","+ splIdx[0];
+				nullCnt++;
+			}	
+		}
+	}
+	
+	/*
+	if( nullCnt > 0 ) {	//	상담실 ID 중 이미 메일분배가 한건이상 된경우..
+		var msg = "상담실 ID [ "+SK_USERS_IDX+" ] 은 이미 메일계정이 분배 되어있습니다.";
+		msg+="\n체크 해제후 등록해주세요.";
+		alert(msg);
+		return;		
+	}
+	*/
+	
+	if( chkCnt <= 0 ) {	//	체크박스를 한개라도 체크 하지 않았을경우.. 
+		alert("등록하실 상담실을 체크하여 주십시오.");
+		return;
+	}
+	/*		체크한 상담실에 이미 메일계정이 등록되어있는지 체크 루틴 .....  end */
+	
+	var link = "";
+	link = "address.auth.do";
+	MM_openBrWindow('' ,'address_pop','status=yes,toolbar=no,scrollbars=no,width=400,height=421')
+	objForm.target = "address_pop";
+	objForm.action = link;
+	objForm.method.value = "address_sk_user_list_pop";
+	objForm.submit();
+}
+
+//권한변경
+function changePermit(_sk_users_idx, _sk_users_permit) {
+	var link = "user.system.do?method=change_sk_permit_form&SK_USERS_IDX=" + 
+				_sk_users_idx + "&SK_USERS_PERMIT="+  _sk_users_permit ;
+		
+	MM_openBrWindow(link,'sys_change_auth','width=300,height=115')
+}
+
+///		컬럼명을 클릭했을때 order by 되도록...
+function colOrder( orderCol ) {
+	
+	var obj;
+	var objForm = document.f_alias_info_list;
+	
+	///		order by 분기 처리 ...
+	if( objForm.orderType.value == "ASC" ) {
+		objForm.orderType.value = "DESC";
+	}
+	else if( objForm.orderType.value == "DESC" ){
+		objForm.orderType.value = "ASC";
+	}
+	
+	///		orderCol 분기
+	objForm.orderCol.value = orderCol;
+	objForm.nPage.value=0;
+	objForm.action="user.admin.do?method=sk_alias_info_list";
+	objForm.submit(); 	
+}
+
+function selectOptions( value ) {
+	
+	var cntName = ["<%=SK_USERS_CENTER_NAME%>",
+	               			"<%=SK_USERS_GROUP_NAME%>",
+	               			"<%=SK_USERS_OFFICE_NAME%>"];
+	
+	//		그룹 명을 선택하였을때.. 
+	if( value == "SK_USERS_GROUP_NAME" ) {
+		
+		var  str = "";
+		str += "<input type='text' id='center_Keyword' ";
+		str += "style='width: 100px' class='k_intx00' ";
+		str += "value='' onclick='valueFlush(this.value);'/>";
+		
+		str += "&nbsp;";
+		
+		str += "<input type='text' id='group_Keyword' ";
+		str += "style='width: 100px' class='k_intx00' ";
+		str += "value='' onclick='valueFlush(this.value);'/>";
+		
+		str += "&nbsp;";
+		
+		str += "<input type='text' id='office_Keyword' ";
+		str += "style='width: 100px' class='k_intx00' ";
+		str += "value='' onclick='valueFlush(this.value);'/>";
+		
+		str += "&nbsp;";
+		 
+		str += "<a href='javascript:aliasInfoSearch();'>";
+		str +="<img src='/images/kor/btn/popup_search.gif' /></a>";
+		
+		document.getElementById("inputBox").innerHTML = str;
+		
+		  var center_keyword = document.getElementById("center_Keyword");
+		  var group_keyword = document.getElementById("group_Keyword");
+		  var office_keyword = document.getElementById("office_Keyword");
+		 
+		  ////	키워드 표시 분기 처리 
+		 if( cntName[0] == "") center_keyword.value = "센터 명";
+		 else if( cntName[0] != "" ) center_keyword.value = cntName[0]; 
+		 if( cntName[1] == "" ) group_keyword.value = "그룹 명";
+		 else if( cntName[1] != "" ) group_keyword.value = cntName[1]; 
+		 if( cntName[2] == "" ) office_keyword.value = "상담실 명";
+		 else if( cntName[2] != "" ) office_keyword.value = cntName[2]; 
+	} 
+	else if( value == "USERS_IDX" ) {
+		var str ="";	   	
+		str += "<input type='text' name='strKeyword' ";
+		str += "style='width: 100px' class='k_intx00' ";
+		str += "value='<%=strKeyword %>' />";
+		
+		str += "&nbsp;";
+		
+		str += "<a href='javascript:aliasInfoSearch();'>";
+		str +="<img src='/images/kor/btn/popup_search.gif' /></a>";
+		
+		document.getElementById("inputBox").innerHTML = str;
+	}	
+	else if( value == "SK_USERS_IDX") {
+		var str ="";	   	
+		str += "<input type='text' name='strKeyword' ";
+		str += "style='width: 100px' class='k_intx00' ";
+		str += "value='<%=strKeyword %>' />";
+		
+		str += "&nbsp;";
+		
+		str += "<a href='javascript:aliasInfoSearch();'>";
+		str +="<img src='/images/kor/btn/popup_search.gif' /></a>";
+		
+		document.getElementById("inputBox").innerHTML = str;
+	}
+	  
+}
+
+ function valueFlush( value ) {
+
+	  var center_keyword = document.getElementById("center_Keyword");
+	  var group_keyword = document.getElementById("group_Keyword");
+	  var office_keyword = document.getElementById("office_Keyword");
+   
+	if( center_keyword != null || group_keyword != null  || office_keyword != null  ) {
+		if( center_keyword.value == "센터 명" ||  group_keyword.value == "그룹 명" ||
+				office_keyword.value == "상담실 명") {
+			
+				if(center_keyword.value == "센터 명") center_keyword.value ="";
+				if(group_keyword.value == "그룹 명") group_keyword.value ="";
+				if(office_keyword.value == "상담실 명") office_keyword.value ="";
+		}
+	}
+} 
+ 
+ function setSelectedIndexByValue( selectObject, value ) {
+	  if ( selectObject == null )
+	    return false;
+		
+	  if( value == "SK_USERS_GROUP_NAME" ) {
+		  selectOptions( "SK_USERS_GROUP_NAME" );
+	  }
+	  
+	  for ( var i = 0; i < selectObject.options.length; i++ ) {
+	    if ( selectObject.options[i].value == value ) {
+	      selectObject.selectedIndex = i;
+	      return true;
+	    }
+	  }
+	  return false
+	}
+ 
+function deleteSkUser() {
+	var chkCnt = 0;
+	var arrayIdx = new Array();
+	var usersIdxs = document.getElementsByName("SK_USERS_IDX");
+	
+	for (var i = 0; i < usersIdxs.length; i++) {	
+		if (usersIdxs[i].checked ) {//	체크박스가 체크된경우에..
+			chkCnt++;
+			arrayIdx.push(usersIdxs[i].value.split(",")[0]);
+		}
+	}
+	
+	if (chkCnt == 0) {
+		alert("상담실을 체크해 주시기 바랍니다.");
+		return;
+	}	
+	if (confirm("선택하신 상담실의 메일계정이 삭제 됩니다.")) {
+		Ext.Ajax.request({
+			scope :this,
+			url: 'address.auth.do',
+			method: 'POST',
+			params: { method : 'aj_updateSkUser', idxs : arrayIdx},
+			success : function(response, options) {
+		  		var reader = new Ext.data.XmlReader({
+		  		   	record: 'RESPONSE'}, ['RESULT','MESSAGE']);
+		  		var resultXML = reader.read(response);
+		  		if (resultXML.records[0].data.RESULT == "success") {
+					document.location.reload();
+		  		}else{
+		  			Ext.Msg.alert('message', resultXML.records[0].data.MESSAGE);
+		  		}
+			},
+			failure : function(response, options) {callAjaxFailure(response, options);}
+		});
+	}
+} 
+//-->	
+</script>
+
+<style type="text/css">
+:root .k_tab_boxMid {
+	border-bottom: 1px solid #fff
+}
+</style>
+
+<form name="f_alias_info_list" method="post">
+<input type=hidden name='method' value='sk_alias_info_list'>
+<input type=hidden name='nPage' value='<%=nPage%>'> 
+<input type=hidden name='orderCol' value='<%=orderCol%>'> 
+<input type=hidden name='orderType' value='<%=orderType%>'>
+<input type=hidden name='ALIAS_IDX' value=''>
+<input type=hidden name='cond_center_keyword' value='<%=SK_USERS_CENTER_NAME%>'>
+<input type=hidden name='cond_group_keyword' value='<%=SK_USERS_GROUP_NAME%>'>
+<input type=hidden name='cond_office_keyword' value='<%=SK_USERS_OFFICE_NAME%>'>
+<div class="k_puTit">
+<h2 class="k_puTit_ico2">상담실 목록<strong>상담실 목록</strong></h2>
+<hr />
+</div>
+<ul class="k_tip_ul">
+	<li>모든 상담실 정보를 관리합니다.</li>
+</ul>
+<div class="k_puAdmin">
+<ul class="k_tab_menu">
+	<li class="k_tab_menuImg"><img src="/images/kor/tabmenu/admin_tabLeft.gif" /></li>
+	<li><a href="user.admin.do?method=user_list" >계정 목록</a></li>
+	<li class="k_tab_menuOn"><b><a href="user.admin.do?method=sk_alias_info_list" >상담실 목록</a></b></li>
+	<%if("B".equals(USERS_COMPNAME)){ %>
+	<li class="k_tab_menuImg"><a href="user.admin.do?method=sk_personal_user_list" >SKB상담사</a></li>
+	<%} %>
+	<li><a href="user.admin.do?method=user_single_regist_form" >개별등록</a></li>
+</ul>
+<div class="k_tab_boxTop">
+<img src="/images/kor/tabmenu/admin_tabTopL.gif" class="k_fltL" />
+<img src="/images/kor/tabmenu/admin_tabTopR.gif" class="k_fltR" />
+</div>
+<div class="k_tab_boxMid">
+<table class="k_tb_other4" >
+	<tr>
+		<th width="20" scope="col"><img	src="/images/kor/ico/ico_check.gif" width="13" height="13" onClick="checkAll(document.f_alias_info_list, 'SK_USERS_IDX')" ;/></th>
+		<th width="80"><a href="javascript:colOrder('SK_USERS_IDX');">상담실 ID</a></th>
+		<th width="100"><a href="javascript:colOrder('SK_USERS_CENTER_NAME');">센터 명</a></th>
+		<th width="100"><a href="javascript:colOrder('SK_USERS_GROUP_NAME');">그룹 명</a></th>
+		<th width="100"><a href="javascript:colOrder('SK_USERS_OFFICE_NAME');">상담실 명</a></th>
+		<th width="85" scope="col"><a href="javascript:colOrder('SK_USERS_PERMIT');">서비스 상태</a></th>
+		<th width="250" scope="col"><a href="javascript:colOrder('USERS_IDX');">메일 계정</a></th>
+	</tr>
+<%
+	if (list == null) {
+%>
+	<tr>
+		<td colspan="5" align="center">리스트가 없습니다.</td>
+	</tr>
+<%		
+	} else {  
+		Iterator iterator = list.iterator();
+		
+		if(!iterator.hasNext()) {
+%>
+	<tr>
+		<td colspan="9" align="center">리스트가 없습니다.</td>
+	</tr>
+<%
+		} else {
+			int i = 0;
+			while(iterator.hasNext()) {
+				i++;
+				skUserEntity = (SkUserEntity)iterator.next();
+%>
+	<tr>
+		<td><input type="checkbox" name="SK_USERS_IDX" 	value="<%=skUserEntity.SK_USERS_IDX %>,<%=skUserEntity.USERS_IDX%>" ></td>
+		<td><%=skUserEntity.SK_USERS_IDX %></td>
+		<td class="k_txAliC"><%=skUserEntity.SK_USERS_CENTER_NAME %></td>
+		<td class="k_txAliC"><%=skUserEntity.SK_USERS_GROUP_NAME %></td>
+		<td class="k_txAliC"><%=skUserEntity.SK_USERS_OFFICE_NAME %></td>
+		<td class="k_txAliC"><b><a href="javascript:changePermit('<%=skUserEntity.SK_USERS_IDX %>', '<%=skUserEntity.SK_USERS_PERMIT %>');"><%=skUserEntity.SK_USERS_PERMIT%></a></b></td>
+		<td class="k_txAliC"><%=skUserEntity.USERS_IDX %></td>
+	</tr>
+<%
+			}
+		}
+	}
+%> 
+</table>
+<p style="width:99%;"><span class="k_fltL" style="padding: 5px 0 0">[ 총 <b><%=nListNum %></b>실 ]</span> 
+<span class="k_fltR" style="padding: 0 0 1px">
+	 <a href="javascript:registSkUserPop();"><img src="/images/kor/btn/popup_entry.gif" /></a>
+	 <a href="javascript:deleteSkUser();"><img src="/images/kor/btn/popup_delete2.gif" /></a>
+</span></p>
+
+<!--<div class="k_puAno"><a href="#"><img src="/images/kor/btn/bod_first.gif" /></a><a href="#"><img src="/images/kor/btn/bod_perv.gif" /></a><span><b>1</b>/<a href="#">2</a>/<a href="#">3</a>/<a href="#">4</a>/<a href="#">5</a>/<a href="#">6</a></span><a href="#"><img src="/images/kor/btn/bod_next.gif"/></a><a href="#"><img src="/images/kor/btn/bod_last.gif" /></a></div> -->
+<div class="k_puAno"><%=pagingInfo.strLinkPagePrev%><%=pagingInfo.strLinkPageList%><%=pagingInfo.strLinkPageNext%></div>
+<div class="k_puAdmin_sBox" style="width:80%">
+
+   	  <select name="strIndex" onchange="selectOptions(this.value);">
+   	      <option value="USERS_IDX">메일 ID</option>
+   	  	  <option value="SK_USERS_GROUP_NAME">조직 조회</option>
+   	  	  <option value="SK_USERS_IDX">상담실 ID</option>
+    </select> 
+    <div id="inputBox" style="display:inline;" >
+     <input type="text" name="strKeyword" style="width: 130px" class="k_intx00" value="<%=strKeyword %>" /> 
+    <a href="javascript:aliasInfoSearch();"><img src="/images/kor/btn/popup_search.gif" /></a>
+    </div>
+  	
+    	
+  
+</div>
+</div>
+<div class="k_tab_boxBott k_clr">
+<img src="/images/kor/tabmenu/admin_tabBottL.gif" class="k_fltL" />
+<img src="/images/kor/tabmenu/admin_tabBottR.gif" class="k_fltR" />
+</div>
+<div style="clear: both"></div>
+</div>
+</form>
+<script language=javascript>
+	setSelectedIndexByValue( document.f_alias_info_list.strIndex, "<%=strIndex%>" );
+</script>
+
+
+
+
+
+
+
+
+

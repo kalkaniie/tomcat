@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="SHARE_GROUP">
+	<insert id="insert_share_group_type_01"
+  				parameterClass="com.nara.jdf.db.entity.ShareGroupEntity">
+		INSERT INTO SHARE_GROUP 
+		(
+			SHARE_GROUP_IDX,
+			DOMAIN,
+			SHARE_GROUP_DEF,
+			SHARE_GROUP_REF,
+			SHARE_GROUP_NAME,
+			SHARE_GROUP_DEFAULT,
+			SHARE_GROUP_HOMEDIR,
+			SHARE_GROUP_QUOTA,
+			SHARE_GROUP_STATUS
+		)
+		VALUES
+		(
+			NEXTVAL('SHARE_GROUP'),
+			#DOMAIN#,
+			#SHARE_GROUP_DEF#,
+			#SHARE_GROUP_REF#,
+			#SHARE_GROUP_NAME#,
+			#SHARE_GROUP_DEFAULT#,
+			#SHARE_GROUP_HOMEDIR#,
+			#SHARE_GROUP_QUOTA#,
+			#SHARE_GROUP_STATUS#
+		)
+	</insert>
+	
+	<select id="select_share_group_type_01"
+	        parameterClass="java.util.HashMap"
+	        resultClass="com.nara.jdf.db.entity.ShareGroupEntity">
+		SELECT
+			SHARE_GROUP_IDX,
+			DOMAIN,
+			SHARE_GROUP_DEF,
+			SHARE_GROUP_REF,
+			SHARE_GROUP_NAME,
+			SHARE_GROUP_DEFAULT,
+			SHARE_GROUP_HOMEDIR,
+			SHARE_GROUP_QUOTA,
+			SHARE_GROUP_STATUS
+		FROM SHARE_GROUP
+		WHERE SHARE_GROUP_IDX = #SHARE_GROUP_IDX#
+		AND   DOMAIN = #DOMAIN#
+	</select>
+	
+
+	<select id="select_share_group_type_02"
+	        parameterClass="java.util.HashMap"
+	        resultClass="com.nara.jdf.db.entity.ShareGroupEntity">									
+    	SELECT
+    		AA.SHARE_GROUP_IDX, 		
+    		AA.DOMAIN, 							
+    		AA.SHARE_GROUP_DEF, 		
+    		AA.SHARE_GROUP_REF, 		
+    		AA.SHARE_GROUP_NAME, 		
+    		AA.SHARE_GROUP_DEFAULT, 
+   			AA.SHARE_GROUP_HOMEDIR, 
+			AA.SHARE_GROUP_QUOTA, 	
+			AA.SHARE_GROUP_STATUS, 	
+			IFNULL(SUM(BB.FILE_SIZE),0) AS FILE_SIZE,
+			(	
+            	SELECT COUNT(SHARE_GROUP_LIST_IDX) 
+             	FROM SHARE_GROUP_LIST SA 
+             	WHERE SA.SHARE_GROUP_IDX = AA.SHARE_GROUP_IDX
+             ) USER_CNT
+     	FROM SHARE_GROUP AA LEFT JOIN ANACONDA_FILE BB 
+     	ON AA.SHARE_GROUP_NAME = SUBSTR(BB.USERS_IDX,11)  
+		<dynamic prepend="AND">
+			<isNotNull prepend="AND" property="DOMAIN">
+				AA.DOMAIN = #DOMAIN#
+			</isNotNull>
+		</dynamic>
+		GROUP BY  AA.SHARE_GROUP_IDX, AA.DOMAIN,AA.SHARE_GROUP_DEF,
+		          AA.SHARE_GROUP_REF, AA.SHARE_GROUP_NAME,AA.SHARE_GROUP_DEFAULT,
+		          AA.SHARE_GROUP_HOMEDIR, AA.SHARE_GROUP_QUOTA,AA.SHARE_GROUP_STATUS
+    	ORDER BY SHARE_GROUP_IDX ASC
+    	LIMIT $SKIP$, $USERS_LISTNUM$ 	
+	</select>
+	
+	<select id="select_share_group_type_02_count"
+	        parameterClass="java.util.HashMap"
+	        resultClass="java.lang.Integer">
+	        	
+		SELECT 	COUNT(AA.SHARE_GROUP_IDX) CNT 		
+		FROM SHARE_GROUP AA , ANACONDA_FILE BB 
+		WHERE  AA.SHARE_GROUP_NAME = SUBSTR(BB.USERS_IDX,11)  
+		<dynamic prepend="AND">
+			<isNotNull prepend="AND" property="DOMAIN">
+				AA.DOMAIN = #DOMAIN#
+			</isNotNull>
+		</dynamic>			  	
+	</select>
+	 
+	<delete id="delete_share_group_type_01"
+	        parameterClass="java.util.HashMap">
+		DELETE FROM SHARE_GROUP
+		WHERE SHARE_GROUP_IDX = #SHARE_GROUP_IDX#
+		AND   DOMAIN = #DOMAIN#
+	</delete>
+	
+	<update id="update_share_group_type_01"
+	        parameterClass="com.nara.jdf.db.entity.ShareGroupEntity">
+	    	UPDATE SHARE_GROUP 
+	    	SET 
+            	SHARE_GROUP_DEF     =  #SHARE_GROUP_DEF#, 
+            	SHARE_GROUP_DEFAULT =  #SHARE_GROUP_DEFAULT#,  
+            	SHARE_GROUP_QUOTA   =  #SHARE_GROUP_QUOTA#, 
+            	SHARE_GROUP_STATUS  =  #SHARE_GROUP_STATUS#  
+            WHERE SHARE_GROUP_IDX   =  #SHARE_GROUP_IDX# 
+	</update>
+	
+	<select id="select_share_group_club_info"
+	        parameterClass="java.util.HashMap"
+	        resultClass="com.nara.jdf.db.entity.AnaUserEntity">
+		SELECT '1111' AS USERS_PASSWD,
+		  SHARE_GROUP_NAME AS USERS_IDX,
+		  SHARE_GROUP_STATUS AS USERS_PERMIT,
+		  '' AS PERIOD_LIMIT_YN,
+		  '' AS DOWN_LIMIT_YN,
+		  0 AS DOWN_CNT,
+		  SHARE_GROUP_QUOTA AS USERS_MAXQUOTA,
+		  0 AS USERS_PERIOD,
+		  '' AS EXPIRE_DEL_YN,
+		  '' AS FILE_HOMEDIR,
+		  '' AS FILE_WRITE_MODE,
+		  '' AS FILE_USE_MODE
+		FROM SHARE_GROUP
+		WHERE SHARE_GROUP_NAME = #SHARE_GROUP_NAME#
+	</select>            
+</sqlMap>

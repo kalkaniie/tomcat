@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="MAIL_REPORT"> 
+  	<statement id="insert_mail_report_type_01"
+  				   parameterClass="com.nara.jdf.db.entity.MailReportEntity">
+        INSERT INTO MAIL_REPORT
+        (
+            MAIL_REPORT_IDX,
+            DOMAIN,
+            USERS_IDX,
+            USERS_NAME,
+            MAIL_REPORT_DATE,
+            MAIL_REPORT_FROM,
+            MAIL_REPORT_SENDDATE,
+            MAIL_REPORT_STMT,
+            MAIL_REPORT_STATE
+        )
+        VALUES
+        (
+			<isEqual prepend="" property= "MAIL_REPORT_IDX" compareValue="0">
+				NEXTVAL(MAIL_REPORT),
+			</isEqual>	
+			<isNotEqual prepend="" property= "MAIL_REPORT_IDX" compareValue="0">
+				#MAIL_REPORT_IDX#,
+			</isNotEqual>            
+            #DOMAIN#,
+            #USERS_IDX#,
+            #USERS_NAME#,
+            DATE_FORMAT(SYSDATE(),'%Y-%m-%d %T'),
+            #MAIL_REPORT_FROM#,
+            #MAIL_REPORT_SENDDATE#,
+            #MAIL_REPORT_STMT#,
+            #MAIL_REPORT_STATE#
+        )
+  	</statement>
+  	
+  	<delete id="delete_mail_report_type_01"
+  				parameterClass="java.util.HashMap">
+  		DELETE FROM MAIL_REPORT
+  		
+  		<dynamic prepend="WHERE">
+  			<isNotNull prepend="AND" property= "DOMAIN">
+				DOMAIN = #DOMAIN#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "MAIL_REPORT_IDX">
+				MAIL_REPORT_IDX = #MAIL_REPORT_IDX#
+			</isNotNull>
+  		</dynamic>
+  	</delete>
+  	
+  	
+  	<select id="select_mail_report_list_type_01"
+	        parameterClass="java.util.Map"
+	        resultClass="com.nara.jdf.db.entity.MailReportEntity">	        
+     	SELECT 
+	     	MAIL_REPORT_IDX,
+	     	DOMAIN,
+	     	USERS_IDX,
+	     	USERS_NAME,
+	     	MAIL_REPORT_DATE,
+	     	MAIL_REPORT_FROM,
+	     	MAIL_REPORT_SENDDATE,
+	     	MAIL_REPORT_STMT,
+	     	MAIL_REPORT_STATE
+      	FROM MAIL_REPORT 
+      	WHERE DOMAIN =  #DOMAIN# 
+      	
+      	<dynamic prepend="">
+			<isGreaterEqual prepend="AND" property="MAIL_REPORT_STATE" compareValue="1">
+				MAIL_REPORT_STATE = #MAIL_REPORT_STATE#
+			</isGreaterEqual>
+		
+		
+			<isNotEqual prepend="" property= "strKeyword" compareValue="">
+				<isEqual prepend="AND" property= "strIndex" compareValue="MAIL_REPORT_DOMAIN">
+					SUBSTR(MAIL_REPORT_FROM,INSTR(MAIL_REPORT_FROM,'@')+1,LENGTH(MAIL_REPORT_FROM)) = #strKeyword#
+				</isEqual>	
+				<isNotEqual prepend="AND" property= "strIndex" compareValue="MAIL_REPORT_DOMAIN">
+					$strIndex$ like CONCAT('%',#strKeyword#,'%')
+				</isNotEqual>
+			</isNotEqual>		
+		</dynamic>					
+		ORDER BY MAIL_REPORT_IDX DESC
+		LIMIT $SKIP$, $USERS_LISTNUM$	  	
+	</select>
+	
+	
+	<select id="select_mail_report_count_type_01" 
+  				parameterClass="java.util.HashMap" 
+  				resultClass="java.lang.Integer">
+		SELECT
+			COUNT(MAIL_REPORT_IDX)
+	 	FROM MAIL_REPORT
+	    WHERE DOMAIN =  #DOMAIN# 
+      	<dynamic prepend="">
+			<isGreaterEqual prepend="AND" property="MAIL_REPORT_STATE" compareValue="1">
+				MAIL_REPORT_STATE = #MAIL_REPORT_STATE#
+			</isGreaterEqual>
+		
+			<isNotEqual prepend="" property= "strKeyword" compareValue="">
+				<isEqual prepend="AND" property= "strIndex" compareValue="MAIL_REPORT_DOMAIN">
+					SUBSTR(MAIL_REPORT_FROM,INSTR(MAIL_REPORT_FROM,'@')+1,LENGTH(MAIL_REPORT_FROM)) = #strKeyword#
+				</isEqual>	
+				<isNotEqual prepend="AND" property= "strIndex" compareValue="MAIL_REPORT_DOMAIN">
+					$strIndex$ like CONCAT('%',#strKeyword#,'%')
+				</isNotEqual>
+			</isNotEqual> 		
+		</dynamic>	
+    </select>
+	
+	
+	<update id="update_mail_report_state"
+            parameterClass="java.util.HashMap">
+    	UPDATE MAIL_REPORT
+    	SET	MAIL_REPORT_STATE = #MAIL_REPORT_STATE#
+		WHERE MAIL_REPORT_IDX =	#MAIL_REPORT_IDX#
+	</update>	
+	
+    <select id="select_mail_report_type_01"
+	        parameterClass="java.util.Map"
+	        resultClass="com.nara.jdf.db.entity.MailReportEntity">	 
+		SELECT 
+		 	MAIL_REPORT_IDX,
+		 	DOMAIN,
+		 	USERS_IDX,
+		 	USERS_NAME,
+		 	MAIL_REPORT_DATE,
+		 	MAIL_REPORT_FROM,
+		 	MAIL_REPORT_SENDDATE,
+		 	MAIL_REPORT_STMT,
+		 	MAIL_REPORT_STATE 
+		FROM MAIL_REPORT 
+		WHERE MAIL_REPORT_IDX = #MAIL_REPORT_IDX#      
+	</select>
+</sqlMap>

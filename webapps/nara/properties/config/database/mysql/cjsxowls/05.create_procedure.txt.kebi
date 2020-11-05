@@ -1,0 +1,232 @@
+/*******************************************************************************
+ FUNCTION NAME   : sf_get_users_name_id
+ DATABASE     : mail                     
+*******************************************************************************/
+
+DROP FUNCTION IF EXISTS sf_get_users_name_id ;
+
+DELIMITER //
+CREATE FUNCTION sf_get_users_name_id(p_str VARCHAR(255)) RETURNS varchar(255) CHARSET euckr
+BEGIN
+	DECLARE Result_name VARCHAR(255);
+	DECLARE tmp_name VARCHAR(100);
+	DECLARE v_str VARCHAR(255);
+	DECLARE v_n NUMERIC;
+
+	SET p_str := REPLACE(p_str, ' ', '');
+	IF SUBSTR(p_str, char_length(p_str)  ,char_length(p_str) + 1) = ',' THEN
+		SET v_str := LTRIM(RTRIM(p_str)) ;
+	ELSE
+		SET v_str := CONCAT(LTRIM(RTRIM(p_str)), ',');
+	END IF;
+
+	WHILE (v_str != '') DO
+		SET v_n := INSTR(v_str, ',');
+		SET tmp_name := LTRIM(RTRIM(SUBSTR(v_str, 1, v_n-1)));
+		SET v_str := SUBSTR(v_str, v_n+1);
+		SET Result_name := CONCAT(sf_get_user_name(tmp_name), '(' , tmp_name , '),' , IFNULL(Result_name,''));
+	END WHILE;
+	SET Result_name := SUBSTR(Result_name, 1  ,char_length(Result_name) -1);
+	RETURN Result_name;
+END
+//
+
+/*******************************************************************************
+ FUNCTION NAME   : sf_get_user_name
+ DATABASE     : mail                     
+*******************************************************************************/
+
+DROP FUNCTION IF EXISTS sf_get_user_name ;
+
+DELIMITER //
+CREATE FUNCTION sf_get_user_name(p_id VARCHAR(255)) RETURNS varchar(255) CHARSET euckr
+begin
+	 DECLARE Result_name VARCHAR(255);
+	 
+     SELECT  USERS_NAME  INTO Result_name FROM USERS
+  	 WHERE USERS_ID = LTRIM(RTRIM(p_id))
+	 LIMIT 1;
+     
+	 RETURN Result_name;
+end
+//
+
+/*******************************************************************************
+ PROCEDURE NAME   : sp_publicaddress_sort_setting
+ DATABASE     : mail                     
+*******************************************************************************/
+
+DROP PROCEDURE IF EXISTS sp_publicaddress_sort_setting ;
+
+DELIMITER //
+CREATE PROCEDURE sp_publicaddress_sort_setting(
+	   IN_PUBLICGROUP_IDX VARCHAR(255), 
+	   IN_TARGET_PUBLICADDRESS_IDX VARCHAR(255),
+	   IN_PUBLICADDRESS_IDX VARCHAR(255))
+BEGIN
+	 DECLARE v_done int DEFAULT 0;
+	 DECLARE v_publicaddress_idx NUMERIC;
+	 DECLARE v_sort_no NUMERIC;
+	 DECLARE v_target_sort_no NUMERIC;
+	 
+	 DECLARE CS_PUBLICGROUPLIST CURSOR FOR
+            SELECT 
+                PUBLICADDRESS_IDX
+            FROM PUBLICADDRESS
+            WHERE PUBLICGROUP_IDX = IN_PUBLICGROUP_IDX
+            ORDER BY IFNULL(PUBLICADDRESS_SORT_NO,0) ASC, PUBLICADDRESS_IDX ASC;
+	 DECLARE CONTINUE HANDLER FOR NOT FOUND SET v_done = 1;
+
+	 SET v_sort_no := 1;
+	 SET v_target_sort_no := 0;
+	 
+	 SELECT PUBLICADDRESS_SORT_NO INTO v_target_sort_no
+     FROM PUBLICADDRESS
+     WHERE PUBLICADDRESS_IDX = IN_TARGET_PUBLICADDRESS_IDX;
+       
+     UPDATE PUBLICADDRESS
+     SET PUBLICADDRESS_SORT_NO = v_target_sort_no+0.5
+     WHERE PUBLICADDRESS_IDX = IN_PUBLICADDRESS_IDX;
+        
+	 OPEN CS_PUBLICGROUPLIST;	
+	 REPEAT
+		FETCH CS_PUBLICGROUPLIST INTO v_publicaddress_idx;
+		IF NOT v_done THEN
+            UPDATE PUBLICADDRESS
+            SET    PUBLICADDRESS_SORT_NO = v_sort_no
+            WHERE  PUBLICADDRESS_IDX = v_publicaddress_idx;
+            
+            SET v_sort_no := v_sort_no+1;
+		END IF;
+	 UNTIL v_done END REPEAT;
+	 CLOSE CS_PUBLICGROUPLIST;	 
+END
+//
+
+/*******************************************************************************
+ PROCEDURE NAME   : sp_publicgroup_sort_setting
+ DATABASE     : mail                     
+*******************************************************************************/
+
+DROP PROCEDURE IF EXISTS sp_publicgroup_sort_setting ;
+
+DELIMITER //
+CREATE PROCEDURE sp_publicgroup_sort_setting(IN_DOMAIN VARCHAR(255), IN_PUBLICGROUP_DEF VARCHAR(255))
+BEGIN
+	 DECLARE v_done int DEFAULT 0;
+	 DECLARE v_publicgroup_idx NUMERIC;
+	 DECLARE v_sort_no NUMERIC;
+	 DECLARE CS_PUBLICGROUP CURSOR FOR
+	 		SELECT 
+                PUBLICGROUP_IDX
+            FROM PUBLICGROUP
+            WHERE PUBLICGROUP_DEF = IN_PUBLICGROUP_DEF
+            ORDER BY IFNULL(PUBLICGROUP_SORT_NO,0) ASC;
+	 DECLARE CONTINUE HANDLER FOR NOT FOUND SET v_done = 1;
+
+	 SET v_sort_no := 1;
+	 
+	 OPEN CS_PUBLICGROUP;	
+	 REPEAT
+		FETCH CS_PUBLICGROUP INTO v_publicgroup_idx ;
+		IF NOT v_done THEN
+	        UPDATE PUBLICGROUP
+            SET    PUBLICGROUP_SORT_NO = v_sort_no
+            WHERE  PUBLICGROUP_IDX = v_publicgroup_idx;
+            
+            SET v_sort_no := v_sort_no+1;
+		END IF;
+	 UNTIL v_done END REPEAT;
+	 CLOSE CS_PUBLICGROUP;	 
+END
+//
+
+/*******************************************************************************
+ PROCEDURE NAME   : sp_usergrouplist_sort_setting
+ DATABASE     : mail                     
+*******************************************************************************/
+
+DROP PROCEDURE IF EXISTS sp_usergrouplist_sort_setting ;
+
+DELIMITER //
+CREATE PROCEDURE sp_usergrouplist_sort_setting(
+	   IN_USER_GROUP_IDX VARCHAR(255), 
+	   IN_TARGET_USER_GROUP_LIST_IDX VARCHAR(255),
+	   IN_USER_GROUP_LIST_IDX VARCHAR(255))
+BEGIN
+	 DECLARE v_done int DEFAULT 0;
+	 DECLARE v_user_group_list_idx NUMERIC;
+	 DECLARE v_sort_no NUMERIC;
+	 DECLARE v_target_sort_no NUMERIC;
+	 
+	 DECLARE CS_USERGROUPLIST CURSOR FOR
+            SELECT 
+                USER_GROUP_LIST_IDX
+            FROM USER_GROUP_LIST
+            WHERE USER_GROUP_IDX = IN_USER_GROUP_IDX
+            ORDER BY IFNULL(USER_GROUP_SORT_NO,0) ASC;
+	 DECLARE CONTINUE HANDLER FOR NOT FOUND SET v_done = 1;
+
+	 SET v_sort_no := 1;
+	 SET v_target_sort_no := 0;
+	 
+	 SELECT USER_GROUP_SORT_NO INTO v_target_sort_no
+     FROM   USER_GROUP_LIST
+     WHERE  USER_GROUP_LIST_IDX = IN_TARGET_USER_GROUP_LIST_IDX;
+        
+     UPDATE USER_GROUP_LIST
+     SET    USER_GROUP_SORT_NO = v_target_sort_no+0.5
+     WHERE  USER_GROUP_LIST_IDX = IN_USER_GROUP_LIST_IDX;
+        
+	 OPEN CS_USERGROUPLIST;	
+	 REPEAT
+		FETCH CS_USERGROUPLIST INTO v_user_group_list_idx;
+		IF NOT v_done THEN
+            UPDATE USER_GROUP_LIST
+            SET    USER_GROUP_SORT_NO = v_sort_no
+            WHERE  USER_GROUP_LIST_IDX = v_user_group_list_idx;
+            
+            SET v_sort_no := v_sort_no+1;
+		END IF;
+	 UNTIL v_done END REPEAT;
+	 CLOSE CS_USERGROUPLIST;	 
+END
+//
+
+/*******************************************************************************
+ PROCEDURE NAME   : sp_usergroup_sort_setting
+ DATABASE     : mail                     
+*******************************************************************************/
+
+DROP PROCEDURE IF EXISTS sp_usergroup_sort_setting ;
+
+DELIMITER //
+CREATE PROCEDURE sp_usergroup_sort_setting(IN_DOMAIN VARCHAR(255), IN_P_USER_GROUP_IDX VARCHAR(255))
+BEGIN
+	 DECLARE v_done int DEFAULT 0;
+	 DECLARE v_user_group_idx NUMERIC;
+	 DECLARE v_sort_no NUMERIC;
+	 DECLARE CS_USERGROUP CURSOR FOR
+	 		SELECT 
+                USER_GROUP_IDX
+            FROM USER_GROUP
+            WHERE P_USER_GROUP_IDX = IN_P_USER_GROUP_IDX
+            ORDER BY IFNULL(USER_GROUP_SORT_NO,0) ASC;
+	 DECLARE CONTINUE HANDLER FOR NOT FOUND SET v_done = 1;
+
+	 SET v_sort_no := 1;
+	 
+	 OPEN CS_USERGROUP;	
+	 REPEAT
+		FETCH CS_USERGROUP INTO v_user_group_idx ;
+		IF NOT v_done THEN
+	        UPDATE USER_GROUP
+            SET    USER_GROUP_SORT_NO = v_sort_no
+            WHERE  USER_GROUP_IDX = v_user_group_idx;
+            
+            SET v_sort_no := v_sort_no+1;
+		END IF;
+	 UNTIL v_done END REPEAT;
+	 CLOSE CS_USERGROUP;	 
+END
+//

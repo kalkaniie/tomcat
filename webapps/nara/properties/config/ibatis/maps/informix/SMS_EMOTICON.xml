@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="SMS_EMOTICON">
+	<select id="select_sms_emoticon_type_01"
+	        parameterClass="java.util.HashMap"
+	        resultClass="com.nara.jdf.db.entity.SmsEmoticonEntity">
+		SELECT SKIP $SKIP$ FIRST $USERS_LISTNUM$ 
+			SEQ_NO,
+			TITLE,
+			CONTENT,
+			REG_DT,
+			FLAG_NO,
+			CNT
+		FROM SMS_EMOTICON
+		
+		<dynamic prepend="WHERE">
+ 			<isNotNull prepend="AND" property= "FLAG_NO">
+				FLAG_NO = #FLAG_NO#
+			</isNotNull>
+ 			<isNotNull prepend="AND" property= "SEQ_NO">
+				SEQ_NO = #SEQ_NO#
+			</isNotNull>
+		</dynamic>
+		
+		ORDER BY $orderCol$ $orderType$
+	</select>
+	
+	<select id="count_sms_emoticon_type_01"
+	        parameterClass="java.util.HashMap"
+	        resultClass="java.lang.Integer">
+		SELECT 
+			COUNT(SEQ_NO) CNT
+		FROM SMS_EMOTICON
+		
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "FLAG_NO">
+				FLAG_NO = #FLAG_NO#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "SEQ_NO">
+				SEQ_NO = #SEQ_NO#
+			</isNotNull>
+		</dynamic>
+	</select>
+	
+	<insert id="insert_sms_emoticon_type_01"
+	        parameterClass="java.util.HashMap">
+	    INSERT INTO SMS_EMOTICON 
+	    (
+	    	SEQ_NO,
+	    	TITLE,
+	    	CONTENT,
+	    	REG_DT,
+	    	FLAG_NO,
+	    	CNT
+	    )
+	    VALUES
+	    (
+	    	SEQ_SMS_EMOTICON.NEXTVAL,
+	    	#TITLE#,
+	    	#CONTENT#,
+	    	TO_CHAR(CURRENT, '%Y%m%d'),
+	    	#FLAG_NO#,
+	    	0
+	    )
+	</insert>
+	
+	<update id="update_sms_emoticon_type_01"
+	        parameterClass="java.util.HashMap">
+	    UPDATE SMS_EMOTICON
+	    SET TITLE = #TITLE#,
+	        CONTENT = #CONTENT#
+	    WHERE SEQ_NO = #SEQ_NO#
+	</update>
+	
+	<delete id="delete_sms_emoticon_type_01"
+	        parameterClass="java.util.HashMap">
+		DELETE FROM SMS_EMOTICON
+		WHERE SEQ_NO = #SEQ_NO#	
+	</delete>
+</sqlMap>

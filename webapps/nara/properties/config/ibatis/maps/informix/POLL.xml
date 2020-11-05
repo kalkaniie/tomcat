@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="POLL">
+	<select id="select_poll_in_poll_idx"
+	        parameterClass="java.util.HashMap"
+	        resultClass="java.util.HashMap">
+		SELECT
+			POLL_IDX
+		FROM POLL
+		
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "DOMAIN">
+				DOMAIN = #DOMAIN#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "POLL_IDX">
+				POLL_IDX = #POLL_IDX#
+			</isNotNull>
+		</dynamic>
+	</select>
+	
+	<delete id="delete_poll_type_01"
+	        parameterClass="java.util.HashMap">
+		DELETE FROM POLL
+		
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "DOMAIN">
+				DOMAIN = #DOMAIN#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "POLL_IDX">
+				POLL_IDX = #POLL_IDX#
+			</isNotNull>
+		</dynamic>
+	</delete>
+	
+	<select id="select_poll_count_type_01" 
+  				parameterClass="java.util.HashMap" 
+  				resultClass="java.lang.Integer">
+		SELECT	count(MEMBER_IDX)
+	 	FROM POLL
+	    WHERE DOMAIN = #DOMAIN# 
+	</select>
+	
+	<select id="select_poll_list_type_01" 
+  				parameterClass="java.util.HashMap" 
+  				resultClass="com.nara.jdf.db.entity.PollEntity">
+            SELECT SKIP $SKIP$ FIRST $USERS_LISTNUM$ 
+	            POLL_IDX,
+	            USERS_IDX,
+	            DOMAIN,
+	            POLL_CONTENT,
+	            POLL_PROGRESS,
+	            TO_CHAR(POLL_SDATE,'%Y-%m-%d') POLL_SDATE,
+	            TO_CHAR(POLL_EDATE,'%Y-%m-%d') POLL_EDATE
+             FROM POLL 
+             WHERE DOMAIN = #DOMAIN# 
+             ORDER BY POLL_IDX DESC
+	</select>
+	
+	<insert id="insert_poll_type_01"
+            parameterClass="java.util.HashMap">
+       	INSERT INTO POLL( 
+       		POLL_IDX,
+            USERS_IDX,
+            DOMAIN,
+            POLL_CONTENT,
+            POLL_SDATE,
+            POLL_EDATE,
+            POLL_PROGRESS
+        ) VALUES (
+        	SEQ_POLL.NEXTVAL,
+        	#USERS_IDX#,
+            #DOMAIN#,
+            #POLL_CONTENT#,
+        	TO_DATE(#POLL_SDATE#,'%Y-%m-%d'),
+        	TO_DATE(#POLL_EDATE#,'%Y-%m-%d'),
+        	#POLL_PROGRESS#
+		)
+    </insert>	
+    
+    <select id="select_poll_max_idx" 
+  				resultClass="java.lang.Integer">
+		SELECT MAX(POLL_IDX) FROM POLL
+	</select>
+	
+	<select id="select_poll_info_type_01" 
+					parameterClass="java.util.HashMap" 
+					resultClass="com.nara.jdf.db.entity.PollEntity">
+		SELECT 
+	        POLL_IDX, 
+	        USERS_IDX, 
+	        DOMAIN, 
+            POLL_CONTENT,
+            POLL_PROGRESS,
+            TO_CHAR(POLL_SDATE,'%Y-%m-%d') POLL_SDATE,
+            TO_CHAR(POLL_EDATE,'%Y-%m-%d') POLL_EDATE 
+        FROM POLL 
+      	WHERE POLL_IDX =  #POLL_IDX# 
+	</select>
+	
+	<update id="update_poll_stop_all"
+            parameterClass="java.util.HashMap">
+    	UPDATE POLL SET POLL_PROGRESS='S' WHERE POLL_PROGRESS = 'P'
+	</update>
+	<update id="update_poll_start_idx"
+            parameterClass="java.util.HashMap">
+    	UPDATE POLL SET POLL_PROGRESS='P' WHERE POLL_IDX = #POLL_IDX#
+	</update>
+	<update id="update_poll_stop_idx"
+            parameterClass="java.util.HashMap">
+    	UPDATE POLL SET POLL_PROGRESS='S' WHERE POLL_IDX = #POLL_IDX#
+	</update>
+</sqlMap>

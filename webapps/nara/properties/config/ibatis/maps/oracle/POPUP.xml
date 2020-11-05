@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="POPUP"> 
+  	<insert id="insert_POPUP_type_01"
+  				parameterClass="com.nara.jdf.db.entity.PopupEntity">
+  		INSERT INTO POPUP
+  		(
+  			POPUP_IDX ,
+			POPUP_URL  , 
+			POPUP_STATE , 
+			POPUP_START,
+			POPUP_END ,   
+			POPUP_TOP ,  
+			POPUP_LEFT , 
+			POPUP_WIDTH  ,
+			POPUP_HEIGHT ,
+			POPUP_TITLE ,
+			POPUP_CONTENT,
+			POPUP_TYPE
+  		)
+  		VALUES
+  		(
+  			SEQ_Popup.NEXTVAL,
+  			#POPUP_URL#  , 
+			#POPUP_STATE# , 
+			#POPUP_START#,
+			#POPUP_END# ,   
+			#POPUP_TOP# ,  
+			#POPUP_LEFT# , 
+			#POPUP_WIDTH#  ,
+			#POPUP_HEIGHT# ,
+			#POPUP_TITLE# , 
+			#POPUP_CONTENT#,
+			#POPUP_TYPE#  
+  		)
+	</insert>
+	
+	<select id="select_POPUP_type_01"
+	        parameterClass="java.util.HashMap"
+	        resultClass="com.nara.jdf.db.entity.PopupEntity">
+		SELECT 
+			POPUP_IDX ,
+			POPUP_URL  , 
+			POPUP_STATE , 
+			POPUP_START,
+			POPUP_END ,   
+			POPUP_TOP ,  
+			POPUP_WIDTH  ,
+			POPUP_HEIGHT ,
+			POPUP_TITLE ,
+			POPUP_TYPE ,
+			POPUP_CONTENT,
+			PAGENUM
+		FROM (
+			SELECT
+			POPUP_IDX ,
+			POPUP_URL  , 
+			POPUP_STATE , 
+			POPUP_START,
+			POPUP_END ,   
+			POPUP_TOP ,  
+			POPUP_WIDTH  ,
+			POPUP_HEIGHT , 
+			POPUP_TITLE ,
+			POPUP_TYPE ,
+			POPUP_CONTENT ,
+				CEIL((ROW_NUMBER() OVER(ORDER BY POPUP_IDX ASC)) / #USERS_LISTNUM#) PAGENUM
+			FROM POPUP
+			
+			<dynamic prepend="WHERE">
+	  			<isNotEqual prepend="AND" property="strIndex" compareValue="">
+					$strIndex$ LIKE '%'||#strKeyword#||'%'
+				</isNotEqual>
+			</dynamic>
+						
+			)
+		WHERE PAGENUM = #nPage#	
+	</select>
+	
+	<select id="select_POPUP_type_02"
+	        parameterClass="java.util.HashMap"
+	        resultClass="com.nara.jdf.db.entity.PopupEntity">
+		SELECT 
+			POPUP_IDX ,
+			POPUP_URL  , 
+			POPUP_STATE , 
+			POPUP_START,
+			POPUP_END ,   
+			POPUP_TOP ,  
+			POPUP_LEFT , 
+			POPUP_WIDTH  ,
+			POPUP_HEIGHT ,
+			POPUP_TITLE ,
+			POPUP_CONTENT ,
+			POPUP_TYPE
+		FROM POPUP
+		<dynamic prepend="WHERE">
+  			<isNotNull prepend="AND" property= "POPUP_IDX">
+				POPUP_IDX = #POPUP_IDX#
+			</isNotNull>
+		</dynamic>
+	</select>
+	
+	
+	<select id="select_POPUP_type_03"
+	        parameterClass="java.util.HashMap"
+	        resultClass="com.nara.jdf.db.entity.PopupEntity">
+		SELECT 
+			POPUP_IDX ,
+			POPUP_URL  , 
+			POPUP_STATE , 
+			POPUP_START,
+			POPUP_END ,   
+			POPUP_TOP ,  
+			POPUP_LEFT , 
+			POPUP_WIDTH  ,
+			POPUP_HEIGHT ,
+			POPUP_TITLE ,
+			POPUP_CONTENT , 
+			POPUP_TYPE
+		FROM POPUP
+		<![CDATA[ WHERE TO_DATE(POPUP_START,'YYYY-MM-DD') <= sysdate  and   sysdate  <= TO_DATE(POPUP_END,'YYYY-MM-DD') + 0.99999
+    		AND  POPUP_STATE ='S' AND POPUP_TYPE=#POPUP_TYPE# ]]>
+  </select>
+	
+	<select id="count_POPUP_type_01"
+	        parameterClass="java.util.HashMap"
+	        resultClass="java.lang.Integer">
+		SELECT
+			COUNT(POPUP_IDX) CNT
+		FROM POPUP
+		<dynamic prepend="WHERE">
+		    <isNotEqual prepend="AND" property="strIndex" compareValue="">
+				$strIndex$ LIKE '%'||#strKeyword#||'%'
+			</isNotEqual>
+		</dynamic>	
+	</select>
+
+  	<delete id="delete_POPUP_type_01"
+  				parameterClass="java.util.HashMap">
+  		DELETE FROM POPUP
+  		WHERE POPUP_IDX = #POPUP_IDX#
+  	</delete>
+  	
+  	<update id="update_POPUP_type_01"
+  				parameterClass="com.nara.jdf.db.entity.PopupEntity">
+  		UPDATE POPUP
+  		SET   	POPUP_URL = #POPUP_URL# , 
+				POPUP_STATE = #POPUP_STATE#, 
+				POPUP_START= #POPUP_START#,
+				POPUP_END = #POPUP_END#,   
+				POPUP_TOP = #POPUP_TOP# ,  
+				POPUP_LEFT = #POPUP_LEFT#  ,
+				POPUP_WIDTH = #POPUP_WIDTH# ,
+				POPUP_HEIGHT = #POPUP_HEIGHT# ,
+				POPUP_TITLE = #POPUP_TITLE#  ,
+				POPUP_CONTENT = #POPUP_CONTENT# , 
+				POPUP_TYPE = #POPUP_TYPE# 
+  		WHERE  POPUP_IDX = #POPUP_IDX#
+  	</update>
+</sqlMap>

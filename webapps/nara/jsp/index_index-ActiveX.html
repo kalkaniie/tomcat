@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ko" lang="ko">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Untitled Document</title>
+<script type="text/javascript" src="js/common.js"></script>
+<style type="text/css">
+<!--
+body{ text-align:center; font-family:돋움,Dotum,Dotum Che,Arial, Helvetica, sans-serif; font-size:12px}
+img { margin: 0px; padding: 0px;border:none;}
+.k_tbTest{ border-collapse:collapse; text-align:justify;margin:3% auto 0}
+.k_tbTestTd{ background:#f0f0f0;padding:3px}
+.k_testCont{ background:#fff;border:1px solid #cecece;padding:17px}
+.k_testTit{ background:url(/images/kor/ico/ico_newchat.gif) no-repeat left top;color:#333;font-weight:bold;font-size:14px;padding:2px 20px}
+.k_testTx{padding:10px 0 7px;margin:0 5px; line-height:14px;color:#666;}
+.k_testTip{margin:0 5px 20px;border-top:3px solid #ececec; color:#8a00ff;padding:12px 0; border-bottom:1px dashed #d6d6d6}
+.k_testTip b{color:#ffa200}
+.k_testTit2{ background:url(/images/kor/bullet/arrow_tit.gif) no-repeat left 1px; color:#666; padding:0 0 0 14px;margin:0 5px 6px; font-weight:bold}
+.k_testTx2{ background:#f0f0f0;padding:15px;margin:0 5px; font-weight:bold; line-height:19px}
+.k_testTx2 a{ color:#00a8ff; text-decoration: underline; }
+.k_testTx2 a:hover{ color:#66CCFF}
+.k_textTx3{color:#666; line-height:14px; margin:13px 5px}
+.k_textLogin{ text-align:right;padding:10px 0 5px}
+.k_textLogin a{ color:#ff0096;}
+.k_testLoad{margin:10px 5px 0;padding-bottom:10px; text-align:center;border-bottom:1px solid #cdcdcd} 
+-->
+</style>
+<script language="">
+function goIndexPage() {
+	location="/index_xecure_init.jsp";
+}
+</script>
+</head>
+<body onload="javascript:goIndexPage();">
+<table width="590" class="k_tbTest">
+  <tr>
+    <td align="right"><img src="/images/common/cp/logo-sm.gif"/></td>
+  </tr>
+  <tr>
+    <td class="k_tbTestTd">
+      <div class="k_testCont">
+      <div class="k_testTit">잠시만기다려주세요.(Plesae wait a moment)</div>
+      <div class="k_testTx">정보보호를 위해 보안모듈(키보드보안 및 웹 페이지 보안모듈)을 설치중에 있습니다.</div>
+      <div class="k_testLoad"><img src="/images/kor/shared/loading-balls.gif" /></div>
+      <div class="k_testTip">속도가 느린 경우 아래의 보안솔루션 및 <b>Active-X Control</b>을 다운로드하여<br />
+      수동으로 설치 후에 접속하시면 보다 빠르게 사용하실 수 있습니다.
+      </div>
+      <div class="k_testTit2">수동설치 프로그램</div>
+      <div  class="k_testTx2">
+      <a href="/XecureObject/CKKeyPro_Installer.exe">키보드 보안솔루션</a>
+      <br/>
+	  <a href="/XecureObject/xw_install.exe">웹페이지 보안솔루션</a>
+	  <br/>
+	  <a href="/activeX/kor/KBinstaller.exe">웹메일 Active-X Control[한글]</a>
+	  <br/>
+	  <a href="/activeX/eng/KBinstallerEn.exe">웹메일 Active-X Control[English]</a>
+      </div>
+      <div class="k_textTx3"><b>메일관련 문의</b><br />
+        - 
+        이메일(mailmaster@mofat.go.kr)또는<br />
+- 전화:2100-7197(외교정보보안팀)/<br />
+-
+야간, 주말 전화:2100-7208(외교사이버안전센터)</div>
+       <div class="k_textLogin">
+         <a href="#">로그인 페이지로 바로가기</a> <img src="/images/kor/bullet/arrow4.gif" />
+       </div>
+      </div>
+    </td>
+  </tr>
+</table>
+</body>
+</html>
+<script type="text/javascript" src="/js/kor/util/activex_install.js"></script>
+<script language="JavaScript">autoActiveXInstall("<%=serverName + contextPath%>");</script>
+<form name='xecure'><input type=hidden name='p'></form>
+<script language='javascript' src='/XecureObject/xecureweb.js'></script>
+<script language='javascript' src='/XecureObject/CKKeyPro.js'></script>
+<script language='javascript'>
+PrintObjectTag();
+XecureNavigate( '/mail/user.public.do?method=login_form', '_self');
+</script>

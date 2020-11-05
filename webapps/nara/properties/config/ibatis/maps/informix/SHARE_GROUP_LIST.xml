@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="SHARE_GROUP_LIST">
+	<insert id="insert_anaconda_users_type_01"
+  				parameterClass="com.nara.jdf.db.entity.AnaUserEntity">
+		INSERT INTO ANACONDA_USERS 
+		(
+			USERS_IDX,
+			USERS_PERMIT,
+			PERIOD_LIMIT_YN,
+			DOWN_LIMIT_YN,
+			DOWN_CNT,
+			USERS_MAXQUOTA,
+			USERS_PERIOD,
+			EXPIRE_DEL_YN,
+			FILE_HOMEDIR
+		)
+		VALUES
+		(
+			#USERS_IDX#,
+			#USERS_PERMIT#,
+			#PERIOD_LIMIT_YN#,
+			#DOWN_LIMIT_YN#,
+			#DOWN_CNT#,
+			#USERS_MAXQUOTA#,
+			#USERS_PERIOD#,
+			#EXPIRE_DEL_YN#,
+			#FILE_HOMEDIR#
+		)
+	</insert>
+	
+	<select id="count_share_group_list_type_01"
+	        parameterClass="java.util.HashMap"
+	        resultClass="java.lang.Integer">
+		SELECT
+			COUNT(USERS_IDX) CNT
+		FROM SHARE_GROUP_LIST
+		<dynamic prepend="WHERE">
+	  		<isNotNull prepend="AND" property= "DOMAIN">
+				DOMAIN = #DOMAIN#
+			</isNotNull>
+	  		<isNotNull prepend="AND" property= "SHARE_GROUP_IDX">
+				SHARE_GROUP_IDX = #SHARE_GROUP_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+		</dynamic> 
+	</select>
+	
+		
+	<delete id="delete_share_group_list_type_01"
+	        parameterClass="java.util.HashMap">
+		DELETE FROM SHARE_GROUP_LIST
+		<dynamic prepend="WHERE">
+	  		<isNotNull prepend="AND" property= "DOMAIN">
+				DOMAIN = #DOMAIN#
+			</isNotNull>
+	  		<isNotNull prepend="AND" property= "SHARE_GROUP_IDX">
+				SHARE_GROUP_IDX = #SHARE_GROUP_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+		</dynamic> 
+	</delete>
+	
+	<select id="count_share_group_list_type_02"
+	        parameterClass="java.util.HashMap"
+	        resultClass="java.lang.Integer">
+		SELECT 
+			COUNT(SG.USERS_IDX) CNT
+		FROM SHARE_GROUP_LIST SG 
+			LEFT OUTER JOIN USERS_MASTER UM ON SG.USERS_IDX = UM.USERS_IDX 
+		  	LEFT OUTER JOIN USERS_DETAIL UD ON SG.USERS_IDX = UD.USERS_IDX 
+		WHERE SG.DOMAIN = #DOMAIN#
+		    AND SG.SHARE_GROUP_IDX = #SHARE_GROUP_IDX#
+			AND UD.USERS_PERMIT !='W' 
+			ORDER BY UM.USERS_NAME 
+	</select>
+	
+	
+	<select id="select_share_group_list_type_02"
+	        parameterClass="java.util.HashMap"
+	        resultClass="com.nara.jdf.db.entity.ShareGroupExtendUserEntity">
+		 	SELECT SKIP $SKIP$ FIRST $USERS_LISTNUM$ 
+				B.SHARE_GROUP_LIST_IDX, 
+			 	B.SHARE_GROUP_IDX, 
+			 	B.SHARE_STATUS, 
+			 	B.SHARE_AUTH, 
+			 	B.DOMAIN, B.USERS_IDX,  B.USERS_ID,  
+		 		B.USERS_NAME, B.USERS_JUMIN1, B.USERS_JUMIN2, B.USERS_LICENCENUM,  
+		 		B.USERS_PERMIT, B.USERS_CELLNO, B.USERS_ISOPEN 
+		 	FROM TABLE ( MULTISET (    
+		 		SELECT  
+		 			SG.SHARE_GROUP_LIST_IDX	SHARE_GROUP_LIST_IDX	,
+					UM.DOMAIN				DOMAIN					,
+					UM.USERS_IDX			USERS_IDX				,
+					SG.SHARE_GROUP_IDX		SHARE_GROUP_IDX			,
+		 			UM.USERS_ID				USERS_ID				,
+					UM.USERS_NAME			USERS_NAME				,
+					UD.USERS_JUMIN1			USERS_JUMIN1			,
+		 			UD.USERS_JUMIN2			USERS_JUMIN2			,
+					UD.USERS_LICENCENUM		USERS_LICENCENUM		,
+		 			UD.USERS_PERMIT			USERS_PERMIT			, 
+		 			UD.USERS_CELLNO			USERS_CELLNO			, 
+		 			UD.USERS_ISOPEN 		USERS_ISOPEN			,
+		 			SG.SHARE_AUTH 			SHARE_AUTH				,
+		 			SG.SHARE_STATUS 		SHARE_STATUS			 
+		 		
+		 		FROM SHARE_GROUP_LIST SG 
+					LEFT OUTER JOIN USERS_MASTER UM ON SG.USERS_IDX = UM.USERS_IDX 
+	  				LEFT OUTER JOIN USERS_DETAIL UD ON SG.USERS_IDX = UD.USERS_IDX 
+				WHERE SG.DOMAIN = #DOMAIN#
+	    			AND SG.SHARE_GROUP_IDX = #SHARE_GROUP_IDX#
+					AND UD.USERS_PERMIT !='W' 
+		 )) B  
+		 
+		 ORDER BY B.USERS_NAME ASC
+	</select>
+	
+	<update id="update_share_group_list_type_01"
+	        parameterClass="java.util.HashMap">
+	    UPDATE SHARE_GROUP_LIST SET 
+			SHARE_STATUS = #SHARE_STATUS# ,
+			SHARE_AUTH = #SHARE_AUTH# 
+		WHERE DOMAIN = #DOMAIN#
+			AND SHARE_GROUP_IDX = #SHARE_GROUP_IDX#
+			AND USERS_IDX = #USERS_IDX#
+	</update>
+</sqlMap>

@@ -1,0 +1,375 @@
+<html>
+
+<head>
+
+<title>메뉴</title>
+<link rel="stylesheet" type="text/css" href="../../resources/css/ext-all.css" />
+<style type="text/css">
+#treediv{float:left;width: 300px; height: 500px;border:1px solid #B2D0F7;overflow:auto;}
+#drop-div{float:right;width: 300px; height: 500px;border:1px solid #B2D0F7;overflow:auto;}
+#wrapper{width:650px;}
+.folder .x-tree-node-icon{
+background:transparent url(../../resources/images/default/tree/folder.gif);
+}
+.x-tree-node-expanded .x-tree-node-icon{
+background:transparent url(../../resources/images/default/tree/folder-open.gif);
+}
+</style>
+
+<script type="text/javascript" src="../../adapter/ext/ext-base.js"></script>
+<script type="text/javascript" src="../../ext-all.js"></script>
+<script type="text/javascript">
+
+ 
+
+ 
+
+Ext.onReady(function(){
+
+ 
+
+           //Ext.BLANK_IMAGE_URL = "http://localhost/extjs/resources/images/default/s.gif";
+
+           //Ext.QuickTips.init();
+
+           //트리시작-----------------------------------------------------------------------------------------------------------
+
+           var Tree = Ext.tree;
+
+ 
+
+           var myTree = new Tree.TreePanel('treediv', {
+
+                     loader: new Tree.TreeLoader(),
+
+                     containerScroll: true,
+
+                     animate:true,
+
+                     enableDD:true,
+
+                     rootVisible:true
+
+           });
+
+ 
+
+           var Rroot = new Tree.AsyncTreeNode({
+
+                     text: '분류',
+
+                     id:'classification',
+
+                     allowDrag:false,
+
+                     allowDrop:true,
+
+                     children: [
+
+                                {text: '영어', id:'cls-1',  children: [
+
+                                          {text: '영문법', id:'eng-1', qtip:'영어문법강좌입니다.', leaf:true, allowDelete:true},
+
+                                          {text: '영어 회화', id:'eng-2', qtip:'영어회화 초보용입니다.', leaf:true, allowDelete:true},
+
+                                          {text: '영작문', id:'eng-3', qtip:'영작문 중급입니다.', leaf:true, allowDelete:true}
+
+                                ]},
+
+                                {text: '수학', id:'cls-2', children: [
+
+                                          {text: '미분', id:'math-1', leaf:true, allowDelete:true},
+
+                                          {text: '적분', id:'math-2', leaf:true, allowDelete:true},
+
+                                          {text: '집합', id:'math-3', leaf:true, allowDelete:true},
+
+                                          {text: '극한값 계산', id:'math-4', leaf:true, allowDelete:true}
+
+                                ]},
+
+                                {text: '국어', id:'cls-3', children: [
+
+                                          {text: '시', id:'kor-1', children: [
+
+                                                     {text: '19세기', id:'poem-1', leaf:true, allowDelete:true},
+
+                                                     {text: '시조', id:'poem-2', leaf:true, allowDelete:true},
+
+                                                     {text: '근대시', id:'poem-3', leaf:true, allowDelete:true}
+
+                                          ]},
+
+                                          {text: '문법', id:'kor-2', leaf:true, allowDelete:true}
+
+                                ]},
+
+                                {text: '지구와현경', id:'earth-1', leaf:true, allowDelete:true},
+
+                                {text: '법학개론', id:'law-1', leaf:true, allowDelete:true}
+
+                     ]
+
+           });
+
+ 
+
+           myTree.setRootNode(Rroot);
+
+           myTree.render();
+
+           myTree.expandAll();
+
+           Rroot.expand(false, false);
+
+ 
+
+ 
+
+           // 메뉴시작-----------------------------------------------------------------------------------------------------------
+
+           var Menu = new Ext.menu.Menu({
+
+                     id:'menu',
+
+                     items: [{
+
+                                id:'expand',
+
+                                handler:expandAll,
+
+                                cls:'expand',
+
+                                text:'확장'
+
+                     },{
+
+                                id:'collapse',
+
+                                handler:collapseAll,
+
+                                cls:'collapse',
+
+                                text:'닫기'
+
+                     },'-',{
+
+                     id:'remove',
+
+                     handler:removeNode,
+
+                     cls:'remove',
+
+                     text: '삭제'
+
+                     }]
+
+           });
+
+ 
+
+ 
+
+           // 이벤트 시작-------------------------------------------------------------------------------------------------------
+
+           myTree.on('beforenodedrop', doDrop);
+
+           myTree.on('click', doClick);
+
+           myTree.on('contextmenu', doMenu);
+
+ 
+
+           // dnd관련 펑션-----------------------------------------------
+
+           function doDrop(e){
+
+ 
+
+                     var temp = "<br/>? e.tree.id : "+ e.tree.id + "<br/>? e.target.id : "+ e.target.id + "<br/>? e.point.id : "+ e.point + "<br/>? e.dropNode.id : "+ e.dropNode.id + "<br/>? e.tree.id : "+ e.tree.id ;
+
+                     infodiv.innerHTML          = temp;
+
+ 
+
+                     activateDrag(false);
+
+                     setTimeout('activateDrag(true)',3000);
+
+ 
+
+           }
+
+ 
+
+ 
+
+// click 펑션-----------------------------------------------
+
+           function doClick(node){
+
+                     if(myTree.getSelectionModel().isSelected(node)){
+
+                                if (node.isLeaf()){
+
+                                          alert('id: ' + node.id + ',  leaf: true');
+
+                                } else {
+
+                                          alert('id:  ' + node.id + ',  leaf: false');
+
+                                }
+
+                     }
+
+           };
+
+ 
+
+ 
+
+// 메뉴관련 펑션-----------------------------------------------
+
+           function doMenu(node, e){
+
+                     node.select();
+
+                     Menu.items.get('remove')[node.attributes.allowDelete ? 'enable' : 'disable']();
+
+                     Menu.showAt(e.getXY());
+
+           }
+
+ 
+
+           function collapseAll(){
+
+                     Menu.hide();
+
+                     setTimeout(function(){
+
+                                Rroot.eachChild(function(n){
+
+                                          n.collapse(false, false);
+
+                                });
+
+                     }, 10);
+
+           }
+
+           function expandAll(){
+
+                     Menu.hide();
+
+                     setTimeout(function(){
+
+                                Rroot.eachChild(function(n){
+
+                                          n.expand(false, false);
+
+                                });
+
+                     }, 10);
+
+           }
+
+           function removeNode(){
+
+                     var n = myTree.getSelectionModel().getSelectedNode();
+
+                     if(n && n.attributes.allowDelete){
+
+                                myTree.getSelectionModel().selectPrevious();
+
+                                n.parentNode.removeChild(n);
+
+                     }
+
+           }
+
+ 
+
+});
+
+ 
+
+function activateDrag(arg){
+
+           if (arg){
+
+                     testdiv.innerHTML = "start drag!";
+
+                     testdiv.style.color = "#FF0000";
+
+                     testdiv.style.fontSize = "30px";
+
+                                Ext.override(Ext.tree.TreeDragZone, {
+
+                                          onBeforeDrag: function(data, e) {
+
+                                                     var n = data.node;
+
+                                                     return n && n.draggable && !n.disabled;
+
+                                          }
+
+                                });
+
+           }else{
+
+                     testdiv.innerHTML = "stop drag! (data processing...)";
+
+                     testdiv.style.color = "#0000FF";
+
+                     testdiv.style.fontSize = "30px";
+
+                                Ext.override(Ext.tree.TreeDragZone, {
+
+                                          onBeforeDrag: function(data, e) {
+
+                                                     return false;
+
+                                          }
+
+                                });
+
+           }
+
+}
+
+ 
+
+ 
+
+</script>
+
+ 
+
+</head>
+
+<body>
+
+ 
+
+<div id="wrapper">
+
+           <div id="treediv"></div>
+
+</div>
+
+<div>
+
+           <p>info div : <span id="infodiv"></span>
+
+</div>
+
+<div>
+
+           <p>test div : <span id="testdiv"></span>
+
+</div>
+
+</body>
+
+</html>

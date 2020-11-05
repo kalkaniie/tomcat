@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="ANACONDA_USERGROUP">
+	<insert id="insert_anaconda_usergroup_type_01"
+	        parameterClass="com.nara.jdf.db.entity.AnaUserGroupEntity">
+		INSERT INTO ANACONDA_USERGROUP
+		(
+			USER_GROUP_IDX,
+			SERVICE_YN,
+			PERIOD_LIMIT_YN,
+			DOWN_LIMIT_YN,
+			DOWN_CNT,
+			USERGROUP_MAXQUOTA,
+			USERGROUP_PERIOD,
+			EXPIRE_DEL_YN,
+			APPLYALL_YN
+		)
+		VALUES
+		(
+			#USER_GROUP_IDX#,
+			#SERVICE_YN#,
+			#PERIOD_LIMIT_YN#,
+			#DOWN_LIMIT_YN#,
+			#DOWN_CNT#,
+			#USERGROUP_MAXQUOTA#,
+			#USERGROUP_PERIOD#,
+			#EXPIRE_DEL_YN#,
+			#APPLYALL_YN#
+		)
+	</insert>   
+	
+	<update id="update_anaconda_usergroup"
+	        parameterClass="com.nara.jdf.db.entity.AnaUserGroupEntity">
+		UPDATE ANACONDA_USERGROUP
+		SET	USERGROUP_MAXQUOTA = #USERGROUP_MAXQUOTA#,
+			DOWN_CNT = #DOWN_CNT#,
+			USERGROUP_PERIOD = #USERGROUP_PERIOD#,
+			PERIOD_LIMIT_YN = #PERIOD_LIMIT_YN#,
+			DOWN_LIMIT_YN = #DOWN_LIMIT_YN#,
+			SERVICE_YN = #SERVICE_YN#
+		WHERE USER_GROUP_IDX = #USER_GROUP_IDX#
+	</update>
+	
+	<delete id="delete_anaconda_usergroup_type_01"
+	        parameterClass="java.util.HashMap">
+		DELETE FROM ANACONDA_USERGROUP
+		
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "USER_GROUP_IDX">
+				USER_GROUP_IDX = #USER_GROUP_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "DOMAIN">
+				SUBSTR(USERS_IDX, INSTR(USERS_IDX, '@')) = CONCAT('@',#DOMAIN#)
+			</isNotNull>
+		</dynamic> 
+	</delete>
+	
+	<select id="select_anaconda_usergroup"
+	        parameterClass="java.util.HashMap"
+	        resultClass="com.nara.jdf.db.entity.AnaUserGroupEntity">
+		SELECT
+			USER_GROUP_IDX,
+			SERVICE_YN,
+			PERIOD_LIMIT_YN,
+			DOWN_LIMIT_YN,
+			DOWN_CNT,
+			USERGROUP_MAXQUOTA,
+			USERGROUP_PERIOD,
+			EXPIRE_DEL_YN,
+			APPLYALL_YN
+		FROM ANACONDA_USERGROUP
+		WHERE USER_GROUP_IDX = #USER_GROUP_IDX#
+	</select>
+	
+	<select id="select_anaconda_usergroup_type_02" 
+  				parameterClass="java.util.HashMap" 
+  				resultClass="com.nara.jdf.db.entity.AnaUserGroupEntity">
+		SELECT
+			AA.USER_GROUP_IDX,
+			AA.SERVICE_YN,
+			AA.PERIOD_LIMIT_YN,
+      		AA.DOWN_LIMIT_YN,
+			AA.DOWN_CNT,
+			AA.USERGROUP_MAXQUOTA,
+			AA.USERGROUP_PERIOD,
+			AA.EXPIRE_DEL_YN,
+			AA.APPLYALL_YN
+		FROM ANACONDA_USERGROUP AA JOIN USER_GROUP_LIST BB
+		ON AA.USER_GROUP_IDX = BB.USER_GROUP_IDX 
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "USER_GROUP_IDX">
+				AA.USER_GROUP_IDX = #USER_GROUP_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				BB.USERS_IDX = #USERS_IDX#
+			</isNotNull>  
+		</dynamic>
+  	</select>
+  	
+</sqlMap>

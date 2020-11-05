@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="KEBI_COMMON">
+	<!-- definition M_DOMAIN start -->
+	<statement id="create_table_m_domain"
+  				   parameterClass="java.util.HashMap">
+        CREATE TABLE $TABLE_NAME$
+        (
+		      M_IDX NUMERIC (10) NOT NULL ,
+		      M_ORDER NUMERIC DEFAULT '0' NOT NULL ,
+		      M_GROUP NUMERIC ,
+		      MBOX_IDX NUMERIC (9) NOT NULL ,
+		      USERS_IDX VARCHAR (200) NOT NULL ,
+		      M_SENDER TEXT,
+		      M_SENDERNM TEXT,
+		      M_RETURN TEXT,
+		      M_TO TEXT ,
+		      M_CC TEXT ,
+		      M_BCC TEXT ,
+		      M_TITLE TEXT,
+		      M_TIME DATETIME ,
+		      M_SIZE NUMERIC (12) ,
+		      M_ATTACHE VARCHAR (100) ,
+		      M_ATTACH_NUM TEXT ,
+		      M_ATTACH_NAME TEXT ,
+		      M_ATTACH_SIZE TEXT ,
+		      M_ATTACH_TYPE TEXT ,
+		      M_TYPE VARCHAR (100) ,
+		      M_ISREAD CHAR (1) ,
+		      M_PRIORITY NUMERIC (1) ,
+		      M_INJURIOUSE CHAR (1) ,
+		      M_DELETED CHAR (1) ,
+		      M_KIND CHAR (1) ,
+		      M_FILENAME TEXT ,
+		      M_FILEPATH TEXT ,
+		      M_ISPARSED CHAR (1) ,
+		      TAG_TYPE NUMERIC (3) DEFAULT '0' NOT NULL ,
+		      MAIL_RECONF_MESSAGE_ID TEXT ,
+		      M_NOTICE CHAR (1) DEFAULT 'N',
+		      M_SECURE_YN CHAR (1) DEFAULT 'N' ,
+		      PRIMARY KEY PK_$TABLE_NAME$ (M_IDX, M_ORDER)	      
+        ) ENGINE=INNODB         
+	</statement>
+	 
+	<statement id="create_index_m_domain_01"
+  				   parameterClass="java.util.HashMap">
+        CREATE INDEX IDX_$TABLE_NAME$_01
+        ON $TABLE_NAME$
+        (
+            MBOX_IDX ASC,
+            M_TIME ASC
+        )  
+	</statement>
+	 
+	<statement id="create_index_m_domain_02"
+  				   parameterClass="java.util.HashMap">
+        CREATE INDEX IDX_$TABLE_NAME$_02
+        ON $TABLE_NAME$
+        (
+            USERS_IDX ASC,
+            M_ISREAD ASC,
+            M_TIME 
+        )       
+	</statement>
+	
+	<statement id="create_index_m_domain_03"
+  				   parameterClass="java.util.HashMap">
+        CREATE INDEX IDX_$TABLE_NAME$_03
+        ON $TABLE_NAME$
+        (
+            MAIL_RECONF_MESSAGE_ID(255)
+        )       
+	</statement>
+    <!-- definition M_DOMAIN end -->
+
+    <!-- definition M_ARCHIVE_DOMAIN start -->
+	<statement id="create_table_m_archive_domain"
+  				   parameterClass="java.util.HashMap">
+        CREATE TABLE $TABLE_NAME$
+        (
+			M_IDX NUMERIC NOT NULL ,
+			M_ORD NUMERIC DEFAULT 0 NOT NULL ,
+			MBOX_IDX NUMERIC NOT NULL ,
+			USERS_IDX VARCHAR (200) NOT NULL ,
+			M_TAG CHAR (1) ,
+			M_SENDER VARCHAR (200) ,
+			M_SENDERNM VARCHAR (100) ,
+			M_TO TEXT ,
+			M_CC TEXT ,
+			M_BCC TEXT ,
+			M_RETURN VARCHAR (200) ,
+			M_TYPE VARCHAR (50) ,
+			M_CHARSET VARCHAR (50) ,
+			M_TITLE VARCHAR (255) ,
+			M_CONTENT TEXT ,
+			M_TIME DATETIME ,
+			M_SIZE NUMERIC ,
+			M_ATTACHE VARCHAR (50) ,
+			M_ATTNUM TEXT ,
+			M_ATTNAME TEXT ,
+			M_ATTSIZE TEXT ,
+			M_ATTTYPE TEXT ,
+			M_ISREAD CHAR (1) ,
+			M_PRIORITY NUMERIC (1) ,
+			M_INJURIOUSE CHAR (1) ,
+			M_FILENAME VARCHAR (70) ,
+			M_FILEPATH TEXT ,
+			M_DELETED CHAR (1) DEFAULT 'N' ,
+			M_REMOTEIP VARCHAR (20),
+			M_SECURE_YN CHAR(1) default 'N',
+			PRIMARY KEY PK_$TABLE_NAME$ (M_IDX, M_ORD)	
+        )  ENGINE=INNODB
+	</statement>
+	 
+	<statement id="create_index_m_archive_domain_01"
+  				   parameterClass="java.util.HashMap">
+        CREATE INDEX IDX_$TABLE_NAME$_01
+        ON $TABLE_NAME$
+        (
+            MBOX_IDX ASC,
+            M_TIME ASC
+        )        
+	</statement>
+	 
+	<statement id="create_index_m_archive_domain_02"
+  				   parameterClass="java.util.HashMap">
+        CREATE INDEX IDX_$TABLE_NAME$_02
+        ON $TABLE_NAME$
+        (
+            USERS_IDX ASC,
+            M_ISREAD ASC,
+            M_TIME ASC
+        )         
+	</statement>
+    <!-- definition M_ARCHIVE_DOMAIN end -->
+
+    <!-- definition M_TAG_DOMAIN start -->
+	<statement id="create_table_m_tag_domain"
+  				   parameterClass="java.util.HashMap">
+        CREATE TABLE $TABLE_NAME$
+        (
+		      USERS_IDX VARCHAR (200) NOT NULL ,
+		      TAG_TYPE NUMERIC (3) NOT NULL ,
+		      TAG_NAME VARCHAR (200) ,
+		      TAG_IMG_NAME VARCHAR (100) NOT NULL ,
+		      TAG_ORD NUMERIC (3) NOT NULL ,
+		      PRIMARY KEY PK_$TABLE_NAME$ (USERS_IDX ,TAG_ORD )			      
+        ) ENGINE=INNODB          
+	</statement>
+
+	<statement id="create_index_m_tag_domain_01"
+  				   parameterClass="java.util.HashMap">
+        CREATE INDEX IDX_$TABLE_NAME$_01
+        ON $TABLE_NAME$
+        (
+            USERS_IDX ASC,
+            TAG_TYPE ASC
+        )     
+	</statement>	
+    <!-- definition M_TAG_DOMAIN end -->
+
+    <!-- definition B_DOMAIN start -->
+	<statement id="create_table_b_domain"
+  				   parameterClass="java.util.HashMap">
+        CREATE TABLE $TABLE_NAME$
+        (
+		      B_IDX NUMERIC NOT NULL ,
+		      BBS_IDX NUMERIC ,
+		      B_REF NUMERIC ,
+		      B_STEP NUMERIC ,
+		      B_LEVEL NUMERIC ,
+		      USERS_IDX VARCHAR (200) ,
+		      B_PASSWD VARCHAR (100) ,
+		      B_NAME VARCHAR (100) ,
+		      B_EMAIL VARCHAR (200) ,
+		      B_TITLE VARCHAR (255) ,
+		      B_CONTENT TEXT ,
+		      B_CONTENT_TYPE CHAR (1) ,
+		      B_DATE VARCHAR (20) , 
+		      B_ATTACHE TEXT ,
+		      B_ATTACHE_SIZE NUMERIC ,
+		      B_READ_NUM NUMERIC ,
+		      B_DOWNLOAD_NUM NUMERIC ,
+		      B_APPEND_NUM NUMERIC ,
+		      B_NOTICE_WAY NUMERIC (1) ,
+		      CUSTOM_TITLE TEXT,
+		      RECEIVE_USERS_IDX VARCHAR(200),
+		      RECEIVE_USERS_NAME VARCHAR(50),
+		      B_NOTICE_YN CHAR(1) DEFAULT 'N',
+		      B_NOTICE_TYPE CHAR(1) DEFAULT '1',
+		      PRIMARY KEY PK_$TABLE_NAME$ (B_IDX )			      
+        ) ENGINE=INNODB        
+	</statement>
+	 
+	<statement id="create_index_b_domain_01"
+  				   parameterClass="java.util.HashMap">
+        CREATE INDEX IDX_$TABLE_NAME$_01
+        ON $TABLE_NAME$
+        (
+            BBS_IDX ASC,
+            B_REF ASC,
+            B_STEP ASC
+        )        
+	</statement>
+    <!-- definition B_ARCHIVE_DOMAIN end -->
+
+    <!-- definition APPEND_DOMAIN start -->	 
+	<statement id="create_table_append_domain"
+  				   parameterClass="java.util.HashMap">
+		CREATE TABLE $TABLE_NAME$
+		   (
+		      APPEND_IDX NUMERIC NOT NULL ,
+		      BBS_IDX NUMERIC ,
+		      B_IDX NUMERIC ,
+		      USERS_IDX VARCHAR (200) ,
+		      APPEND_PASSWD VARCHAR (100) ,
+		      APPEND_NAME VARCHAR (100) ,
+		      APPEND_EMAIL VARCHAR (200) ,
+		      APPEND_CONTENT TEXT ,
+		      APPEND_DATE VARCHAR (20) ,
+		      PRIMARY KEY PK_$TABLE_NAME$ (APPEND_IDX )	      
+		   )  ENGINE=INNODB
+	</statement>
+	 
+	<statement id="create_index_append_domain_01"
+  				   parameterClass="java.util.HashMap">        
+		CREATE INDEX IDX_$TABLE_NAME$_01
+	    ON $TABLE_NAME$
+	    (
+	    	BBS_IDX ASC 
+	    )	           
+	</statement>
+    <!-- definition APPEND_DOMAIN end -->
+	
+	<!-- definition NOTE_DOMAIN start -->
+    <statement id="create_table_note_domain"
+  				   parameterClass="java.util.HashMap">
+
+        CREATE TABLE $TABLE_NAME$ 
+        (
+		      NOTE_IDX NUMERIC NOT NULL ,
+		      USERS_IDX VARCHAR (200) NOT NULL ,
+		      USERS_ID VARCHAR (200) NOT NULL ,
+		      DOMAIN VARCHAR (200) NOT NULL ,
+		      NOTE_BOX_TYPE NUMERIC (1) NOT NULL ,
+		      NOTE_SAVE_YN CHAR (1) DEFAULT 'N' NOT NULL ,
+		      NOTE_FROM TEXT ,
+		      NOTE_TO TEXT ,
+		      NOTE_TITLE TEXT,
+		      NOTE_CONTENT TEXT ,
+		      NOTE_TIME DATETIME ,
+		      REF_NOTE_IDX NUMERIC ,
+		      NOTE_ISREAD CHAR (1) DEFAULT 'N' NOT NULL ,
+		      PRIMARY KEY PK_$TABLE_NAME$ (NOTE_IDX )
+        )   ENGINE=INNODB       
+	</statement>	
+	<!-- definition NOTE_DOMAIN end -->
+	
+	<statement id="create_sequence"
+  				   parameterClass="java.lang.String">
+		INSERT INTO SEQUENCE
+		VALUES(#TABLE_NAME#, 1, 0)
+	</statement>
+	
+	<statement id="get_sequence_next_value"
+                parameterClass="java.util.HashMap"
+                resultClass="java.lang.Integer">
+		SELECT NEXTVAL(#TABLE_NAME#) AS NVAL
+ 	</statement>
+ 	
+ 	<statement id="drop_sequence"
+  				   parameterClass="java.lang.String">
+		DELETE FROM SEQUENCE 
+		WHERE NAME = #TABLE_NAME#		   
+ 	</statement>
+ 	
+ 	<statement id="drop_table"
+  				   parameterClass="java.lang.String">
+		DROP TABLE $TABLE_NAME$			   
+ 	</statement>
+ 	
+	<!-- definition M_DOMAIN_CONTENT start -->
+	<statement id="create_table_m_domain_content"
+  				   parameterClass="java.util.HashMap">
+        CREATE TABLE $TABLE_NAME$_CONTENT
+        (
+            M_IDX NUMERIC NOT NULL ,
+		    M_ORDER NUMERIC NOT NULL ,
+		    M_CONTENT TEXT ,
+		    M_CONTENT_TYPE VARCHAR(400),
+		    PRIMARY KEY PK_$TABLE_NAME$_CONTENT (M_IDX, M_ORDER )
+        ) ENGINE=INNODB
+	</statement>
+	
+	<statement id="create_table_m_archive_domain_content"
+  				   parameterClass="java.util.HashMap">
+        CREATE TABLE $TABLE_NAME$_CONTENT
+        (
+            M_IDX NUMERIC NOT NULL ,
+		    M_ORDER NUMERIC NOT NULL ,
+		    M_CONTENT TEXT ,
+		    M_CONTENT_TYPE VARCHAR(400),
+		    PRIMARY KEY PK_$TABLE_NAME$_CONTENT (M_IDX, M_ORDER )	
+        ) ENGINE=INNODB
+	</statement>
+	<!-- definition M_DOMAIN_CONTENT end --> 	
+</sqlMap>

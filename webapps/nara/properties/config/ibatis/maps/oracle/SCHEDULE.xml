@@ -1,0 +1,597 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="SCHEDULE">
+	<select id="select_schedule_type_01"
+			parameterClass="java.util.HashMap"
+			resultClass="java.util.HashMap">
+		SELECT 
+		    SCHEDULE_IDX,
+		    P_SCHEDULE_IDX,
+		    USERS_IDX,
+		    USERS_NAME,
+		    DOMAIN,
+		    USER_GROUP_IDX,
+		    SCHEDULE_SHARE,
+		    SCHEDULE_TYPE,
+		    SCHEDULE_TITLE,
+		     <!--<![CDATA[ REPLACE(SCHEDULE_STMT,chr(13), '<br>') AS SCHEDULE_STMT, ]]>-->
+		    SCHEDULE_STMT, 
+		    TO_CHAR(SCHEDULE_SDATE, 'YYYY-MM-DD HH24:MI:SS') SCHEDULE_SDATE,
+		    TO_CHAR(SCHEDULE_EDATE, 'YYYY-MM-DD HH24:MI:SS') SCHEDULE_EDATE,
+		    SCHEDULE_REPEAT,
+		    SCHEDULE_DAYLY,
+		    SCHEDULE_ALAM,
+		    TO_CHAR(SCHEDULE_ALAM_DATE, 'YYYY-MM-DD HH24:MI:SS') SCHEDULE_ALAM_DATE,
+		    SCHEDULE_ALAM_WAY,
+		    SCHEDULE_DDAY,
+		    SHARE_GROUP_IDX,
+		    TO_CHAR(SCHEDULE_SDATE, 'D') REPEAT_WEEK, 
+		    TO_CHAR(SCHEDULE_SDATE, 'DD') REPEAT_MONTH, 
+		    TO_CHAR(SCHEDULE_SDATE, 'MMDD') REPEAT_YEAR
+		FROM SCHEDULE
+		
+		WHERE DOMAIN = #DOMAIN#
+		<![CDATA[
+		AND (SCHEDULE_SDATE BETWEEN TO_DATE(#SCHEDULE_SDATE#, 'YYYY-MM-DD') AND TO_DATE(#SCHEDULE_EDATE#, 'YYYY-MM-DD') + 0.99999
+		      OR SCHEDULE_EDATE BETWEEN TO_DATE(#SCHEDULE_SDATE#, 'YYYY-MM-DD') AND TO_DATE(#SCHEDULE_EDATE#, 'YYYY-MM-DD') + 0.99999
+		      OR ( SCHEDULE_SDATE < TO_DATE(#SCHEDULE_SDATE#, 'YYYY-MM-DD')  AND SCHEDULE_EDATE > TO_DATE(#SCHEDULE_EDATE#, 'YYYY-MM-DD'))
+		     )
+		]]>
+		<dynamic prepend="">
+			<isEqual prepend="AND" property= "SELECT_TYPE" compareValue="PRIVATE">
+				(USERS_IDX = #USERS_IDX# AND SCHEDULE_SHARE  = 0)
+			</isEqual>
+			<isEqual prepend="AND" property= "SELECT_TYPE" compareValue="GROUP">
+				(SCHEDULE_SHARE  = 1 
+				 AND SHARE_GROUP_IDX IN 
+					(
+						SELECT USER_GROUP_IDX
+						FROM USER_GROUP CONNECT BY PRIOR USER_GROUP_IDX = P_USER_GROUP_IDX 
+						START WITH USER_GROUP_IDX = #USER_GROUP_IDX#
+						UNION
+						SELECT USER_GROUP_IDX
+						FROM USER_GROUP CONNECT BY USER_GROUP_IDX = PRIOR P_USER_GROUP_IDX 
+						START WITH USER_GROUP_IDX = #USER_GROUP_IDX#
+					)
+				)
+			</isEqual>
+			<isEqual prepend="AND" property= "SELECT_TYPE" compareValue="TOTAL">
+				(
+					(USERS_IDX = #USERS_IDX# AND SCHEDULE_SHARE  = 0) 
+					OR (SCHEDULE_SHARE = 2) 
+					OR (
+						SCHEDULE_SHARE  = 1 AND SHARE_GROUP_IDX IN 
+							(
+								SELECT USER_GROUP_IDX
+								FROM USER_GROUP CONNECT BY PRIOR USER_GROUP_IDX = P_USER_GROUP_IDX 
+								START WITH USER_GROUP_IDX = #USER_GROUP_IDX#
+								UNION
+								SELECT USER_GROUP_IDX
+								FROM USER_GROUP CONNECT BY USER_GROUP_IDX = PRIOR P_USER_GROUP_IDX 
+								START WITH USER_GROUP_IDX = #USER_GROUP_IDX#
+							)
+						)
+				)
+			</isEqual>
+		</dynamic>
+		ORDER BY SCHEDULE_SDATE ASC, SCHEDULE_TITLE
+	</select>
+	
+	<select id="select_schedule_type_02"
+			parameterClass="java.util.HashMap"
+			resultClass="com.nara.jdf.db.entity.ScheduleEntity">
+		SELECT 
+		    SCHEDULE_IDX,
+		    P_SCHEDULE_IDX,
+		    USERS_IDX,
+		    USERS_NAME,
+		    DOMAIN,
+		    USER_GROUP_IDX,
+		    SCHEDULE_SHARE,
+		    SCHEDULE_TYPE,
+		    SCHEDULE_TITLE,
+		    <!-- <![CDATA[ REPLACE(SCHEDULE_STMT,chr(13), '<br>') AS SCHEDULE_STMT, ]]> -->
+		    SCHEDULE_STMT,
+		    TO_CHAR(SCHEDULE_SDATE, 'YYYY-MM-DD HH24:MI:SS') SCHEDULE_SDATE,
+		    TO_CHAR(SCHEDULE_EDATE, 'YYYY-MM-DD HH24:MI:SS') SCHEDULE_EDATE,
+		    SCHEDULE_REPEAT,
+		    SCHEDULE_DAYLY,
+		    SCHEDULE_ALAM,
+		    TO_CHAR(SCHEDULE_ALAM_DATE, 'YYYY-MM-DD HH24:MI:SS') SCHEDULE_ALAM_DATE,
+		    SCHEDULE_ALAM_WAY,
+		    SCHEDULE_DDAY,
+		    SHARE_GROUP_IDX,
+		    TO_CHAR(SCHEDULE_SDATE, 'D') REPEAT_WEEK, 
+		    TO_CHAR(SCHEDULE_SDATE, 'DD') REPEAT_MONTH, 
+		    TO_CHAR(SCHEDULE_SDATE, 'MMDD') REPEAT_YEAR
+		FROM SCHEDULE
+		WHERE SCHEDULE_IDX = #SCHEDULE_IDX#
+	</select>
+	
+	<insert id="insert_schedule_type_01"
+			parameterClass="com.nara.jdf.db.entity.ScheduleEntity">
+		INSERT INTO SCHEDULE
+		(
+			SCHEDULE_IDX,
+			P_SCHEDULE_IDX,
+			USERS_IDX,
+			USERS_NAME,
+			DOMAIN,
+			USER_GROUP_IDX,
+			SCHEDULE_SHARE,
+			SCHEDULE_TYPE,
+			SCHEDULE_TITLE,
+			SCHEDULE_STMT,
+			SCHEDULE_SDATE,
+			SCHEDULE_EDATE,
+			SCHEDULE_REPEAT,
+			SCHEDULE_DAYLY,
+			SCHEDULE_ALAM,
+			SCHEDULE_ALAM_DATE,
+			SCHEDULE_ALAM_WAY,
+			SCHEDULE_DDAY,
+			SHARE_GROUP_IDX
+		)
+		VALUES
+		(
+			SEQ_SCHEDULE.NEXTVAL,
+			#P_SCHEDULE_IDX#,
+			#USERS_IDX#,
+			#USERS_NAME#,
+			#DOMAIN#,
+			#USER_GROUP_IDX#,
+			#SCHEDULE_SHARE#,
+			#SCHEDULE_TYPE#,
+			#SCHEDULE_TITLE#,
+			#SCHEDULE_STMT#,
+			TO_DATE(#SCHEDULE_SDATE#, 'YYYY-MM-DD HH24:MI:SS'),
+			TO_DATE(#SCHEDULE_EDATE#, 'YYYY-MM-DD HH24:MI:SS'),
+			#SCHEDULE_REPEAT#,
+			#SCHEDULE_DAYLY#,
+			#SCHEDULE_ALAM#,
+			TO_DATE(#SCHEDULE_ALAM_DATE#, 'YYYY-MM-DD HH24:MI:SS'),
+			#SCHEDULE_ALAM_WAY#,
+			#SCHEDULE_DDAY#,
+			#SHARE_GROUP_IDX#
+		)
+	</insert>
+
+	<select id="select_today_schedule"
+			parameterClass="java.util.HashMap"
+			resultClass="java.util.HashMap">
+        <![CDATA[
+		SELECT
+			*
+		FROM (    
+			SELECT 
+				SCHEDULE_IDX,
+				P_SCHEDULE_IDX,
+				USERS_IDX,
+				USERS_NAME,
+				DOMAIN,
+				USER_GROUP_IDX,
+				SCHEDULE_SHARE,
+				SCHEDULE_TYPE,
+				SCHEDULE_TITLE,
+				SCHEDULE_STMT,
+				SCHEDULE_SDATE,
+				SCHEDULE_EDATE,
+				SCHEDULE_REPEAT,
+				SCHEDULE_DAYLY,
+				SCHEDULE_ALAM,
+				SCHEDULE_ALAM_DATE,
+				SCHEDULE_ALAM_WAY,
+				SCHEDULE_DDAY,
+				SHARE_GROUP_IDX,
+				CEIL((ROW_NUMBER() OVER(ORDER BY $orderCol$ $orderType$))/$USERS_LISTNUM$) PAGENUM
+			FROM SCHEDULE 
+			WHERE TRUNC(SYSDATE) BETWEEN TRUNC(SCHEDULE_SDATE) AND TRUNC(SCHEDULE_EDATE)
+			AND (
+				(
+					(USERS_IDX =  #USERS_IDX# AND SCHEDULE_SHARE = 0)
+					OR SCHEDULE_SHARE = 2
+					OR (SCHEDULE_SHARE = 1 
+						AND SHARE_GROUP_IDX IN 
+						(
+							SELECT USER_GROUP_IDX
+							FROM USER_GROUP CONNECT BY PRIOR USER_GROUP_IDX = P_USER_GROUP_IDX 
+							START WITH USER_GROUP_IDX = #USER_GROUP_IDX#
+							UNION
+							SELECT USER_GROUP_IDX
+							FROM USER_GROUP CONNECT BY USER_GROUP_IDX = PRIOR P_USER_GROUP_IDX 
+							START WITH USER_GROUP_IDX = #USER_GROUP_IDX#
+						)
+					) 
+				)
+				OR (
+					SCHEDULE_REPEAT = 3 
+					AND TO_CHAR(sysdate, 'D') = TO_CHAR(SCHEDULE_SDATE, 'D')
+					OR (SCHEDULE_REPEAT = 4 
+						AND (
+							TRUNC(LAST_DAY(SCHEDULE_SDATE)) = TRUNC(SCHEDULE_SDATE) 
+							AND TRUNC(LAST_DAY(SYSDATE)) = TRUNC(SYSDATE)
+							OR  TO_CHAR(SCHEDULE_SDATE,'DD') =  TO_CHAR(SYSDATE,'DD')
+						)
+					)
+				   )
+				OR (
+					SCHEDULE_REPEAT = 5 
+					AND (
+						TRUNC(LAST_DAY(SCHEDULE_SDATE)) = TRUNC(SCHEDULE_SDATE) 
+						AND TRUNC(LAST_DAY(SYSDATE)) = TRUNC(SYSDATE)
+					)
+					AND 
+		            	(TO_CHAR(SCHEDULE_SDATE, 'MM') = TO_CHAR(SYSDATE, 'MM')
+						OR TO_CHAR(SCHEDULE_SDATE, 'MMDD') = TO_CHAR(SYSDATE, 'MMDD')
+		                ) 
+				    )
+				
+			)
+		  )
+		WHERE PAGENUM = 1
+        ]]>
+	</select>
+	
+	<update id="update_schedule_type_01"
+			parameterClass="com.nara.jdf.db.entity.ScheduleEntity">
+		UPDATE SCHEDULE
+		SET P_SCHEDULE_IDX= #P_SCHEDULE_IDX#,
+			DOMAIN = #DOMAIN#,
+			USER_GROUP_IDX = #USER_GROUP_IDX#,
+			SCHEDULE_SHARE = #SCHEDULE_SHARE#,
+			SCHEDULE_TYPE= #SCHEDULE_TYPE#,
+			SCHEDULE_TITLE= #SCHEDULE_TITLE#,
+			SCHEDULE_STMT = #SCHEDULE_STMT#,
+			SCHEDULE_SDATE = TO_DATE(#SCHEDULE_SDATE#, 'YYYY-MM-DD HH24:MI:SS'),
+			SCHEDULE_EDATE = TO_DATE(#SCHEDULE_EDATE#, 'YYYY-MM-DD HH24:MI:SS'),
+			SCHEDULE_REPEAT = #SCHEDULE_REPEAT#,
+			SCHEDULE_DAYLY = #SCHEDULE_DAYLY#,
+			SCHEDULE_ALAM = #SCHEDULE_ALAM#,
+			SCHEDULE_ALAM_DATE = TO_DATE(#SCHEDULE_ALAM_DATE#, 'YYYY-MM-DD HH24:MI:SS'),
+			SCHEDULE_ALAM_WAY = #SCHEDULE_ALAM_WAY#,
+			SCHEDULE_DDAY = #SCHEDULE_DDAY#,
+			SHARE_GROUP_IDX = #SHARE_GROUP_IDX#
+		WHERE SCHEDULE_IDX = #SCHEDULE_IDX#
+	</update>
+	
+	<delete id="delete_schedule_type_01"
+			parameterClass="java.util.HashMap">
+		DELETE FROM SCHEDULE
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "DOMAIN">
+				DOMAIN = #DOMAIN#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "SCHEDULE_IDX">
+				SCHEDULE_IDX = #SCHEDULE_IDX#
+			</isNotNull>
+		</dynamic>	
+	</delete>
+	
+	<select id="select_schedule_type_03"
+			parameterClass="java.util.HashMap"
+			resultClass="java.util.HashMap">
+		SELECT
+			SCHEDULE_IDX,
+		    P_SCHEDULE_IDX,
+		    USERS_IDX,
+		    USERS_NAME,
+		    DOMAIN,
+		    USER_GROUP_IDX,
+		    SCHEDULE_SHARE,
+		    SCHEDULE_TYPE,
+		    SCHEDULE_TITLE,
+		     <!--<![CDATA[ REPLACE(SCHEDULE_STMT,chr(13), '<br>') AS SCHEDULE_STMT, ]]>-->
+		    SCHEDULE_STMT, 
+		    SCHEDULE_SDATE,
+		    SCHEDULE_EDATE,
+		    SCHEDULE_REPEAT,
+		    SCHEDULE_DAYLY,
+		    SCHEDULE_ALAM,
+		    SCHEDULE_ALAM_DATE,
+		    SCHEDULE_ALAM_WAY,
+		    SCHEDULE_DDAY,
+		    SHARE_GROUP_IDX,
+		    REPEAT_WEEK, 
+		    REPEAT_MONTH, 
+		    REPEAT_YEAR,
+		    DDAY_CNT
+		FROM (
+			SELECT
+			    SCHEDULE_IDX,
+			    P_SCHEDULE_IDX,
+			    USERS_IDX,
+			    USERS_NAME,
+			    DOMAIN,
+			    USER_GROUP_IDX,
+			    SCHEDULE_SHARE,
+			    SCHEDULE_TYPE,
+			    SCHEDULE_TITLE,
+			    SCHEDULE_STMT,
+			    TO_CHAR(SCHEDULE_SDATE, 'YYYY-MM-DD HH24:MI:SS') SCHEDULE_SDATE,
+			    TO_CHAR(SCHEDULE_EDATE, 'YYYY-MM-DD HH24:MI:SS') SCHEDULE_EDATE,
+			    SCHEDULE_REPEAT,
+			    SCHEDULE_DAYLY,
+			    SCHEDULE_ALAM,
+			    TO_CHAR(SCHEDULE_ALAM_DATE, 'YYYY-MM-DD HH24:MI:SS') SCHEDULE_ALAM_DATE,
+			    SCHEDULE_ALAM_WAY,
+			    SCHEDULE_DDAY,
+			    SHARE_GROUP_IDX,
+			    TO_CHAR(SCHEDULE_SDATE, 'D') REPEAT_WEEK, 
+			    TO_CHAR(SCHEDULE_SDATE, 'DD') REPEAT_MONTH, 
+			    TO_CHAR(SCHEDULE_SDATE, 'MMDD') REPEAT_YEAR,
+			    TRUNC(TO_CHAR(SCHEDULE_SDATE, 'YYYYMMDD') - TO_CHAR(SYSDATE, 'YYYYMMDD')) DDAY_CNT,
+			    CEIL((ROW_NUMBER() OVER(ORDER BY $orderCol$ $orderType$))/$USERS_LISTNUM$) PAGENUM
+			FROM SCHEDULE
+			WHERE DOMAIN = #DOMAIN#
+			AND TO_CHAR(SCHEDULE_SDATE, 'YYYYMMDD') >= #SCHEDULE_SDATE#
+			<dynamic prepend="">
+				<isNotNull prepend="AND" property= "USERS_IDX">
+					USERS_IDX = #USERS_IDX#
+				</isNotNull>
+				<isEqual prepend="AND" property= "SELECT_TYPE" compareValue="MY_MEMORIAL_DAY">
+					SCHEDULE_TYPE = 1
+				</isEqual>
+				<isEqual prepend="AND" property= "SELECT_TYPE" compareValue="MY_D_DAY">
+					SCHEDULE_DDAY = 1
+				</isEqual>
+			</dynamic>
+		)
+		
+		WHERE PAGENUM = 1 	
+	</select>
+	
+	<select id="select_schedule_type_curmonth"
+			parameterClass="java.util.HashMap"
+			resultClass="com.nara.jdf.db.entity.ScheduleEntity">
+		 <![CDATA[  
+		SELECT 
+		    SCHEDULE_IDX,
+		    P_SCHEDULE_IDX,
+		    USERS_IDX,
+		    USERS_NAME,
+		    DOMAIN,
+		    USER_GROUP_IDX,
+		    SCHEDULE_SHARE,
+		    SCHEDULE_TYPE,
+		    SCHEDULE_TITLE,
+		    SCHEDULE_STMT,
+		    TO_CHAR(SCHEDULE_SDATE, 'YYYY-MM-DD HH24:MI:SS') SCHEDULE_SDATE,
+			TO_CHAR(SCHEDULE_EDATE, 'YYYY-MM-DD HH24:MI:SS') SCHEDULE_EDATE,
+		    SCHEDULE_REPEAT,
+		    SCHEDULE_DAYLY,
+		    SCHEDULE_ALAM,
+		    TO_CHAR(SCHEDULE_ALAM_DATE, 'YYYY-MM-DD HH24:MI:SS') SCHEDULE_ALAM_DATE,
+		    SCHEDULE_ALAM_WAY,
+		    SCHEDULE_DDAY,
+		    SHARE_GROUP_IDX,
+		    TO_CHAR(SCHEDULE_SDATE, 'D') REPEAT_WEEK, 
+		    TO_CHAR(SCHEDULE_SDATE, 'DD') REPEAT_MONTH, 
+			TO_CHAR(SCHEDULE_SDATE, 'MMDD') REPEAT_YEAR
+		FROM SCHEDULE
+		
+		WHERE DOMAIN = #DOMAIN#
+		AND ( TO_CHAR(SCHEDULE_SDATE, 'YYYY-MM') <=  #SCHEDULE_MONTH#  
+	       	AND TO_CHAR(SCHEDULE_EDATE,'YYYY-MM') >= #SCHEDULE_MONTH#  )
+	    ]]>		      
+		<dynamic prepend="">
+			<isEqual prepend="AND" property= "SELECT_TYPE" compareValue="PRIVATE">
+				(USERS_IDX = #USERS_IDX# AND SCHEDULE_SHARE  = 0)
+			</isEqual>
+			<isEqual prepend="AND" property= "SELECT_TYPE" compareValue="GROUP">
+				(SCHEDULE_SHARE  = 1 AND SHARE_GROUP_IDX LIKE '%|$SHARE_GROUP_IDX$|%')
+			</isEqual>
+			<isEqual prepend="AND" property= "SELECT_TYPE" compareValue="TOTAL">
+				((USERS_IDX = #USERS_IDX# AND SCHEDULE_SHARE  = 0) OR (SCHEDULE_SHARE = 2) OR (SCHEDULE_SHARE  = 1 AND SHARE_GROUP_IDX LIKE '%|$SHARE_GROUP_IDX$|%'))
+			</isEqual>
+		</dynamic>	
+	</select>
+	
+	<select id="select_schedule_type_01_new"
+			parameterClass="java.util.HashMap"
+			resultClass="com.nara.jdf.db.entity.ScheduleEntity">
+		SELECT 
+		    SCHEDULE_IDX,
+		    P_SCHEDULE_IDX,
+		    USERS_IDX,
+		    USERS_NAME,
+		    DOMAIN,
+		    USER_GROUP_IDX,
+		    SCHEDULE_SHARE,
+		    SCHEDULE_TYPE,
+		    SCHEDULE_TITLE,
+		     <!--<![CDATA[ REPLACE(SCHEDULE_STMT,chr(13), '<br>') AS SCHEDULE_STMT, ]]>-->
+		    SCHEDULE_STMT, 
+		    TO_CHAR(SCHEDULE_SDATE, 'YYYY-MM-DD HH24:MI:SS') SCHEDULE_SDATE,
+		    TO_CHAR(SCHEDULE_EDATE, 'YYYY-MM-DD HH24:MI:SS') SCHEDULE_EDATE,
+		    SCHEDULE_REPEAT,
+		    SCHEDULE_DAYLY,
+		    SCHEDULE_ALAM,
+		    TO_CHAR(SCHEDULE_ALAM_DATE, 'YYYY-MM-DD HH24:MI:SS') SCHEDULE_ALAM_DATE,
+		    SCHEDULE_ALAM_WAY,
+		    SCHEDULE_DDAY,
+		    SHARE_GROUP_IDX,
+		    TO_CHAR(SCHEDULE_SDATE, 'D') REPEAT_WEEK, 
+		    TO_CHAR(SCHEDULE_SDATE, 'DD') REPEAT_MONTH, 
+		    TO_CHAR(SCHEDULE_SDATE, 'MMDD') REPEAT_YEAR
+		FROM SCHEDULE
+		
+		WHERE DOMAIN = #DOMAIN#
+		<![CDATA[
+		AND (SCHEDULE_SDATE BETWEEN TO_DATE(#SCHEDULE_SDATE#, 'YYYY-MM-DD') AND TO_DATE(#SCHEDULE_EDATE#, 'YYYY-MM-DD') + 0.99999
+		      OR SCHEDULE_EDATE BETWEEN TO_DATE(#SCHEDULE_SDATE#, 'YYYY-MM-DD') AND TO_DATE(#SCHEDULE_EDATE#, 'YYYY-MM-DD') + 0.99999
+		      OR ( SCHEDULE_SDATE < TO_DATE(#SCHEDULE_SDATE#, 'YYYY-MM-DD')  AND SCHEDULE_EDATE > TO_DATE(#SCHEDULE_EDATE#, 'YYYY-MM-DD'))
+		     )
+		]]>
+		<dynamic prepend="">
+			<isEqual prepend="AND" property= "SELECT_TYPE" compareValue="PRIVATE">
+				(USERS_IDX = #USERS_IDX# AND SCHEDULE_SHARE  = 0)
+			</isEqual>
+			<isEqual prepend="AND" property= "SELECT_TYPE" compareValue="GROUP">
+				(SCHEDULE_SHARE  = 1 
+				 AND SHARE_GROUP_IDX IN 
+					(
+						SELECT USER_GROUP_IDX
+						FROM USER_GROUP CONNECT BY PRIOR USER_GROUP_IDX = P_USER_GROUP_IDX 
+						START WITH USER_GROUP_IDX = #USER_GROUP_IDX#
+						UNION
+						SELECT USER_GROUP_IDX
+						FROM USER_GROUP CONNECT BY USER_GROUP_IDX = PRIOR P_USER_GROUP_IDX 
+						START WITH USER_GROUP_IDX = #USER_GROUP_IDX#
+					)
+				)
+			</isEqual>
+			<isEqual prepend="AND" property= "SELECT_TYPE" compareValue="TOTAL">
+				(
+					(USERS_IDX = #USERS_IDX# AND SCHEDULE_SHARE  = 0) 
+					OR (SCHEDULE_SHARE = 2) 
+					OR (
+						SCHEDULE_SHARE  = 1 AND SHARE_GROUP_IDX IN 
+							(
+								SELECT USER_GROUP_IDX
+								FROM USER_GROUP CONNECT BY PRIOR USER_GROUP_IDX = P_USER_GROUP_IDX 
+								START WITH USER_GROUP_IDX = #USER_GROUP_IDX#
+								UNION
+								SELECT USER_GROUP_IDX
+								FROM USER_GROUP CONNECT BY USER_GROUP_IDX = PRIOR P_USER_GROUP_IDX 
+								START WITH USER_GROUP_IDX = #USER_GROUP_IDX#
+							)
+						)
+				)
+			</isEqual>
+		</dynamic>
+		ORDER BY SCHEDULE_SDATE ASC
+	</select>	
+	
+	<select id="select_search_schedule"
+			parameterClass="java.util.HashMap"
+			resultClass="com.nara.jdf.db.entity.ScheduleEntity">
+		SELECT
+			*
+		FROM (
+	        SELECT 
+			    SCHEDULE_IDX,
+			    P_SCHEDULE_IDX,
+			    USERS_IDX,
+			    USERS_NAME,
+			    DOMAIN,
+			    USER_GROUP_IDX,
+			    SCHEDULE_SHARE,
+			    SCHEDULE_TYPE,
+			    SCHEDULE_TITLE,
+			    SCHEDULE_STMT, 
+			    TO_CHAR(SCHEDULE_SDATE, 'YYYY-MM-DD HH24:MI:SS') SCHEDULE_SDATE,
+			    TO_CHAR(SCHEDULE_EDATE, 'YYYY-MM-DD HH24:MI:SS') SCHEDULE_EDATE,
+			    SCHEDULE_REPEAT,
+			    SCHEDULE_DAYLY,
+			    SCHEDULE_ALAM,
+			    TO_CHAR(SCHEDULE_ALAM_DATE, 'YYYY-MM-DD HH24:MI:SS') SCHEDULE_ALAM_DATE,
+			    SCHEDULE_ALAM_WAY,
+			    SCHEDULE_DDAY,
+			    SHARE_GROUP_IDX,
+			    TO_CHAR(SCHEDULE_SDATE, 'D') REPEAT_WEEK, 
+			    TO_CHAR(SCHEDULE_SDATE, 'DD') REPEAT_MONTH, 
+			    TO_CHAR(SCHEDULE_SDATE, 'MMDD') REPEAT_YEAR,
+			    CEIL((ROW_NUMBER() OVER(ORDER BY $orderCol$ $orderType$))/$USERS_LISTNUM$) PAGENUM
+			FROM SCHEDULE		
+			WHERE DOMAIN = #DOMAIN#
+			<dynamic prepend="">
+				<isEqual prepend="AND" property= "SELECT_TYPE" compareValue="PRIVATE">
+					(USERS_IDX = #USERS_IDX# AND SCHEDULE_SHARE  = 0)
+				</isEqual>
+				<isEqual prepend="AND" property= "SELECT_TYPE" compareValue="GROUP">
+					(SCHEDULE_SHARE  = 1 
+					 AND SHARE_GROUP_IDX IN 
+						(
+							SELECT USER_GROUP_IDX
+							FROM USER_GROUP CONNECT BY PRIOR USER_GROUP_IDX = P_USER_GROUP_IDX 
+							START WITH USER_GROUP_IDX = #USER_GROUP_IDX#
+							UNION
+							SELECT USER_GROUP_IDX
+							FROM USER_GROUP CONNECT BY USER_GROUP_IDX = PRIOR P_USER_GROUP_IDX 
+							START WITH USER_GROUP_IDX = #USER_GROUP_IDX#
+						)
+					)
+				</isEqual>
+				<isEqual prepend="AND" property= "SELECT_TYPE" compareValue="TOTAL">
+					(
+						(USERS_IDX = #USERS_IDX# AND SCHEDULE_SHARE  = 0) 
+						OR (SCHEDULE_SHARE = 2) 
+						OR (
+							SCHEDULE_SHARE  = 1 AND SHARE_GROUP_IDX IN 
+								(
+									SELECT USER_GROUP_IDX
+									FROM USER_GROUP CONNECT BY PRIOR USER_GROUP_IDX = P_USER_GROUP_IDX 
+									START WITH USER_GROUP_IDX = #USER_GROUP_IDX#
+									UNION
+									SELECT USER_GROUP_IDX
+									FROM USER_GROUP CONNECT BY USER_GROUP_IDX = PRIOR P_USER_GROUP_IDX 
+									START WITH USER_GROUP_IDX = #USER_GROUP_IDX#
+								)
+							)
+					)
+				</isEqual>
+				<isNotNull prepend="" property= "strKeyword">
+					<iterate property="strIndex" prepend="AND" open="(" close=")" conjunction="OR" >
+		      			$strIndex[]$ like '%'||#strKeyword#||'%'
+					</iterate>			
+				</isNotNull>
+			</dynamic>
+		)
+		WHERE PAGENUM = #nPage#
+	</select>
+	
+	<select id="select_search_schedule_count"
+			parameterClass="java.util.HashMap"
+			resultClass="java.lang.Integer">
+        SELECT
+		    COUNT(SCHEDULE_IDX) CNT
+		FROM SCHEDULE		
+		WHERE DOMAIN = #DOMAIN#
+		<dynamic prepend="">
+			<isEqual prepend="AND" property= "SELECT_TYPE" compareValue="PRIVATE">
+				(USERS_IDX = #USERS_IDX# AND SCHEDULE_SHARE  = 0)
+			</isEqual>
+			<isEqual prepend="AND" property= "SELECT_TYPE" compareValue="GROUP">
+				(SCHEDULE_SHARE  = 1 
+				 AND SHARE_GROUP_IDX IN 
+					(
+						SELECT USER_GROUP_IDX
+						FROM USER_GROUP CONNECT BY PRIOR USER_GROUP_IDX = P_USER_GROUP_IDX 
+						START WITH USER_GROUP_IDX = #USER_GROUP_IDX#
+						UNION
+						SELECT USER_GROUP_IDX
+						FROM USER_GROUP CONNECT BY USER_GROUP_IDX = PRIOR P_USER_GROUP_IDX 
+						START WITH USER_GROUP_IDX = #USER_GROUP_IDX#
+					)
+				)
+			</isEqual>
+			<isEqual prepend="AND" property= "SELECT_TYPE" compareValue="TOTAL">
+				(
+					(USERS_IDX = #USERS_IDX# AND SCHEDULE_SHARE  = 0) 
+					OR (SCHEDULE_SHARE = 2) 
+					OR (
+						SCHEDULE_SHARE  = 1 AND SHARE_GROUP_IDX IN 
+							(
+								SELECT USER_GROUP_IDX
+								FROM USER_GROUP CONNECT BY PRIOR USER_GROUP_IDX = P_USER_GROUP_IDX 
+								START WITH USER_GROUP_IDX = #USER_GROUP_IDX#
+								UNION
+								SELECT USER_GROUP_IDX
+								FROM USER_GROUP CONNECT BY USER_GROUP_IDX = PRIOR P_USER_GROUP_IDX 
+								START WITH USER_GROUP_IDX = #USER_GROUP_IDX#
+							)
+						)
+				)
+			</isEqual>
+			<isNotNull prepend="" property= "strKeyword">
+				<iterate property="strIndex" prepend="AND" open="(" close=")" conjunction="OR" >
+	      			$strIndex[]$ like '%'||#strKeyword#||'%'
+				</iterate>			
+			</isNotNull>
+		</dynamic>	
+	</select>	
+</sqlMap>

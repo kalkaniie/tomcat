@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="ECARD">
+	<select id="count_ecard_theme"
+	        parameterClass="java.util.HashMap"
+	        resultClass="java.lang.Integer">
+		SELECT
+			COUNT(ECARD_IDX) CNT
+		FROM ECARD
+		<dynamic prepend="WHERE">
+	  	 	<isNotEqual prepend="AND" property= "ECARD_THEME" compareValue="">
+				ECARD_THEME = #ECARD_THEME#
+			</isNotEqual>
+		</dynamic>
+		
+	</select>
+	
+	<select id="get_ecard_curr_seq_num"
+	       resultClass="java.lang.Integer">
+		SELECT	SEQ_ECARD.CURRVAL
+		FROM SYS.DUAL
+	</select>
+	
+	<select id="select_ecard_type_01"
+	        parameterClass="java.util.HashMap"
+	        resultClass="com.nara.jdf.db.entity.ECardEntity">
+		SELECT SKIP $SKIP$ FIRST $USERS_LISTNUM$
+			ECARD_IDX,
+			ECARD_THEME,
+			ECARD_TITLE,
+			TO_CHAR(ECARD_DATE, '%Y-%m-%d %H:%M:%S') ECARD_DATE,
+			ECARD_SENDNUM
+		FROM ECARD
+		<dynamic prepend="WHERE">
+ 			<isNotEqual prepend="AND" property= "ECARD_THEME" compareValue="">
+				ECARD_THEME = #ECARD_THEME#
+			</isNotEqual>
+		</dynamic>
+		ORDER BY ECARD_THEME ASC
+	</select>
+	
+	<select id="select_ecard_type_02"
+	        resultClass="java.util.HashMap">
+		SELECT
+			DISTINCT ECARD_THEME
+		FROM ECARD
+		ORDER BY ECARD_THEME ASC
+	</select>
+	<select id="select_ecard_type_03"
+	        parameterClass="java.util.HashMap"
+	        resultClass="com.nara.jdf.db.entity.ECardEntity">
+		 SELECT 
+	       ECARD_IDX, 
+	       ECARD_THEME, 
+	       ECARD_TITLE, 
+	       TO_CHAR(ECARD_DATE,'%Y-%m-%d %H:%M:%S') ECARD_DATE, 
+	       ECARD_SENDNUM 
+       	FROM ECARD 
+       	ORDER BY ECARD_THEME 
+	</select>
+	
+	<select id="select_ecard_favor"
+	        resultClass="com.nara.jdf.db.entity.ECardEntity">
+       SELECT FIRST 6
+	       ECARD_IDX, 
+	       ECARD_THEME, 
+	       ECARD_TITLE, 
+	       TO_CHAR(ECARD_DATE,'%Y-%m-%d') ECARD_DATE, 
+	       ECARD_SENDNUM 
+       FROM ECARD WHERE ECARD_SENDNUM != 0  
+       ORDER BY ECARD_SENDNUM DESC 
+	</select>
+	<select id="select_ecard_latest"
+	        resultClass="com.nara.jdf.db.entity.ECardEntity">
+       SELECT FIRST 12
+	       ECARD_IDX, 
+	       ECARD_THEME, 
+	       ECARD_TITLE, 
+	       TO_CHAR(ECARD_DATE,'%Y-%m-%d') ECARD_DATE,  
+	       ECARD_SENDNUM 
+       FROM ECARD 
+       ORDER BY ECARD_DATE DESC 
+	</select>
+	<insert id="insert_ecard_type_01"
+	        parameterClass="com.nara.jdf.db.entity.ECardEntity">
+		INSERT INTO ECARD
+		(
+			ECARD_IDX,
+			ECARD_THEME,
+			ECARD_TITLE,
+			ECARD_DATE,
+			ECARD_SENDNUM
+		)
+		VALUES
+		(
+			SEQ_ECARD.NEXTVAL,
+			#ECARD_THEME#,
+			#ECARD_TITLE#,
+			CURRENT,
+			#ECARD_SENDNUM#
+		)
+	</insert>
+	
+	<update id="update_ecard_sendnum"
+	        parameterClass="java.util.HashMap">
+		UPDATE ECARD
+		SET    ECARD_SENDNUM = ECARD_SENDNUM + 1
+		WHERE  ECARD_IDX = #ECARD_IDX#
+	</update>
+	
+	<delete id="delete_ecard_type_01"
+	        parameterClass="java.util.HashMap">
+		DELETE FROM ECARD
+		WHERE ECARD_IDX = #ECARD_IDX#
+	</delete>
+</sqlMap>

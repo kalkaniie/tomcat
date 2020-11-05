@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="POLL_ITEM">
+	<delete id="delete_poll_item_type_01"
+	        parameterClass="java.util.HashMap">
+		DELETE FROM POLL_ITEM
+		
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "POLL_IDX">
+				POLL_IDX = #POLL_IDX#
+			</isNotNull>
+		</dynamic>
+	</delete>
+	
+	<insert id="insert_poll_item_type_01"
+            parameterClass="java.util.HashMap">
+       	INSERT INTO POLL_ITEM( 
+       		POLL_IDX,
+            POLL_ITEM_NUM,
+            POLL_ITEM_CONTENT,
+            POLL_ITEM_SUM
+        ) VALUES (
+        	#POLL_IDX#,
+            #POLL_ITEM_NUM#,
+            #POLL_ITEM_CONTENT#,
+            #POLL_ITEM_SUM#
+		)
+    </insert>	
+    
+    <select id="select_poll_item_list_type_01" 
+  				parameterClass="java.util.HashMap" 
+  				resultClass="com.nara.jdf.db.entity.PollItemEntity">
+		SELECT
+      		POLL_IDX,
+      		POLL_ITEM_NUM,
+      		POLL_ITEM_CONTENT,
+      		POLL_ITEM_SUM 
+      	FROM POLL_ITEM 
+     	WHERE POLL_IDX =  #POLL_IDX# 
+      	ORDER BY POLL_ITEM_NUM ASC
+	</select>
+	
+	<update id="update_poll_item_vote"
+            parameterClass="java.util.HashMap">
+    	UPDATE POLL_ITEM 
+    	SET POLL_ITEM_SUM= POLL_ITEM_SUM+1
+    	WHERE POLL_IDX = #POLL_IDX#
+    	AND POLL_ITEM_NUM =#POLL_ITEM_NUM#
+	</update>
+	
+	<select id="get_join_poll_total_count" 
+  				parameterClass="java.util.HashMap" 
+  				resultClass="java.lang.Integer">
+		SELECT
+      		SUM(POLL_ITEM_SUM) TOTAL_SUM 
+      FROM POLL_ITEM 
+      WHERE POLL_IDX =  #POLL_IDX#
+	</select>
+</sqlMap>

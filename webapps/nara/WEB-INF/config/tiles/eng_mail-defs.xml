@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+ <!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 1.1//EN"
+       "http://jakarta.apache.org/struts/dtds/tiles-config_1_1.dtd">
+
+<tiles-definitions>
+	<definition name="eng.mail.mainLayout.type1" page="/jsp/eng/layout/mail.mainLayout.jsp">
+		<put name="title" value="WebMailSystem" type="definition"/>
+		<put name="header" value="/jsp/eng/common/header.jsp" type="page"/>
+		<put name="body"   value="" type="page"/>
+		<put name="footer" value="/jsp/eng/common/footer.jsp" type="page"/>
+	</definition>
+	<definition name="eng.mail.popupLayout.menuPopup" page="/jsp/eng/layout/mail.menuPopupLayout.jsp">
+		<put name="title" value="WebMailSystem" type="definition"/>
+		<put name="leftmenu" value="/jsp/eng/menu/leftbase.jsp" type="page"/>		
+		<put name="body"   value="" type="page"/>
+	</definition>
+	<definition name="eng.mail.popupLayout.aminmenuPopup" page="/jsp/eng/layout/mail.menuAdminPopupLayout.jsp">
+		<put name="title" value="WebMailSystem" type="definition"/>
+		<put name="header" value="/jsp/eng/common/header_admin.jsp" type="page"/>
+		<put name="leftmenu" value="/jsp/eng/menu/leftbase.jsp" type="page"/>		
+		<put name="body"   value="" type="page"/>
+	</definition>
+	
+	<definition name="eng.mail.popupLayout.boxPopup" page="/jsp/eng/layout/mail.boxPopupLayout.jsp">
+		<put name="title" value="WebMailSystem" type="definition"/>
+		<put name="body"   value="" type="page"/>
+	</definition>
+	
+	<definition name="eng.mail.boxPopup" extends="eng.mail.popupLayout.boxPopup" >
+		<put name="title" value="WebMailSystem" type="definition"/>
+		<put name="body"    value="" type="page"/>
+	</definition>
+	
+	<definition name="eng.mail.basePage" extends="eng.mail.mainLayout.type1" >
+		<put name="leftmenu" value="/jsp/eng/menu/leftbase.jsp" type="page"/>
+	</definition>
+	
+	<definition name="eng.mail.envPage" extends="eng.mail.popupLayout.menuPopup" >
+		<put name="title" value="WebMailSystem" type="definition"/>
+		<put name="leftmenu" value="/jsp/eng/menu/leftenv.jsp" type="page"/>
+	</definition>
+	<definition name="eng.mail.adminPage" extends="eng.mail.popupLayout.aminmenuPopup" >
+		<put name="title" value="WebMailSystem" type="definition"/>
+		<put name="leftmenu" value="/jsp/eng/menu/leftadmin.jsp" type="page"/>
+	</definition>
+	
+	<definition name="eng.mail.boxPage" page="/jsp/eng/layout/mail.boxLayout.jsp">
+		<put name="title" value="WebMailSystem" type="definition"/>
+		<put name="body" value="" type="page"/>
+	</definition>
+	
+	<definition name="eng.mail.excelPage" page="/jsp/eng/layout/excelLayout.jsp">
+		<put name="title" value="WebMailSystem" type="definition"/>
+		<put name="body" value="" type="page"/>
+	</definition>
+	
+	<!-- text mode -->
+	<definition name="eng.mail.text.basePage" page="/jsp_text/eng/layout/mail.text.mainLayout.jsp">
+		<put name="title" value="WebMailSystem" type="definition"/>
+		<put name="header" value="/jsp_text/eng/common/header.jsp" type="page"/>
+		<put name="body"   value="" type="page"/>
+		<put name="footer" value="/jsp_text/eng/common/footer.jsp" type="page"/>
+	</definition>
+	<definition name="eng.mail.text.boxPage" page="/jsp_text/eng/layout/mail.text.boxLayout.jsp">
+		<put name="title" value="WebMailSystem" type="definition"/>
+		<put name="body"   value="" type="page"/>
+	</definition>
+	
+	<!-- standard mode -->
+	<definition name="eng.mail.std.basePage" page="/jsp_std/eng/layout/mail.std.mainLayout.jsp">
+		<put name="title" value="WebMailSystem" type="definition"/>
+		<put name="header" value="/jsp_std/eng/common/header.jsp" type="page"/>
+		<put name="body"   value="" type="page"/>
+		<put name="footer" value="/jsp_std/eng/common/footer.jsp" type="page"/>
+	</definition>
+	<definition name="eng.mail.std.boxPage" page="/jsp_std/eng/layout/mail.std.boxLayout.jsp">
+		<put name="title" value="WebMailSystem" type="definition"/>
+		<put name="body"   value="" type="page"/>
+	</definition>
+	<definition name="eng.mail.std.blankPage" page="/jsp_std/eng/layout/mail.std.blankLayout.jsp">
+		<put name="title" value="WebMailSystem" type="definition"/>
+		<put name="body"   value="" type="page"/>
+	</definition>
+</tiles-definitions>

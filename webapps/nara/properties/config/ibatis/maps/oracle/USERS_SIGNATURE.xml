@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="USERS_SIGNATURE">
+	<select id="select_users_signature_type_01"
+	        parameterClass="java.util.HashMap"
+	        resultClass="com.nara.jdf.db.entity.SignEntity">
+	    SELECT SIGN_IDX,
+	    	USERS_IDX,
+	    	SIGN_TITLE,
+	    	SIGN_DEFAULT
+	    FROM USERS_SIGNATURE
+	    <dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+		</dynamic>
+		ORDER BY SIGN_TITLE
+	</select>
+	
+	<select id="select_users_signature_type_02" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="com.nara.jdf.db.entity.SignEntity">
+        SELECT SIGN_IDX,
+          USERS_IDX,
+          SIGN_TITLE,
+          SIGN_STMT,
+          SIGN_DEFAULT
+        FROM USERS_SIGNATURE
+        WHERE SIGN_IDX = #SIGN_IDX#
+  	</select>
+	
+	<insert id="insert_users_signature_type_01"
+			parameterClass="com.nara.jdf.db.entity.SignEntity">
+		INSERT INTO USERS_SIGNATURE
+		(
+			SIGN_IDX,
+			USERS_IDX,
+			SIGN_TITLE,
+			SIGN_STMT,
+			SIGN_DEFAULT
+		)
+		VALUES
+		(
+			SEQ_USERS_SIGNATURE.NEXTVAL,
+			#USERS_IDX#,
+			#SIGN_TITLE#,
+			#SIGN_STMT#,
+			#SIGN_DEFAULT#	
+		)
+	</insert>
+		
+	<update id="update_users_signature_type_01"
+	        parameterClass="com.nara.jdf.db.entity.SignEntity">
+		UPDATE USERS_SIGNATURE SET 
+		SIGN_TITLE = #SIGN_TITLE#,
+		SIGN_STMT  = #SIGN_STMT#,
+		SIGN_DEFAULT = #SIGN_DEFAULT#
+		WHERE USERS_IDX = #USERS_IDX#
+			AND	SIGN_IDX = #SIGN_IDX#
+	</update>
+	
+	<delete id="delete_users_signature_type_01"
+  				parameterClass="java.util.HashMap">
+  		DELETE FROM USERS_SIGNATURE
+  		WHERE  SIGN_IDX = #SIGN_IDX#
+  	</delete>
+	
+	
+	<select id="select_users_signature_type_03" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="java.lang.String">
+        SELECT SIGN_STMT
+        FROM USERS_SIGNATURE
+        WHERE SIGN_IDX = #SIGN_IDX#
+  	</select>
+  	
+  	<delete id="delete_users_signature_by_users_idx" 
+  				parameterClass="java.util.HashMap">
+        DELETE FROM USERS_SIGNATURE
+        WHERE USERS_IDX = #USERS_IDX#
+  	</delete>
+</sqlMap>

@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="MEMBER">
+	<select id="select_member_info_type_01" 
+					parameterClass="java.util.HashMap" 
+					resultClass="com.nara.jdf.db.entity.MemberEntity">
+		SELECT 
+			MEMBER_IDX,
+      		DOMAIN,
+      		USERS_IDX,
+      		ORGANIZE_IDX, 
+      		AUTHORITY_IDX 
+      	FROM MEMBER 
+      	WHERE MEMBER_IDX =  #MEMBER_IDX# 
+	</select>
+	
+	<select id="select_member_list_type_01" 
+  				parameterClass="java.util.HashMap" 
+  				resultClass="java.util.HashMap">
+		SELECT SKIP $SKIP$ FIRST $USERS_LISTNUM$
+	      	UM.DOMAIN, 
+	      	UD.USERS_IDX, 
+	      	UM.USERS_ID, 
+	      	UM.USERS_NAME, 
+	      	UD.USERS_JUMIN1, 
+	      	UD.USERS_JUMIN2, 
+	      	UD.USERS_LICENCENUM, 
+	      	M.MEMBER_IDX, 
+	      	M.ORGANIZE_IDX, 
+	      	M.AUTHORITY_IDX
+	 	FROM MEMBER M RIGHT OUTER JOIN USERS_MASTER UM
+	 	  ON M.USERS_IDX = UM.USERS_IDX JOIN USERS_DETAIL UD ON UM.USERS_IDX = UD.USERS_IDX
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property="DOMAIN">
+				M.DOMAIN = #DOMAIN#
+			</isNotNull>
+			<isEqual prepend="AND" property="ORGANIZE_IDX" compareValue="-1">
+				M.ORGANIZE_IDX IS NULL
+			</isEqual>
+			<isEqual prepend="AND" property="ORGANIZE_IDX" compareValue="0">
+				M.USERS_IDX = UM.USERS_IDX
+			</isEqual>
+			<isGreaterEqual prepend="AND" property="ORGANIZE_IDX" compareValue="1">
+				M.ORGANIZE_IDX =  #ORGANIZE_IDX#
+			</isGreaterEqual>
+			<isGreaterEqual prepend="AND" property="AUTHORITY_IDX" compareValue="1">
+				M.AUTHORITY_IDX = #AUTHORITY_IDX#
+			</isGreaterEqual>
+			<isNotNull prepend="" property= "strKeyword">
+				<isNotEqual prepend="" property= "strKeyword" compareValue="">
+					<isEqual prepend="AND" property= "strIndex" compareValue="USERS_JUMIN">
+						UD.USERS_JUMIN1 || '-' || UD.USERS_JUMIN2 = #strKeyword#
+					</isEqual>	
+					<isNotEqual prepend="AND" property= "strIndex" compareValue="B_DATE">
+						$strIndex$ like '%$strKeyword$%'
+					</isNotEqual>
+				</isNotEqual>	
+			</isNotNull> 
+
+		</dynamic>
+   		ORDER BY MEMBER_IDX ASC
+	</select>
+	
+	<select id="select_member_count_type_01" 
+  				parameterClass="java.util.HashMap" 
+  				resultClass="java.lang.Integer">
+	  	SELECT 
+	      	COUNT(UD.USERS_IDX) CNT 
+	 	FROM MEMBER M RIGHT OUTER JOIN USERS_MASTER UM
+	 	  ON M.USERS_IDX = UM.USERS_IDX JOIN USERS_DETAIL UD ON UM.USERS_IDX = UD.USERS_IDX
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property="DOMAIN">
+				M.DOMAIN = #DOMAIN#
+			</isNotNull>
+			<isEqual prepend="AND" property="ORGANIZE_IDX" compareValue="-1">
+				M.ORGANIZE_IDX IS NULL
+			</isEqual>
+			<isEqual prepend="AND" property="ORGANIZE_IDX" compareValue="0">
+				M.USERS_IDX = UM.USERS_IDX
+			</isEqual>
+			<isGreaterEqual prepend="AND" property="ORGANIZE_IDX" compareValue="1">
+				M.ORGANIZE_IDX =  #ORGANIZE_IDX#
+			</isGreaterEqual>
+			<isGreaterEqual prepend="AND" property="AUTHORITY_IDX" compareValue="1">
+				M.AUTHORITY_IDX = #AUTHORITY_IDX#
+			</isGreaterEqual>
+			<isNotNull prepend="" property= "strKeyword">
+				<isNotEqual prepend="" property= "strKeyword" compareValue="">
+					<isEqual prepend="AND" property= "strIndex" compareValue="USERS_JUMIN">
+						UD.USERS_JUMIN1 || '-' || UD.USERS_JUMIN2 = #strKeyword#
+					</isEqual>	
+					<isNotEqual prepend="AND" property= "strIndex" compareValue="B_DATE">
+						$strIndex$ like '%$strKeyword$%'
+					</isNotEqual>
+				</isNotEqual>	
+			</isNotNull> 
+		</dynamic>
+	</select>
+	
+	<select id="select_member_count_type_02" 
+  				parameterClass="java.util.HashMap" 
+  				resultClass="java.lang.Integer">
+		SELECT	count(MEMBER_IDX)
+	 	FROM MEMBER
+	    WHERE USERS_IDX = #USERS_IDX#
+	    	AND ORGANIZE_IDX = #ORGANIZE_IDX#
+	</select>
+	
+	
+	<update id="update_member_type_01"
+            parameterClass="java.util.HashMap">
+    	UPDATE MEMBER
+    	SET 
+    	<dynamic prepend="">
+    		<isEqual prepend="" property= "UPDATE_TYPE" compareValue="AUTHORITY_IDX">
+				AUTHORITY_IDX = #AUTHORITY_IDX#
+			</isEqual>
+			<isEqual prepend="" property= "UPDATE_TYPE" compareValue="ORGANIZE_IDX">
+				ORGANIZE_IDX = #ORGANIZE_IDX#
+			</isEqual>
+			
+    	</dynamic>
+		
+		WHERE MEMBER_IDX =#MEMBER_IDX#
+    		AND DOMAIN =#DOMAIN#
+	</update>
+	
+	<insert id="insert_member_type_01"
+            parameterClass="com.nara.jdf.db.entity.MemberEntity">
+        INSERT INTO MEMBER
+        (
+          	MEMBER_IDX,
+          	DOMAIN,
+          	USERS_IDX,
+          	ORGANIZE_IDX, 
+          	AUTHORITY_IDX 
+         ) VALUES (
+         	SEQ_MEMBER.NEXTVAL,
+         	#DOMAIN#,
+          	#USERS_IDX#,
+          	#ORGANIZE_IDX#, 
+          	#AUTHORITY_IDX#
+		 )
+    </insert>	
+	
+	
+	<delete id="delete_member_type_01"
+  				parameterClass="java.util.HashMap">
+   		DELETE FROM MEMBER
+  		<dynamic prepend="WHERE">
+  			<isNotNull prepend="AND" property= "MEMBER_IDX">
+				MEMBER_IDX = #MEMBER_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "DOMAIN">
+				DOMAIN = #DOMAIN#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "ORGANIZE_IDX">
+				ORGANIZE_IDX = #ORGANIZE_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+		</dynamic>
+  	</delete>
+  	
+  	<update id="update_member_type_02"
+            parameterClass="java.util.HashMap">
+    	UPDATE MEMBER
+    	SET	AUTHORITY_IDX = 	0
+		WHERE AUTHORITY_IDX =	#AUTHORITY_IDX#
+    		AND DOMAIN =#DOMAIN#
+	</update>	
+</sqlMap>

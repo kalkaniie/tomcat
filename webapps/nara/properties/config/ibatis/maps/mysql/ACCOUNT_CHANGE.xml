@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+
+<sqlMap namespace="ACCOUNT_CHANGE"> 
+	<select id="select_account_change_type_01"
+	        parameterClass="java.util.Map"
+	        resultClass="com.nara.jdf.db.entity.AccountChangeEntity">
+		SELECT 
+			USERS_IDX,
+			DOMAIN,
+			REQ_ID,
+			REQ_PASSWD,
+			DATE_FORMAT(REQ_DATE, '%Y-%m-%d %T') REQ_DATE,
+			CONFIRM_USERS_IDX,
+			DATE_FORMAT(CONFIRM_DATE, '%Y-%m-%d %T') CONFIRM_DATE,
+			STATUS
+        FROM ACCOUNT_CHANGE 
+        <dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "USERS_IDX">
+            	USERS_IDX = #USERS_IDX#
+            </isNotNull>
+            <isNotNull prepend="AND" property= "DOMAIN">
+            	DOMAIN = #DOMAIN#
+            </isNotNull>
+            <isNotNull prepend="AND" property= "REQ_ID">
+            	REQ_ID = #REQ_ID#
+            </isNotNull>
+        </dynamic>    	
+	</select>
+  
+	<select id="select_account_change_type_02"
+	        parameterClass="java.util.Map"
+	        resultClass="com.nara.jdf.db.entity.AccountChangeEntity">
+		SELECT
+			USERS_IDX,
+			DOMAIN,
+			REQ_ID,
+			REQ_PASSWD,
+			DATE_FORMAT(REQ_DATE, '%Y-%m-%d %T') REQ_DATE,
+			CONFIRM_USERS_IDX,
+			DATE_FORMAT(CONFIRM_DATE, '%Y-%m-%d %T') CONFIRM_DATE,
+			STATUS
+		FROM ACCOUNT_CHANGE
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property="USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property="DOMAIN">
+				DOMAIN = #DOMAIN#
+			</isNotNull>
+			<isNotNull prepend="" property="strKeyword">
+				<isNotEqual prepend="AND" property="strKeyword" compareValue="">
+					$strIndex$ LIKE CONCAT('%',#strKeyword#, '%')
+				</isNotEqual>
+			</isNotNull>
+			<isNotNull prepend="AND" property="REQ_DATE_S">
+				REQ_DATE BETWEEN STR_TO_DATE(#REQ_DATE_S#,'%Y-%m-%d') AND DATE_ADD(DATE_ADD(STR_TO_DATE(#REQ_DATE_E#,'%Y-%m-%d'), INTERVAL 1 DAY), INTERVAL -1 SECOND)
+			</isNotNull>
+			<isNotNull prepend="AND" property="CONFIRM_DATE_S">
+				CONFIRM_DATE BETWEEN STR_TO_DATE(#CONFIRM_DATE_S#,'%Y-%m-%d') AND DATE_ADD(DATE_ADD(STR_TO_DATE(#CONFIRM_DATE_E#,'%Y-%m-%d'), INTERVAL 1 DAY), INTERVAL -1 SECOND)
+			</isNotNull>
+		</dynamic>
+		ORDER BY $orderCol$ $orderType$
+		LIMIT $SKIP$, $USERS_LISTNUM$	  	
+	</select>
+	 
+	<select id="count_account_change_type_02"
+	        parameterClass="java.util.Map"
+	        resultClass="java.lang.Integer">	        
+		SELECT
+			COUNT(USERS_IDX) CNT
+		FROM ACCOUNT_CHANGE
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property="USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property="DOMAIN">
+				DOMAIN = #DOMAIN#
+			</isNotNull>
+			<isNotNull prepend="AND" property="REQ_ID">
+				REQ_ID = #REQ_ID#
+			</isNotNull>
+			<isNotNull prepend="" property="strKeyword">
+				<isNotEqual prepend="AND" property="strKeyword" compareValue="">
+					$strIndex$ LIKE CONCAT('%',#strKeyword#, '%')
+				</isNotEqual>
+			</isNotNull>
+			<isNotNull prepend="AND" property="REQ_DATE_S">
+				REQ_DATE BETWEEN STR_TO_DATE(#REQ_DATE_S#,'%Y-%m-%d') AND DATE_ADD(DATE_ADD(STR_TO_DATE(#REQ_DATE_E#,'%Y-%m-%d'), INTERVAL 1 DAY), INTERVAL -1 SECOND)
+			</isNotNull>
+			<isNotNull prepend="AND" property="CONFIRM_DATE_S">
+				CONFIRM_DATE BETWEEN STR_TO_DATE(#CONFIRM_DATE_S#,'%Y-%m-%d') AND DATE_ADD(DATE_ADD(STR_TO_DATE(#CONFIRM_DATE_E#,'%Y-%m-%d'), INTERVAL 1 DAY), INTERVAL -1 SECOND)
+			</isNotNull>
+		</dynamic>
+	</select>
+	
+	
+	<delete id="delete_account_change_type_01"
+	        parameterClass="java.util.Map">
+	    DELETE FROM ACCOUNT_CHANGE
+	    <dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "DOMAIN">
+				DOMAIN = #DOMAIN#
+			</isNotNull>
+		</dynamic>
+	</delete>
+	
+	<update id="update_account_change_type_01"
+            parameterClass="java.util.Map">
+    	UPDATE ACCOUNT_CHANGE 
+    	SET CONFIRM_USERS_IDX = #CONFIRM_USERS_IDX#,
+			CONFIRM_DATE = SYSDATE(),
+			STATUS = #STATUS#
+        <dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "REQ_ID">
+				REQ_ID = #REQ_ID#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "DOMAIN">
+				DOMAIN = #DOMAIN#
+			</isNotNull>
+		</dynamic>
+	</update>
+	
+	<update id="update_account_change_type_02"
+            parameterClass="java.util.Map">
+    	UPDATE ACCOUNT_CHANGE 
+    	SET STATUS = #STATUS#
+        <dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "REQ_ID">
+				REQ_ID = #REQ_ID#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "DOMAIN">
+				DOMAIN = #DOMAIN#
+			</isNotNull>
+		</dynamic>
+	</update>	
+	
+	<insert id="insert_account_change_type_01"
+	        parameterClass="com.nara.jdf.db.entity.AccountChangeEntity">
+		 INSERT INTO ACCOUNT_CHANGE( 
+			USERS_IDX,
+			DOMAIN,
+			REQ_ID,
+			REQ_PASSWD,
+			REQ_DATE,
+			CONFIRM_USERS_IDX,
+			CONFIRM_DATE,
+			STATUS
+        )
+        VALUES
+		(
+			#USERS_IDX#,
+			#DOMAIN#,
+			#REQ_ID#,
+			#REQ_PASSWD#,
+			SYSDATE(),
+			NULL,
+			NULL,
+			#STATUS#
+		)
+	</insert>	
+</sqlMap>

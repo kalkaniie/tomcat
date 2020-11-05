@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="USERS_PASSWD_CHANGE"> 
+  	<select id="get_users_passwd_change_info" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="com.nara.jdf.db.entity.UserPasswdChangeEntity">
+		SELECT 
+			USERS_PASSWD_CHANGE_IDX,
+			USERS_IDX,
+			BEFORE_PASSWD,
+			AFTER_PASSWD,
+			CONNECT_IP,
+			TO_CHAR(CHANGE_DATE, 'YYYY-MM-DD HH24:MI:SS') CHANGE_DATE,
+			TRUNC(SYSDATE - CHANGE_DATE) CHANGE_LATER_DAY
+		FROM USERS_PASSWD_CHANGE
+		WHERE USERS_IDX = #USERS_IDX#
+		AND USERS_PASSWD_CHANGE_IDX = (SELECT MAX(USERS_PASSWD_CHANGE_IDX)
+		                               FROM USERS_PASSWD_CHANGE
+		                               WHERE USERS_IDX = #USERS_IDX#
+		                              )
+  	</select>
+  	
+  	<insert id="insert_user_passwd_change"
+  				parameterClass="com.nara.jdf.db.entity.UserPasswdChangeEntity">
+  		INSERT INTO USERS_PASSWD_CHANGE
+  		(
+			USERS_PASSWD_CHANGE_IDX,
+			USERS_IDX,
+			BEFORE_PASSWD,
+			AFTER_PASSWD,
+			CONNECT_IP,
+			CHANGE_DATE
+  		)
+  		VALUES
+  		(
+			SEQ_USERS_PASSWD_CHANGE.NEXTVAL,
+			#USERS_IDX#,
+			#BEFORE_PASSWD#,
+			#AFTER_PASSWD#,
+			#CONNECT_IP#,
+			SYSDATE
+  		)
+	</insert>
+</sqlMap>

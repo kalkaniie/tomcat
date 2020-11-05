@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="SMS">
+	<select id="select_sms_type_01"
+	        parameterClass="java.util.HashMap"
+	        resultClass="com.nara.jdf.db.entity.SmsEntity">
+		SELECT SKIP $SKIP$ FIRST $USERS_LISTNUM$ 
+			SERIALNO,
+			DESTCALLNO,
+			CALLBACKNO,
+			DATA,
+			TO_CHAR(JEOBSU_TIME, '%Y-%m-%d %H:%M:%S') JEOBSU_TIME,
+			TO_CHAR(YEYAK_TIME, '%Y-%m-%d %H:%M:%S') YEYAK_TIME,
+			USER_NO,
+			COMPANY_NO,
+			RESULT,
+			TYPE
+		FROM SMS
+	
+		<dynamic prepend="WHERE">
+			<isNotEqual prepend="AND" property= "COMPANY_NO" compareValue="">
+				COMPANY_NO = #COMPANY_NO#
+			</isNotEqual>
+			<isNotEqual prepend="AND" property= "USER_NO" compareValue="">
+   				USER_NO LIKE '%$USER_NO$%'
+			</isNotEqual>
+			<isNotEqual prepend="AND" property= "JEOBSU_TIME" compareValue="">
+   				JEOBSU_TIME BETWEEN TO_DATE(#JEOBSU_TIME#, '%Y-%m') AND TO_DATE(#JEOBSU_TIME#, '%Y-%m') + 1 UNITS MONTH - 1 UNITS SECOND
+			</isNotEqual>
+		</dynamic>	
+        ORDER BY $orderCol$ $orderType$
+	</select>
+	
+	<select id="count_sms_type_01"
+	        parameterClass="java.util.HashMap"
+	        resultClass="java.lang.Integer">
+			SELECT
+				COUNT(SERIALNO) CNT
+			FROM SMS
+		
+			<dynamic prepend="WHERE">
+				<isNotEqual prepend="AND" property= "COMPANY_NO" compareValue="">
+					COMPANY_NO = #COMPANY_NO#
+				</isNotEqual>
+				<isNotEqual prepend="AND" property= "USER_NO" compareValue="">
+       				USER_NO LIKE '%$USER_NO$%'
+				</isNotEqual>
+				<isNotEqual prepend="AND" property= "JEOBSU_TIME" compareValue="">
+       				JEOBSU_TIME BETWEEN TO_DATE(#JEOBSU_TIME#, '%Y-%m') AND TO_DATE(#JEOBSU_TIME#, '%Y-%m') + 1 UNITS MONTH - 1 UNITS SECOND
+				</isNotEqual>
+			</dynamic>	
+	</select>
+	
+	<insert id="insert_sms_type_01"
+		parameterClass="com.nara.jdf.db.entity.SmsEntity">
+			
+		INSERT INTO SMS(SERIALNO ,DESTCALLNO,CALLBACKNO ,DATA ,JEOBSU_TIME ,YEYAK_TIME,USER_NO ,COMPANY_NO ,RESULT ,TYPE )
+		VALUES (SEQ_SMS.NEXTVAL, #DESTCALLNO#, #CALLBACKNO#, #DATA#, CURRENT, 
+		<dynamic prepend="">
+			<isNotEqual prepend="" property= "JEOBSU_TIME" compareValue="0">
+				TO_DATE(#JEOBSU_TIME#, '%Y-%m-%d %H:%M:%S'),
+			</isNotEqual>
+			<isEqual prepend="" property= "JEOBSU_TIME" compareValue="0">
+				CURRENT,
+			</isEqual>
+		</dynamic>
+		#USER_NO#, #COMPANY_NO#, #RESULT#, #TYPE#)
+	</insert>
+	
+	
+	<select id="select_sms_type_02"
+	        parameterClass="java.util.HashMap"
+	        resultClass="java.util.HashMap">
+		SELECT FIRST 10 DESTCALLNO FROM TABLE ( MULTISET (
+			SELECT DESTCALLNO,JEOBSU_TIME
+			FROM TABLE ( MULTISET
+			(SELECT
+				DISTINCT(DESTCALLNO) AS DESTCALLNO,
+				JEOBSU_TIME
+			 FROM SMS
+			 WHERE USER_NO = #USER_NO#
+			))
+			ORDER BY JEOBSU_TIME DESC
+		))
+	</select>
+</sqlMap>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="MAIL_LOG"> 
+  	
+  	
+  	<select id="select_mail_log_day"
+	        parameterClass="java.util.Map"
+	        resultClass="com.nara.jdf.db.entity.MailLogEntity">	        
+		
+		SELECT TO_CHAR(MAIL_LOG_DATE, 'YYYY-MM-DD HH24') MAIL_LOG_DATE_DAY, 
+        	SUM(MAIL_LOG_RECEIVE_COUNT) MAIL_LOG_RECEIVE_COUNT, 
+            SUM(MAIL_LOG_SEND_COUNT) MAIL_LOG_SEND_COUNT, 
+            SUM(MAIL_LOG_RECEIVE_VOLUME) MAIL_LOG_RECEIVE_VOLUME, 
+            SUM(MAIL_LOG_SEND_VOLUME) MAIL_LOG_SEND_VOLUME, 
+            SUM(MAIL_LOG_ERROR_COUNT) MAIL_LOG_ERROR_COUNT 
+        FROM MAIL_LOG 
+        WHERE (MAIL_LOG_DATE BETWEEN TO_DATE(#startCal#,'YYYY-MM-DD HH24') AND TO_DATE(#endCal#,'YYYY-MM-DD HH24')) 
+      	<dynamic prepend="">
+			<isNotNull prepend="AND" property="DOMAIN" >
+				MAIL_LOG_DOMAIN = #DOMAIN#
+			</isNotNull>
+		</dynamic>					
+		GROUP BY TO_CHAR(MAIL_LOG_DATE, 'YYYY-MM-DD HH24')
+		ORDER BY TO_CHAR(MAIL_LOG_DATE, 'YYYY-MM-DD HH24')	  	
+	</select>
+	
+	<select id="select_mail_log_week"
+	        parameterClass="java.util.Map"
+	        resultClass="com.nara.jdf.db.entity.MailLogEntity">	        
+		
+		SELECT TO_CHAR(MAIL_LOG_DATE, 'YYYY-MM-DD') MAIL_LOG_DATE_WEEK, 
+        	SUM(MAIL_LOG_RECEIVE_COUNT) MAIL_LOG_RECEIVE_COUNT, 
+            SUM(MAIL_LOG_SEND_COUNT) MAIL_LOG_SEND_COUNT, SUM(MAIL_LOG_RECEIVE_VOLUME) MAIL_LOG_RECEIVE_VOLUME, 
+            SUM(MAIL_LOG_SEND_VOLUME) MAIL_LOG_SEND_VOLUME, SUM(MAIL_LOG_ERROR_COUNT) MAIL_LOG_ERROR_COUNT 
+        FROM MAIL_LOG 
+        WHERE (MAIL_LOG_DATE BETWEEN TO_DATE(#startCal#,'YYYY-MM-DD HH24') AND TO_DATE(#endCal#,'YYYY-MM-DD HH24')) 
+        <dynamic prepend="">
+			<isNotNull prepend="AND" property="DOMAIN" >
+				MAIL_LOG_DOMAIN = #DOMAIN#
+			</isNotNull>
+		</dynamic>					
+		GROUP BY TO_CHAR(MAIL_LOG_DATE, 'YYYY-MM-DD')	 
+		ORDER BY TO_CHAR(MAIL_LOG_DATE, 'YYYY-MM-DD') 	
+	</select>
+	
+	<select id="select_mail_log_month"
+	        parameterClass="java.util.Map"
+	        resultClass="com.nara.jdf.db.entity.MailLogEntity">	        
+		
+		SELECT TO_CHAR(MAIL_LOG_DATE, 'YYYY-MM W') MAIL_LOG_DATE_MONTH, 
+        	SUM(MAIL_LOG_RECEIVE_COUNT) MAIL_LOG_RECEIVE_COUNT, 
+            SUM(MAIL_LOG_SEND_COUNT) MAIL_LOG_SEND_COUNT, SUM(MAIL_LOG_RECEIVE_VOLUME) MAIL_LOG_RECEIVE_VOLUME, 
+            SUM(MAIL_LOG_SEND_VOLUME) MAIL_LOG_SEND_VOLUME, SUM(MAIL_LOG_ERROR_COUNT) MAIL_LOG_ERROR_COUNT 
+        FROM MAIL_LOG 
+        WHERE (MAIL_LOG_DATE BETWEEN TO_DATE(#startCal#,'YYYY-MM-DD HH24') AND TO_DATE(#endCal#,'YYYY-MM-DD HH24')) 
+        <dynamic prepend="">
+			<isNotNull prepend="AND" property="DOMAIN" >
+				MAIL_LOG_DOMAIN = #DOMAIN#
+			</isNotNull>
+		</dynamic>					
+		GROUP BY TO_CHAR(MAIL_LOG_DATE, 'YYYY-MM W')
+		ORDER BY TO_CHAR(MAIL_LOG_DATE, 'YYYY-MM W')	  		  	
+	</select>
+	
+	<select id="select_mail_log_year"
+	        parameterClass="java.util.Map"
+	        resultClass="com.nara.jdf.db.entity.MailLogEntity">	        
+		
+		SELECT TO_CHAR(MAIL_LOG_DATE, 'YYYY-MM') MAIL_LOG_DATE_YEAR, 
+        	SUM(MAIL_LOG_RECEIVE_COUNT) MAIL_LOG_RECEIVE_COUNT, 
+            SUM(MAIL_LOG_SEND_COUNT) MAIL_LOG_SEND_COUNT, SUM(MAIL_LOG_RECEIVE_VOLUME) MAIL_LOG_RECEIVE_VOLUME, 
+            SUM(MAIL_LOG_SEND_VOLUME) MAIL_LOG_SEND_VOLUME, SUM(MAIL_LOG_ERROR_COUNT) MAIL_LOG_ERROR_COUNT 
+        FROM MAIL_LOG 
+        WHERE (MAIL_LOG_DATE BETWEEN TO_DATE(#startCal#,'YYYY-MM-DD HH24') AND TO_DATE(#endCal#,'YYYY-MM-DD HH24')) 
+        <dynamic prepend="">
+			<isNotNull prepend="AND" property="DOMAIN" >
+				MAIL_LOG_DOMAIN = #DOMAIN#
+			</isNotNull>
+		</dynamic>					
+		GROUP BY TO_CHAR(MAIL_LOG_DATE, 'YYYY-MM')	  	
+		ORDER BY TO_CHAR(MAIL_LOG_DATE, 'YYYY-MM')	  	
+	</select>
+</sqlMap>
+
+
+

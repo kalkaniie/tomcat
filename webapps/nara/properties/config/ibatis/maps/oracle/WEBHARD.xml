@@ -1,0 +1,490 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="WEBHARD">
+
+	<insert id="createDiskUser" parameterClass="com.nara.springframework.webhard.DiskUserEntity">
+		INSERT INTO DISK_USER (
+		USERS_IDX,
+		USERS_PASSWD,
+		HOME_DIRECTORY,
+		ENABLE_FLAG,
+		READ_PERMISSION,
+
+		WRITE_PERMISSION,
+		REMOVE_PERMISSION,
+		IDLE_TIME,
+		UPLOAD_RATE,
+		DOWNLOAD_RATE,
+
+		MAX_LOGIN_NUMBER,
+		MAX_LOGIN_PER_IP,
+		DISK_USAGE,
+		DISK_QUOTA,
+		BIGMAIL_VALIDITY_DAYS,
+
+		BIGMAIL_DOWNLOAD_LIMIT,
+		LAST_ACCESS_TIME,
+		LAST_ACCESS_IP,
+		BIGMAIL_MAX_VALIDITY_DAYS,
+		BIGMAIL_MAX_DOWNLOAD_LIMIT
+
+		) VALUES (
+		#USERS_IDX#,
+		#USERS_PASSWD#,
+		#HOME_DIRECTORY#,
+		#ENABLE_FLAG#,
+		#READ_PERMISSION#,
+
+		#WRITE_PERMISSION#,
+		#REMOVE_PERMISSION#,
+		#IDLE_TIME#,
+		#UPLOAD_RATE#,
+		#DOWNLOAD_RATE#,
+
+		#MAX_LOGIN_NUMBER#,
+		#MAX_LOGIN_PER_IP#,
+		#DISK_USAGE#,
+		#DISK_QUOTA#,
+		#BIGMAIL_VALIDITY_DAYS#,
+
+		#BIGMAIL_DOWNLOAD_LIMIT#,
+		SYSDATE,
+		#LAST_ACCESS_IP#,
+		#BIGMAIL_MAX_VALIDITY_DAYS#,
+		#BIGMAIL_MAX_DOWNLOAD_LIMIT#
+		)
+	</insert>
+	
+	<delete id="deleteDiskUser" parameterClass="java.lang.String">
+		DELETE FROM DISK_USER WHERE USERS_IDX = #USERS_IDX#
+	</delete>
+
+	<select id="getUser" parameterClass="java.util.HashMap"
+		resultClass="com.nara.springframework.webhard.DiskUserEntity">
+		SELECT
+		USERS_IDX,
+		USERS_PASSWD,
+		HOME_DIRECTORY,
+		ENABLE_FLAG,
+		READ_PERMISSION,
+
+		WRITE_PERMISSION,
+		REMOVE_PERMISSION,
+		IDLE_TIME,
+		UPLOAD_RATE,
+		DOWNLOAD_RATE,
+
+		MAX_LOGIN_NUMBER,
+		MAX_LOGIN_PER_IP,
+		DISK_USAGE,
+		DISK_QUOTA,
+		BIGMAIL_VALIDITY_DAYS,
+
+		BIGMAIL_DOWNLOAD_LIMIT,
+		BIGMAIL_MAX_VALIDITY_DAYS,
+		BIGMAIL_MAX_DOWNLOAD_LIMIT
+
+		FROM DISK_USER
+		<dynamic prepend="">
+			<isNotNull prepend="WHERE" property="USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+		</dynamic>
+	</select>
+
+	<select id="getMyDiskLog" parameterClass="java.util.HashMap"
+		resultClass="com.nara.springframework.webhard.MyDiskEntity">
+		SELECT USERS_IDX, USER_ID, USER_IP, COMMAND, COMMAND_COMMENT,
+		COMMAND_SUCCESS, FOLDER_NAME, FILE_NAME, FILE_SIZE, LOG_DATE
+		FROM (
+			SELECT USERS_IDX, USER_ID, USER_IP, COMMAND, COMMAND_COMMENT,
+			COMMAND_SUCCESS, FOLDER_NAME, FILE_NAME, FILE_SIZE, LOG_DATE,
+			ROWNUM AS RNUM
+			FROM
+			<iterate property="TABLE_LIST" open="(" close=")" conjunction="UNION ALL">
+				SELECT USERS_IDX, USER_ID, USER_IP, COMMAND, COMMAND_COMMENT,
+				COMMAND_SUCCESS, FOLDER_NAME, FILE_NAME, FILE_SIZE, LOG_DATE
+				FROM $TABLE_LIST[]$
+			</iterate>
+			<dynamic prepend="WHERE">
+				<isNotNull prepend="AND" property="USERS_IDX">
+					USERS_IDX = #USERS_IDX#
+			   	</isNotNull>
+			</dynamic>
+			ORDER BY LOG_DATE DESC ) B
+			<dynamic prepend="WHERE">
+				<isNotNull prepend="AND" property="nPage">
+					B.RNUM &gt;= #nPage#
+			   	</isNotNull>
+				<isNotNull prepend="AND" property="nList">
+					ROWNUM &lt;= #nList#
+			   	</isNotNull>
+				<isNotEqual prepend="" property="keyType" compareValue="">
+					<isEqual prepend="" property="keyType" compareValue="FOLDER_NAME">
+						AND
+						FOLDER_NAME LIKE '%'||#keyWord#||'%'
+					</isEqual>
+					<isEqual prepend="" property="keyType" compareValue="FILE_NAME">
+						AND
+						FILE_NAME LIKE '%'||#keyWord#||'%'
+					</isEqual>
+					<isEqual prepend="" property="keyType" compareValue="LOG_DATE">
+						AND
+						LOG_DATE &gt;= TO_DATE(#sDay# , 'YYYY-MM-DD') AND LOG_DATE &lt; (
+						TO_DATE(#eDay#, 'YYYY-MM-DD') + 1)
+					</isEqual>
+				</isNotEqual>
+			</dynamic>
+	</select>
+
+	<select id="getTotMyDiskLog" parameterClass="java.util.HashMap"
+		resultClass="java.lang.Integer">
+		SELECT COUNT(USERS_IDX)
+		FROM (
+		SELECT USERS_IDX, USER_ID, USER_IP, COMMAND, COMMAND_COMMENT,
+		COMMAND_SUCCESS,
+		FOLDER_NAME, FILE_NAME, FILE_SIZE, LOG_DATE
+		FROM
+		<iterate property="TABLE_LIST" open="(" close=")" conjunction="UNION ALL">
+			SELECT USERS_IDX, USER_ID, USER_IP, COMMAND, COMMAND_COMMENT,
+			COMMAND_SUCCESS,
+			FOLDER_NAME, FILE_NAME, FILE_SIZE, LOG_DATE
+			FROM $TABLE_LIST[]$
+		</iterate>
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property="USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+		   	</isNotNull>
+		</dynamic>
+		ORDER BY LOG_DATE DESC ) B
+		<dynamic prepend="WHERE">
+			<isNotEqual prepend="" property="keyType" compareValue="">
+				<isEqual prepend="AND" property="keyType" compareValue="FOLDER_NAME">
+					FOLDER_NAME LIKE '%'||#keyWord#||'%'
+				</isEqual>
+				<isEqual prepend="AND" property="keyType" compareValue="FILE_NAME">
+					FILE_NAME LIKE '%'||#keyWord#||'%'
+				</isEqual>
+				<isEqual prepend="AND" property="keyType" compareValue="LOG_DATE">
+					LOG_DATE &gt;= TO_DATE(#sDay# , 'YYYY-MM-DD') AND LOG_DATE &lt; (
+					TO_DATE(#eDay#, 'YYYY-MM-DD') + 1)
+				</isEqual>
+			</isNotEqual>
+		</dynamic>
+	</select>
+
+	<select id="getBigMailLog" parameterClass="java.util.HashMap"
+		resultClass="com.nara.springframework.webhard.BigMailEntity">
+		SELECT USERS_IDX, M_IDX, M_TITLE, M_TO, FILE_ID, FILE_NAME,
+		FILE_SIZE, EXPIRY_DATE, LOG_DATE, DOWNLOAD_LIMIT, DOWNLOAD_COUNT
+		FROM (
+		SELECT A.USERS_IDX, A.M_IDX, A.M_TITLE, A.M_TO, A.FILE_ID, A.FILE_NAME,
+		A.FILE_SIZE, A.EXPIRY_DATE, A.LOG_DATE, NVL(B.DOWNLOAD_LIMIT, 0) AS DOWNLOAD_LIMIT,
+		NVL(B.DOWNLOAD_COUNT, 0) AS DOWNLOAD_COUNT,
+		ROWNUM AS RNUM
+		FROM
+		<iterate property="TABLE_LIST" open="(" close=")" conjunction="UNION ALL">
+			SELECT USERS_IDX, M_IDX, M_TITLE, M_TO, FILE_ID, FILE_NAME,
+			FILE_SIZE, EXPIRY_DATE, LOG_DATE
+			FROM $TABLE_LIST[]$
+		</iterate>
+		A LEFT OUTER JOIN DISK_BIGMAIL B
+		ON A.FILE_ID = B.FILE_ID
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property="USERS_IDX">
+				A.USERS_IDX = #USERS_IDX#
+			</isNotNull>
+		</dynamic>
+		ORDER BY LOG_DATE DESC ) C
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property="nPage">
+				C.RNUM &gt;= #nPage#
+		   	</isNotNull>
+			<isNotNull prepend="AND" property="nList">
+				ROWNUM &lt;= #nList#
+		   	</isNotNull>
+			<isNotEqual prepend="" property="keyType" compareValue="">
+				<isEqual prepend="" property="keyType" compareValue="M_TITLE">
+					AND
+					M_TITLE LIKE '%'||#keyWord#||'%'
+				</isEqual>
+				<isEqual prepend="" property="keyType" compareValue="M_TO">
+					AND M_TO
+					LIKE '%'||#keyWord#||'%'
+				</isEqual>
+				<isEqual prepend="" property="keyType" compareValue="LOG_DATE">
+					AND
+					LOG_DATE &gt;= TO_DATE(#sDay# , 'YYYY-MM-DD') AND LOG_DATE &lt; (
+					TO_DATE(#eDay#, 'YYYY-MM-DD') + 1)
+				</isEqual>
+			</isNotEqual>
+		</dynamic>
+	</select>
+
+	<select id="getTotBigMailLog" parameterClass="java.util.HashMap"
+		resultClass="java.lang.Integer">
+		SELECT COUNT(USERS_IDX)
+		FROM (
+			SELECT A.USERS_IDX, A.M_IDX, A.M_TITLE, A.M_TO, A.FILE_ID, A.FILE_NAME,
+			A.FILE_SIZE, A.EXPIRY_DATE, A.LOG_DATE, B.DOWNLOAD_LIMIT,
+			B.DOWNLOAD_COUNT
+			FROM
+			<iterate property="TABLE_LIST" open="(" close=")" conjunction="UNION ALL">
+				SELECT USERS_IDX, M_IDX, M_TITLE, M_TO, FILE_ID, FILE_NAME,
+				FILE_SIZE, EXPIRY_DATE, LOG_DATE
+				FROM $TABLE_LIST[]$
+			</iterate>
+			A LEFT OUTER JOIN DISK_BIGMAIL B
+			ON A.FILE_ID = B.FILE_ID
+			<dynamic prepend="WHERE">
+				<isNotNull prepend="AND" property="USERS_IDX">
+					A.USERS_IDX = #USERS_IDX#
+				</isNotNull>
+			</dynamic>
+			ORDER BY LOG_DATE DESC ) C
+			<dynamic prepend="WHERE">
+				<isNotEqual prepend="" property="keyType" compareValue="">
+					<isEqual prepend="" property="keyType" compareValue="M_TITLE">
+						M_TITLE LIKE '%'||#keyWord#||'%'
+					</isEqual>
+					<isEqual prepend="" property="keyType" compareValue="M_TO">
+						M_TO LIKE '%'||#keyWord#||'%'
+					</isEqual>
+					<isEqual prepend="" property="keyType" compareValue="LOG_DATE">
+						LOG_DATE &gt;= TO_DATE(#sDay# , 'YYYY-MM-DD') AND LOG_DATE &lt; (
+						TO_DATE(#eDay#, 'YYYY-MM-DD') + 1)
+					</isEqual>
+				</isNotEqual>
+			</dynamic>
+	</select>
+	
+	<select id="getGuestMailLog" parameterClass="java.util.HashMap"
+		resultClass="com.nara.springframework.webhard.GuestMailEntity">
+		SELECT USERS_IDX, M_IDX, M_TITLE, M_TO, GUEST_ID, FOLDER_NAME,
+		EXPIRY_DATE, LOG_DATE
+		FROM (
+			SELECT A.USERS_IDX, A.M_IDX, A.M_TITLE, A.M_TO, A.GUEST_ID, A.FOLDER_NAME,
+			A.EXPIRY_DATE, A.LOG_DATE,
+			ROWNUM AS RNUM
+			FROM
+			<iterate property="TABLE_LIST" open="(" close=")" conjunction="UNION ALL">
+				SELECT USERS_IDX, M_IDX, M_TITLE, M_TO, GUEST_ID, FOLDER_NAME,
+				EXPIRY_DATE, LOG_DATE
+				FROM $TABLE_LIST[]$
+			</iterate>
+			A LEFT OUTER JOIN DISK_GUEST B
+			ON A.GUEST_ID = B.GUEST_ID
+			<dynamic prepend="WHERE">
+				<isNotNull prepend="AND" property="USERS_IDX">
+					A.USERS_IDX = #USERS_IDX#
+				</isNotNull>
+			</dynamic>
+			ORDER BY LOG_DATE DESC ) C
+			<dynamic prepend="WHERE">
+				<isNotNull prepend="AND" property="nPage">
+					C.RNUM &gt;= #nPage#
+			   	</isNotNull>
+				<isNotNull prepend="AND" property="nList">
+					ROWNUM &lt;= #nList#
+			   	</isNotNull>
+				<isNotEqual prepend="" property="keyType" compareValue="">
+					<isEqual prepend="" property="keyType" compareValue="M_TITLE">
+						AND
+						M_TITLE LIKE '%'||#keyWord#||'%'
+					</isEqual>
+					<isEqual prepend="" property="keyType" compareValue="FOLDER_NAME">
+						AND FOLDER_NAME
+						LIKE '%'||#keyWord#||'%'
+					</isEqual>
+					<isEqual prepend="" property="keyType" compareValue="LOG_DATE">
+						AND
+						LOG_DATE &gt;= TO_DATE(#sDay# , 'YYYY-MM-DD') AND LOG_DATE &lt; (
+						TO_DATE(#eDay#, 'YYYY-MM-DD') + 1)
+					</isEqual>
+				</isNotEqual>
+			</dynamic>
+	</select>
+	
+	<select id="getTotGuestMailLog" parameterClass="java.util.HashMap"
+		resultClass="java.lang.Integer">
+		SELECT COUNT(USERS_IDX)
+		FROM (
+			SELECT A.USERS_IDX, A.M_IDX, A.M_TITLE, A.M_TO, A.GUEST_ID, A.FOLDER_NAME,
+			A.EXPIRY_DATE, A.LOG_DATE
+			FROM
+			<iterate property="TABLE_LIST" open="(" close=")" conjunction="UNION ALL">
+				SELECT USERS_IDX, M_IDX, M_TITLE, M_TO, GUEST_ID, FOLDER_NAME,
+				EXPIRY_DATE, LOG_DATE
+				FROM $TABLE_LIST[]$
+			</iterate>
+			A LEFT OUTER JOIN DISK_GUEST B
+			ON A.GUEST_ID = B.GUEST_ID
+			<dynamic prepend="WHERE">
+				<isNotNull prepend="AND" property="USERS_IDX">
+					A.USERS_IDX = #USERS_IDX#
+				</isNotNull>
+			</dynamic>
+			ORDER BY LOG_DATE DESC ) C
+			<dynamic prepend="WHERE">
+				<isNotEqual prepend="" property="keyType" compareValue="">
+					<isEqual prepend="" property="keyType" compareValue="M_TITLE">
+						M_TITLE LIKE '%'||#keyWord#||'%'
+					</isEqual>
+					<isEqual prepend="" property="keyType" compareValue="FOLDER_NAME">
+						FOLDER_NAME LIKE '%'||#keyWord#||'%'
+					</isEqual>
+					<isEqual prepend="" property="keyType" compareValue="LOG_DATE">
+						LOG_DATE &gt;= TO_DATE(#sDay# , 'YYYY-MM-DD') AND LOG_DATE &lt; (
+						TO_DATE(#eDay#, 'YYYY-MM-DD') + 1)
+					</isEqual>
+				</isNotEqual>
+			</dynamic>
+	</select>
+	
+	<select id="getPublicDiskLog" parameterClass="java.util.HashMap"
+		resultClass="com.nara.springframework.webhard.PublicDiskEntity">
+		SELECT GROUP_IDX, GROUP_NAME, USER_ID, USER_IP, COMMAND,
+        COMMAND_COMMENT, COMMAND_SUCCESS, FOLDER_NAME, FILE_NAME, FILE_SIZE, TO_CHAR(LOG_DATE, 'YYYY-MM-DD [HH24:MI]') AS LOG_DATE
+		FROM (
+			SELECT GROUP_IDX, GROUP_NAME, USER_ID, USER_IP, COMMAND,
+			COMMAND_COMMENT, COMMAND_SUCCESS, FOLDER_NAME, FILE_NAME, FILE_SIZE, LOG_DATE,
+			ROWNUM AS RNUM
+			FROM
+			<iterate property="TABLE_LIST" open="(" close=")" conjunction="UNION ALL">
+				SELECT GROUP_IDX, GROUP_NAME, USER_ID, USER_IP, COMMAND,
+				COMMAND_COMMENT, COMMAND_SUCCESS, FOLDER_NAME, FILE_NAME, FILE_SIZE, LOG_DATE
+				FROM $TABLE_LIST[]$
+			</iterate>
+			<dynamic prepend="WHERE">
+				<isNotNull prepend="AND" property="USERS_IDX">
+					USER_ID = #USERS_IDX#
+				</isNotNull>
+			</dynamic>
+			ORDER BY LOG_DATE DESC ) B
+			<dynamic prepend="WHERE">
+				<isNotNull prepend="AND" property="nPage">
+					B.RNUM &gt;= #nPage#
+			   	</isNotNull>
+				<isNotNull prepend="AND" property="nList">
+					ROWNUM &lt;= #nList#
+			   	</isNotNull>
+				<isNotEqual prepend="" property="keyType" compareValue="">
+					<isEqual prepend="" property="keyType" compareValue="FOLDER_NAME">
+						AND FOLDER_NAME LIKE '%'||#keyWord#||'%'
+					</isEqual>
+					<isEqual prepend="" property="keyType" compareValue="FILE_NAME">
+						AND FILE_NAME
+						LIKE '%'||#keyWord#||'%'
+					</isEqual>
+					<isEqual prepend="" property="keyType" compareValue="LOG_DATE">
+						AND LOG_DATE &gt;= TO_DATE(#sDay# , 'YYYY-MM-DD') AND LOG_DATE &lt; (
+						TO_DATE(#eDay#, 'YYYY-MM-DD') + 1)
+					</isEqual>
+				</isNotEqual>
+			</dynamic>
+	</select>
+	
+	<select id="getTotPublicDiskLog" parameterClass="java.util.HashMap"
+		resultClass="java.lang.Integer">
+		SELECT COUNT(USER_ID)
+		FROM (
+			SELECT GROUP_IDX, GROUP_NAME, USER_ID, USER_IP, COMMAND,
+			COMMAND_COMMENT, COMMAND_SUCCESS, FOLDER_NAME, FILE_NAME, FILE_SIZE, LOG_DATE,
+			ROWNUM AS RNUM
+			FROM
+			<iterate property="TABLE_LIST" open="(" close=")" conjunction="UNION ALL">
+				SELECT GROUP_IDX, GROUP_NAME, USER_ID, USER_IP, COMMAND,
+				COMMAND_COMMENT, COMMAND_SUCCESS, FOLDER_NAME, FILE_NAME, FILE_SIZE, LOG_DATE
+				FROM $TABLE_LIST[]$
+			</iterate>
+			<dynamic prepend="WHERE">
+				<isNotNull prepend="AND" property="USERS_IDX">
+					USER_ID = #USERS_IDX#
+				</isNotNull>
+			</dynamic>
+			ORDER BY LOG_DATE DESC ) B
+			<dynamic prepend="WHERE">
+				<isNotNull prepend="AND" property="nPage">
+					B.RNUM &gt;= #nPage#
+			   	</isNotNull>
+				<isNotNull prepend="AND" property="nList">
+					ROWNUM &lt;= #nList#
+			   	</isNotNull>
+				<isNotEqual prepend="" property="keyType" compareValue="">
+					<isEqual prepend="" property="keyType" compareValue="FOLDER_NAME">
+						AND FOLDER_NAME LIKE '%'||#keyWord#||'%'
+					</isEqual>
+					<isEqual prepend="" property="keyType" compareValue="FILE_NAME">
+						AND FILE_NAME
+						LIKE '%'||#keyWord#||'%'
+					</isEqual>
+					<isEqual prepend="" property="keyType" compareValue="LOG_DATE">
+						AND LOG_DATE &gt;= TO_DATE(#sDay# , 'YYYY-MM-DD') AND LOG_DATE &lt; (
+						TO_DATE(#eDay#, 'YYYY-MM-DD') + 1)
+					</isEqual>
+				</isNotEqual>
+			</dynamic>
+	</select>
+	
+	<select id="getUserGroupIdx" parameterClass="java.util.HashMap"
+		resultClass="java.lang.Integer">
+		SELECT 
+			USER_GROUP_IDX 
+		FROM 
+			USER_GROUP_LIST 
+		<dynamic prepend="">
+			<isNotNull prepend="WHERE" property="USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+		</dynamic>
+	</select>
+	
+	<select id="getUnionTableList" parameterClass="java.util.HashMap"
+		resultClass="java.lang.String">
+		SELECT TNAME
+		FROM TAB
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property="TABLE_NAME">
+				TNAME LIKE '%'||#TABLE_NAME#||'%'
+		   	</isNotNull>
+		</dynamic>
+		ORDER BY TNAME
+	</select>
+	
+	<update id="userEnvModify" parameterClass="com.nara.springframework.webhard.DiskUserEntity">
+		UPDATE DISK_USER SET
+			BIGMAIL_VALIDITY_DAYS = #BIGMAIL_VALIDITY_DAYS#,
+			BIGMAIL_DOWNLOAD_LIMIT = #BIGMAIL_DOWNLOAD_LIMIT#
+		WHERE USERS_IDX = #USERS_IDX#
+	</update>
+	
+	<update id="userEnvModifyToAdmin" parameterClass="com.nara.springframework.webhard.DiskUserEntity">
+    	UPDATE DISK_USER SET
+	    	ENABLE_FLAG = #ENABLE_FLAG#,
+	    	DISK_QUOTA = #DISK_QUOTA#,
+	        BIGMAIL_VALIDITY_DAYS = #BIGMAIL_VALIDITY_DAYS#,
+	        BIGMAIL_DOWNLOAD_LIMIT = #BIGMAIL_DOWNLOAD_LIMIT#,
+	        BIGMAIL_MAX_VALIDITY_DAYS = #BIGMAIL_MAX_VALIDITY_DAYS#,
+	        BIGMAIL_MAX_DOWNLOAD_LIMIT = #BIGMAIL_MAX_DOWNLOAD_LIMIT#
+        WHERE USERS_IDX = #USERS_IDX#
+    </update>
+    
+    <update id="userAllModify" parameterClass="java.util.HashMap">
+    	UPDATE DISK_USER
+        <dynamic prepend="">
+			<isEqual prepend="SET " property="UPDATE_TYPE" compareValue="ALL_UPDATE_DISK_USER_MAX_QUOTA">
+				DISK_QUOTA = #DISK_QUOTA#
+			</isEqual>
+			<isEqual prepend="SET " property="UPDATE_TYPE" compareValue="ALL_UPDATE_BIGMAIL_MAX_VALIDITY_DAYS">
+				BIGMAIL_VALIDITY_DAYS = #BIGMAIL_VALIDITY_DAYS#,
+				BIGMAIL_MAX_VALIDITY_DAYS = #BIGMAIL_MAX_VALIDITY_DAYS#
+			</isEqual>
+			<isEqual prepend="SET " property="UPDATE_TYPE" compareValue="ALL_UPDATE_BIGMAIL_MAX_DOWNLOAD_LIMIT">
+				BIGMAIL_DOWNLOAD_LIMIT = #BIGMAIL_DOWNLOAD_LIMIT#,
+				BIGMAIL_MAX_DOWNLOAD_LIMIT = #BIGMAIL_MAX_DOWNLOAD_LIMIT#
+			</isEqual>	
+		</dynamic>
+    </update>
+
+</sqlMap>

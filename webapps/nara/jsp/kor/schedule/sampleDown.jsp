@@ -1,0 +1,2 @@
+<%@ page contentType="application/vnd.ms-excel;charset=euc-kr"%><%response.setHeader("content-Disposition", "filename=samplesch.csv");response.setHeader("Content-Description", "JSP Generated Data");%>일정제목,시작일,시작시간,종료일,종료시간,내용
+샘플일정,2009-01-10,08:05,2009-01-10,18:00,샘플일정내용입니다.

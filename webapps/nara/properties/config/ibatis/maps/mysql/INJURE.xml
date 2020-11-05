@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="INJURE">
+	<delete id="delete_injure_type_01"
+	        parameterClass="java.util.HashMap">
+		DELETE FROM INJURE
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "INJURE_IDX_LIST">
+				INJURE_IDX IN ( $INJURE_IDX_LIST$ )
+			</isNotNull>
+  			<isNotNull prepend="AND" property= "INJURE_IDX">
+				INJURE_IDX = #INJURE_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property="DOMAIN">
+				SUBSTR(USERS_IDX, INSTR(USERS_IDX, '@')) = CONCAT('@',#DOMAIN#)
+			</isNotNull>
+  		</dynamic>
+	</delete>
+	
+	<select id="select_injure_type_01"
+	        parameterClass="java.util.HashMap"
+	        resultClass="com.nara.jdf.db.entity.InjureEntity">
+	    SELECT 
+	    	INJURE_IDX,
+	    	USERS_IDX,
+	    	INJURE_AUTH,
+	    	INJURE_KEYWORD
+	    FROM INJURE
+		<dynamic prepend="WHERE">
+  			<isNotNull prepend="AND" property= "INJURE_IDX">
+				INJURE_IDX = #INJURE_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "INJURE_AUTH">
+				INJURE_AUTH = #INJURE_AUTH#
+			</isNotNull>
+  		</dynamic>
+	</select>
+	
+	<insert id="insert_injure_type_01"
+	        parameterClass="com.nara.jdf.db.entity.InjureEntity">
+		INSERT INTO INJURE
+		(
+			INJURE_IDX,
+			USERS_IDX,
+			INJURE_AUTH,
+			INJURE_KEYWORD
+		)
+		VALUES
+		(
+			<dynamic prepend="">
+				<isGreaterEqual prepend="" property="INJURE_IDX" compareValue="1">
+					#INJURE_IDX#,
+				</isGreaterEqual>
+  				<isLessEqual prepend="" property="INJURE_IDX" compareValue="0">
+					NEXTVAL('INJURE'),
+				</isLessEqual>
+  			</dynamic>
+  			
+			#USERS_IDX#,
+			#INJURE_AUTH#,
+			#INJURE_KEYWORD#
+		)
+	</insert>
+	
+    <select id="select_injure_keyword"
+            parameterClass="java.lang.String"
+            resultClass="java.lang.String">
+        SELECT 
+        	INJURE_KEYWORD 
+        FROM INJURE 
+        WHERE USERS_IDX = #USERS_IDX# 
+        OR INJURE_AUTH = 2 
+	</select>
+	
+    <update id="move_injure_info"
+            parameterClass="java.util.HashMap">
+    	UPDATE INJURE
+    	SET USERS_IDX = #AFTER_USERS_IDX#
+    	WHERE USERS_IDX = #BEFORE_USERS_IDX# 
+	</update>	
+</sqlMap>

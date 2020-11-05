@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="PASSWD_HINT"> 
+   	<select id="count_table_passwd_hint" 
+  				resultClass="java.lang.Integer">
+  		SELECT COUNT(TNAME) CNT 
+  		FROM TAB
+  		WHERE TNAME = 'PASSWD_HINT'
+  	</select>
+   
+  	
+  	<select id="select_passwd_hint_type_01" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="com.nara.jdf.db.entity.UserPassHintEntity">
+  		SELECT 
+  			USERS_IDX,
+  			PASSWD_HINT_QUESTION,
+  			PASSWD_HINT_ANSWER
+  		FROM PASSWD_HINT
+  		WHERE USERS_IDX = #USERS_IDX#
+  	</select>
+  	
+  	<select id="select_passwd_hint_type_02" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="com.nara.jdf.db.entity.UserPassHintEntity">
+  		SELECT 
+  			AA.USERS_IDX,
+  			AA.PASSWD_HINT_QUESTION,
+  			AA.PASSWD_HINT_ANSWER
+  		FROM PASSWD_HINT AA, USERS BB
+  		WHERE AA.USERS_IDX = BB.USERS_IDX
+  		AND   AA.USERS_IDX = #USERS_IDX#
+  		AND   AA.PASSWD_HINT_QUESTION = #PASSWD_HINT_QUESTION#
+  		AND   AA.PASSWD_HINT_ANSWER = #PASSWD_HINT_ANSWER#
+  		AND   BB.USERS_NAME = #USERS_NAME#
+  	</select>
+  	
+  	<insert id="insert_passwd_hint_type_01"
+  				parameterClass="com.nara.jdf.db.entity.UserPassHintEntity">
+  		INSERT INTO PASSWD_HINT
+  		(
+  			USERS_IDX,
+  			PASSWD_HINT_QUESTION,
+  			PASSWD_HINT_ANSWER
+  		)
+  		VALUES
+  		(
+  			#USERS_IDX#,
+  			#PASSWD_HINT_QUESTION#,
+  			#PASSWD_HINT_ANSWER#
+  		)
+	</insert>
+
+  	<delete id="delete_passwd_hint_type_01"
+  				parameterClass="java.util.HashMap">
+  		DELETE FROM PASSWD_HINT
+  		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "DOMAIN">
+				SUBSTR(USERS_IDX, INSTR(USERS_IDX,'@')) = '@'||#DOMAIN#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+		</dynamic>
+  	</delete>
+  	
+  	<update id="update_passwd_hint_type_01"
+  				parameterClass="com.nara.jdf.db.entity.UserPassHintEntity">
+  		UPDATE PASSWD_HINT
+  		SET PASSWD_HINT_QUESTION = #PASSWD_HINT_QUESTION#,
+  			PASSWD_HINT_ANSWER = #PASSWD_HINT_ANSWER#
+  		WHERE USERS_IDX = #USERS_IDX#  			
+	</update>
+</sqlMap>

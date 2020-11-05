@@ -1,0 +1,35 @@
+var GC_APPEARANCE = {
+	'weekdays':  ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+	'longmonth' : ['January','February','March','April','May','June','July','August','September','October','November','December'],
+	'messages' : {
+				'Warning' : 'Warning: the date entered does not meet preset date format',
+				'AltPrevYear' : 'to previos year',
+				'AltNextYear' : 'to next year',
+				'AltPrevMonth' : 'to previos month',
+				'AltNextMonth' : 'to next month'
+	},
+	'CalDiv' : 'clsCalDiv',
+	'OuterFrame' : 'clsOuterFrame',
+	'InnerFrame' : 'clsInnerFrame',
+	'TopPartNavpanel' : 'clsTopPartNavpanel',
+	'BottomPartNavpanel' : 'clsBottomPartNavpanel',
+	'MidRow' : 'clsMidRow',
+	'DateGrid':'clsDateGrid',
+	'WeekDay':'clsWeekDay',
+	'WorkDayCell': 'clsWorkDayCell',
+	'HoliDayCell': 'clsHoliDayCell',
+	'OtherMonthDayCell': 'clsOtherMonthDayCell',
+	'SelectedDayCell': 'clsSelectedDayCell',
+	'CurrentMonthDay': 'clsCurrentMonthDay',
+	'OtherMonthDay': 'clsOtherMonthDay',
+	'SelectedDay': 'clsSelectedDay',
+	'InfoTitle':'clsInfoTitle',
+	'DataArea':'clsDataArea',
+	'PrevYear':'../js/kor/calender1.1/img/prev_year.gif',
+	'PrevMonth':'../js/kor/calender1.1/img/prev_month.gif',
+	'NextYear':'../js/kor/calender1.1/img/next_year.gif',
+	'NextMonth':'../js/kor/calender1.1/img/next_month.gif',
+	'IcoCalUnVis': '../js/kor/calender1.1/img/dpr_unvis.gif',
+	'IcoCalVis': '../js/kor/calender1.1/img/dpr_vis.gif'
+
+};

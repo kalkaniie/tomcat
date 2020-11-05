@@ -1,0 +1,389 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="ADMIN_WEBHARD">
+
+	<select id="getSepupList" parameterClass="java.util.HashMap"
+		resultClass="com.nara.springframework.webhard.AdminWebHardEntity">
+			SELECT 
+				DOMAIN, 
+				DISK_USER_MAX_QUOTA, 
+				BIGMAIL_MAX_VALIDITY_DAYS,
+				BIGMAIL_MAX_DOWNLOAD_LIMIT, 
+				WEBLINK_FOLDER_ENABLE, 
+				
+				GUEST_FOLDER_ENABLE,
+				VIRUS_CHECK_ENABLE, 
+				UPLOAD_FILE_SIZE_LIMIT, 
+				LOG_USER_VIEW_MONTHS,
+				LOG_PRESERVATION_MONTHS
+			FROM DISK_CONFIG
+		<dynamic prepend="">
+			<isNotNull prepend="WHERE" property="DOMAIN">
+				DOMAIN = #DOMAIN#
+			</isNotNull>
+		</dynamic>
+	</select>
+	
+	<select id="getFileFilterList" parameterClass="java.util.HashMap"
+		resultClass="com.nara.springframework.webhard.AdminFileFilterEntity">
+			SELECT 
+				FILTER_ID, 
+				FILTER_ITEM
+			FROM DISK_FILE_FILTER
+	</select>
+	
+	<update id="setBasicSetup" parameterClass="com.nara.springframework.webhard.AdminWebHardEntity"> 
+		UPDATE DISK_CONFIG SET
+			DISK_USER_MAX_QUOTA = #DISK_USER_MAX_QUOTA#,
+            BIGMAIL_MAX_VALIDITY_DAYS = #BIGMAIL_MAX_VALIDITY_DAYS#,
+            BIGMAIL_MAX_DOWNLOAD_LIMIT = #BIGMAIL_MAX_DOWNLOAD_LIMIT#,
+            WEBLINK_FOLDER_ENABLE = #WEBLINK_FOLDER_ENABLE#,
+            GUEST_FOLDER_ENABLE = #GUEST_FOLDER_ENABLE#,
+            VIRUS_CHECK_ENABLE = #VIRUS_CHECK_ENABLE#,
+            UPLOAD_FILE_SIZE_LIMIT = #UPLOAD_FILE_SIZE_LIMIT#,
+            LOG_USER_VIEW_MONTHS = #LOG_USER_VIEW_MONTHS#,
+            LOG_PRESERVATION_MONTHS = #LOG_PRESERVATION_MONTHS#
+		WHERE DOMAIN = #DOMAIN#
+	</update>
+	
+	<insert id="registFileFilter" parameterClass="java.lang.String"> 
+		INSERT INTO DISK_FILE_FILTER (
+			FILTER_ID, FILTER_ITEM
+		) VALUES (
+			SEQ_DISK_FILE_FILTER.NEXTVAL, #FILTER_ITEM#
+		)
+	</insert>
+	
+	<delete id="removeFileFilter" parameterClass="java.lang.Integer"> 
+		DELETE FROM DISK_FILE_FILTER WHERE FILTER_ID =  #FILTER_ID#
+	</delete>
+	
+	<select id="getDiskUserList" parameterClass="java.util.HashMap"
+		resultClass="com.nara.springframework.webhard.DiskUserEntity">
+			SELECT   A.USERS_IDX, A.USERS_PASSWD, A.HOME_DIRECTORY, A.ENABLE_FLAG,
+			         A.READ_PERMISSION, A.WRITE_PERMISSION, A.REMOVE_PERMISSION,
+			         A.IDLE_TIME, A.UPLOAD_RATE, A.DOWNLOAD_RATE, A.MAX_LOGIN_NUMBER,
+			         A.MAX_LOGIN_PER_IP, A.DISK_USAGE, A.DISK_QUOTA,
+			         A.BIGMAIL_VALIDITY_DAYS, A.BIGMAIL_DOWNLOAD_LIMIT, B.USERS_NAME,
+			         TO_CHAR (A.LAST_ACCESS_TIME, 'YYYY-MM-DD [HH24:MI]' ) AS LAST_ACCESS_TIME,
+			         A.LAST_ACCESS_IP
+			    FROM DISK_USER A, USERS B
+			   WHERE A.USERS_IDX = B.USERS_IDX
+			   <dynamic prepend="">
+					<isNotEqual prepend="AND" property="keyType" compareValue="">
+						<isEqual prepend="" property="keyType" compareValue="USERS_NAME">
+							B.USERS_NAME LIKE '%'||#keyWord#||'%'
+						</isEqual>
+						<isEqual prepend="" property="keyType" compareValue="USERS_ID">
+							B.USERS_ID LIKE '%'||#keyWord#||'%'
+						</isEqual>
+						<isEqual prepend="" property="keyType" compareValue="DISK_USAGE">
+							A.DISK_USAGE &gt;= #keyWord#
+						</isEqual>
+					</isNotEqual>
+				</dynamic>
+			ORDER BY USERS_IDX
+	</select>
+	
+	<select id="getDiskUserPageList" parameterClass="java.util.HashMap"
+		resultClass="com.nara.springframework.webhard.DiskUserEntity">
+		  SELECT * FROM (
+			SELECT   A.USERS_IDX, A.USERS_PASSWD, A.HOME_DIRECTORY, A.ENABLE_FLAG,
+			         A.READ_PERMISSION, A.WRITE_PERMISSION, A.REMOVE_PERMISSION,
+			         A.IDLE_TIME, A.UPLOAD_RATE, A.DOWNLOAD_RATE, A.MAX_LOGIN_NUMBER,
+			         A.MAX_LOGIN_PER_IP, A.DISK_USAGE, A.DISK_QUOTA,
+			         A.BIGMAIL_VALIDITY_DAYS, A.BIGMAIL_DOWNLOAD_LIMIT, B.USERS_NAME,
+			         TO_CHAR (A.LAST_ACCESS_TIME, 'YYYY-MM-DD [HH24:MI]' ) AS LAST_ACCESS_TIME,
+			         A.LAST_ACCESS_IP,
+			         CEIL((ROW_NUMBER() OVER(ORDER BY USERS_NAME))/$USERS_LISTNUM$) PAGENUM 
+			    FROM DISK_USER A, USERS B
+			   WHERE A.USERS_IDX = B.USERS_IDX
+			   <dynamic prepend="">
+					<isNotEqual prepend="AND" property="keyType" compareValue="">
+						<isEqual prepend="" property="keyType" compareValue="USERS_NAME">
+							B.USERS_NAME LIKE '%'||#keyWord#||'%'
+						</isEqual>
+						<isEqual prepend="" property="keyType" compareValue="USERS_ID">
+							B.USERS_ID LIKE '%'||#keyWord#||'%'
+						</isEqual>
+						<isEqual prepend="" property="keyType" compareValue="DISK_USAGE">
+							A.DISK_USAGE &gt;= #keyWord#
+						</isEqual>
+					</isNotEqual>
+				</dynamic>
+	      ) CC
+		  WHERE CC.PAGENUM = #nPage#
+	</select>
+	
+	<select id="getCountDiskUserList" parameterClass="java.util.HashMap"
+		resultClass="java.lang.Integer">
+			SELECT   COUNT(A.USERS_IDX) CNT
+			    FROM DISK_USER A, USERS B
+			   WHERE A.USERS_IDX = B.USERS_IDX
+			   <dynamic prepend="">
+					<isNotEqual prepend="AND" property="keyType" compareValue="">
+						<isEqual prepend="" property="keyType" compareValue="USERS_NAME">
+							B.USERS_NAME LIKE '%'||#keyWord#||'%'
+						</isEqual>
+						<isEqual prepend="" property="keyType" compareValue="USERS_ID">
+							B.USERS_ID LIKE '%'||#keyWord#||'%'
+						</isEqual>
+						<isEqual prepend="" property="keyType" compareValue="DISK_USAGE">
+							A.DISK_USAGE &gt;= #keyWord#
+						</isEqual>
+					</isNotEqual>
+				</dynamic>
+	</select>
+	
+	<update id="updatePermitUser" parameterClass="java.lang.String">
+		UPDATE DISK_USER SET ENABLE_FLAG = 1
+			WHERE USERS_IDX = #USERS_IDX#
+	</update>
+	
+	<update id="updateUserStop" parameterClass="java.lang.String">
+		UPDATE DISK_USER SET ENABLE_FLAG = 0
+			WHERE USERS_IDX = #USERS_IDX#
+	</update> 
+	
+	<update id="updateUserVolumeAddtype" parameterClass="java.util.HashMap">
+		UPDATE DISK_USER
+		<dynamic prepend="">
+			<isEqual prepend="SET " property= "addtype" compareValue="+">
+				DISK_QUOTA = DISK_QUOTA + (#VOLUME#)
+			</isEqual>
+			<isEqual prepend="SET " property= "addtype" compareValue="-">
+				DISK_QUOTA = DISK_QUOTA - (#VOLUME#)
+			</isEqual>
+  		</dynamic>
+  		<dynamic prepend="">
+  			<isNotNull prepend="WHERE" property="USERS_IDX">
+  				USERS_IDX = #USERS_IDX#
+  			</isNotNull>
+  		</dynamic> 
+	</update> 
+	
+	<update id="updateUserVolumeAll" parameterClass="java.util.HashMap">
+		UPDATE DISK_USER SET DISK_QUOTA = #VOLUME#
+  		<dynamic prepend="">
+  			<isNotNull prepend="WHERE" property="USERS_IDX">
+  				USERS_IDX = #USERS_IDX#
+  			</isNotNull>
+  		</dynamic> 
+	</update> 
+	
+	<select id="getDiskGroupList" parameterClass="java.util.HashMap"
+		resultClass="com.nara.springframework.webhard.DiskGroupEntity">
+			SELECT A.GROUP_IDX, A.USER_GROUP_IDX, A.GROUP_NAME, A.HOME_DIRECTORY,
+			       A.ENABLE_FLAG, A.DISK_USAGE, A.DISK_QUOTA, B.DISK_USER_COUNT
+			  FROM (SELECT GROUP_IDX, USER_GROUP_IDX, GROUP_NAME, HOME_DIRECTORY,
+			               ENABLE_FLAG, DISK_USAGE, DISK_QUOTA
+			          FROM DISK_GROUP) A,
+			       (SELECT   COUNT (USERS_IDX) AS DISK_USER_COUNT, GROUP_IDX
+			            FROM DISK_GROUP_MEMBER
+			        GROUP BY GROUP_IDX) B
+			 WHERE A.GROUP_IDX = B.GROUP_IDX
+		<dynamic prepend="">
+			<isNotEqual prepend="AND" property="keyType" compareValue="">
+				<isEqual prepend="" property="keyType" compareValue="GROUP_NAME">
+					A.GROUP_NAME LIKE '%'||#keyWord#||'%'
+				</isEqual>
+				<isEqual prepend="" property="keyType" compareValue="DISK_USER_COUNT">
+					B.DISK_USER_COUNT &gt;= #keyWord#
+				</isEqual>
+				<isEqual prepend="" property="keyType" compareValue="DISK_USAGE">
+					A.DISK_USAGE &gt;= #keyWord#
+				</isEqual>
+			</isNotEqual>
+		</dynamic>
+	</select>
+	
+	<select id="getUserGroupUserList"
+	        parameterClass="java.util.HashMap"
+	        resultClass="com.nara.jdf.db.entity.UserGroupListExtendUserEntity">
+		SELECT 
+			 UG.USER_GROUP_LIST_IDX, UM.DOMAIN, UM.USERS_IDX, UG.USER_GROUP_IDX, 
+			 UM.USERS_ID, UM.USERS_NAME, UM.USERS_JUMIN1, UM.USERS_JUMIN2, UM.USERS_LICENCENUM, 
+			 UM.USERS_PERMIT, UM.USERS_CELLNO, UM.USERS_ISOPEN,UG.USER_GROUP_SORT_NO
+	 	FROM USER_GROUP_LIST UG 
+		  	LEFT OUTER JOIN USERS UM ON UG.USERS_IDX = UM.USERS_IDX 
+	 	WHERE UM.DOMAIN = #DOMAIN#
+	    <dynamic prepend="">
+			<isGreaterEqual prepend="AND" property="USER_GROUP_IDX" compareValue="1">
+				UG.USER_GROUP_IDX = #USER_GROUP_IDX#
+			</isGreaterEqual>
+			<isNotEqual prepend="" property= "strKeyword" compareValue="">
+				<isEqual prepend="AND" property= "strIndex" compareValue="USERS_ID">
+					UM.USERS_ID LIKE '%'||#strKeyword#||'%'
+				</isEqual>
+				<isEqual prepend="AND" property= "strIndex" compareValue="USERS_NAME">
+					UM.USERS_NAME LIKE '%'||#strKeyword#||'%'
+				</isEqual>
+			</isNotEqual>
+		</dynamic>
+ 
+	</select>
+	
+	<insert id="registGroup" parameterClass="java.util.HashMap">
+		INSERT INTO DISK_GROUP (
+			GROUP_IDX, USER_GROUP_IDX, GROUP_NAME, HOME_DIRECTORY,
+	        ENABLE_FLAG, DISK_USAGE, DISK_QUOTA
+	    ) VALUES (
+	    	SEQ_DISK_GROUP.NEXTVAL, #USER_GROUP_IDX#, #GROUP_NAME#, #HOME_DIRECTORY#,
+	        #ENABLE_FLAG#, #DISK_USAGE#, #DISK_QUOTA#
+	    )
+	</insert>
+	
+	<select id="getDiskGroupIdx" parameterClass="java.util.HashMap"
+		resultClass="java.lang.Integer">
+		SELECT SEQ_DISK_GROUP.CURRVAL FROM DUAL
+		<!-- SELECT LAST_NUMBER
+		  FROM USER_SEQUENCES
+		 WHERE SEQUENCE_NAME = 'SEQ_DISK_GROUP' -->
+	</select>
+	
+	<insert id="registGroupUser" parameterClass="java.util.HashMap">
+		INSERT INTO DISK_GROUP_MEMBER (
+			GROUP_IDX, USERS_IDX, ENABLE_FLAG, READ_PERMISSION,
+	        WRITE_PERMISSION, REMOVE_PERMISSION
+	    ) VALUES (
+	    	#GROUP_IDX#, #USERS_IDX#, #ENABLE_FLAG#, #READ_PERMISSION#,
+	        #WRITE_PERMISSION#, #REMOVE_PERMISSION#
+	    )
+	</insert>
+	
+	<select id="getDiskGroup" parameterClass="java.lang.Integer" resultClass="com.nara.springframework.webhard.DiskGroupEntity">
+		SELECT A.GROUP_IDX, A.USER_GROUP_IDX, A.GROUP_NAME, A.HOME_DIRECTORY,
+		       A.ENABLE_FLAG, A.DISK_USAGE, A.DISK_QUOTA, B.DISK_USER_COUNT
+		  FROM (SELECT GROUP_IDX, USER_GROUP_IDX, GROUP_NAME, HOME_DIRECTORY,
+		               ENABLE_FLAG, DISK_USAGE, DISK_QUOTA
+		          FROM DISK_GROUP) A,
+		       (SELECT   COUNT (USERS_IDX) AS DISK_USER_COUNT, GROUP_IDX
+		            FROM DISK_GROUP_MEMBER
+		        GROUP BY GROUP_IDX) B
+		 WHERE A.GROUP_IDX = B.GROUP_IDX 
+		   AND A.GROUP_IDX = #GROUP_IDX#
+	</select>
+	
+	<delete id="deleteGroup" parameterClass="java.lang.Integer">
+		DELETE FROM DISK_GROUP WHERE GROUP_IDX = #GROUP_IDX#
+	</delete>
+	
+	<delete id="deleteGroupMember" parameterClass="java.lang.Integer">
+		DELETE FROM DISK_GROUP_MEMBER WHERE GROUP_IDX = #GROUP_IDX#
+	</delete>
+	
+	<update id="enableDisk" parameterClass="java.util.HashMap">
+		UPDATE DISK_GROUP SET ENABLE_FLAG = #ENABLE_FLAG# WHERE GROUP_IDX = #GROUP_IDX#
+	</update>
+	
+	<select id="getDiskGroupMember" parameterClass="java.lang.Integer" resultClass="com.nara.springframework.webhard.DiskGroupMemberEntity">
+		SELECT A.GROUP_IDX, A.USERS_IDX, A.ENABLE_FLAG, A.READ_PERMISSION,
+		       A.WRITE_PERMISSION, A.REMOVE_PERMISSION, B.USERS_NAME
+		  FROM DISK_GROUP_MEMBER A, USERS B
+		 WHERE A.USERS_IDX = B.USERS_IDX 
+		   AND A.GROUP_IDX = #GROUP_IDX#
+	</select>
+	
+	<update id="modifyGroup" parameterClass="java.util.HashMap">
+		UPDATE DISK_GROUP SET GROUP_NAME = #GROUP_NAME#, ENABLE_FLAG = #ENABLE_FLAG#, DISK_QUOTA = #DISK_QUOTA#
+		WHERE GROUP_IDX = #GROUP_IDX#
+	</update>
+	
+	<select id="getWhiteList" resultClass="com.nara.springframework.webhard.WhiteListEntity">
+		SELECT
+			WHITELIST_ID, WHITELIST_IP
+		FROM DISK_IP_WHITELIST
+	</select>
+	
+	<select id="getBlackList" resultClass="com.nara.springframework.webhard.BlackListEntity">
+		SELECT
+			BLACKLIST_ID, BLACKLIST_IP
+		FROM DISK_IP_BLACKLIST
+	</select>
+	
+	<insert id="registWhiteIp" parameterClass="java.lang.String">
+		INSERT INTO DISK_IP_WHITELIST (
+			WHITELIST_ID, WHITELIST_IP
+	    ) VALUES (
+	    	SEQ_DISK_IP_WHITELIST.NEXTVAL, #WHITELIST_IP#
+	    )
+	</insert>
+	
+	<insert id="registBlackIp" parameterClass="java.lang.String">
+		INSERT INTO DISK_IP_BLACKLIST (
+			BLACKLIST_ID, BLACKLIST_IP
+	    ) VALUES (
+	    	SEQ_DISK_IP_BLACKLIST.NEXTVAL, #BLACKLIST_IP#
+	    )
+	</insert>
+	
+	<delete id="removeBlackIp" parameterClass="java.lang.Integer">
+		DELETE FROM DISK_IP_BLACKLIST WHERE BLACKLIST_ID = #BLACKLIST_ID#
+	</delete>
+	
+	<delete id="removeWhiteIp" parameterClass="java.lang.Integer">
+		DELETE FROM DISK_IP_WHITELIST WHERE WHITELIST_ID = #WHITELIST_ID#
+	</delete>
+	
+	<select id="getWebhardStatisticDay" parameterClass="java.util.HashMap" resultClass="com.nara.springframework.webhard.DiskStatisticEntity">
+		SELECT   TO_CHAR (DATE_HOUR, 'yyyy-MM-DD HH24') AS DATE_HOUR,
+		         SUM (UPLOAD_COUNT) AS UPLOAD_COUNT,
+		         SUM (UPLOAD_AMOUNT) AS UPLOAD_AMOUNT,
+		         SUM (DOWNLOAD_COUNT) AS DOWNLOAD_COUNT,
+		         SUM (DOWNLOAD_AMOUNT) AS DOWNLOAD_AMOUNT,
+		         SUM (DELETE_COUNT) AS DELETE_COUNT,
+		         SUM (DELETE_AMOUNT) AS DELETE_AMOUNT
+		    FROM DISK_STATISTICS
+		   WHERE (DATE_HOUR BETWEEN TO_DATE (#startCal#, 'YYYY-MM-DD HH24')
+		                        AND TO_DATE (#endCal#, 'YYYY-MM-DD HH24')
+		         )
+		GROUP BY TO_CHAR (DATE_HOUR, 'yyyy-MM-DD HH24')
+	</select>
+	
+	<select  id="getWebhardStatisticWeek" parameterClass="java.util.HashMap" resultClass="com.nara.springframework.webhard.DiskStatisticEntity">
+		SELECT   TO_CHAR (DATE_HOUR, 'yyyy-MM-DD') AS DATE_HOUR,
+		         SUM (UPLOAD_COUNT) AS UPLOAD_COUNT,
+		         SUM (UPLOAD_AMOUNT) AS UPLOAD_AMOUNT,
+		         SUM (DOWNLOAD_COUNT) AS DOWNLOAD_COUNT,
+		         SUM (DOWNLOAD_AMOUNT) AS DOWNLOAD_AMOUNT,
+		         SUM (DELETE_COUNT) AS DELETE_COUNT,
+		         SUM (DELETE_AMOUNT) AS DELETE_AMOUNT
+		    FROM DISK_STATISTICS
+		   WHERE (DATE_HOUR BETWEEN TO_DATE (#startCal#, 'YYYY-MM-DD HH24')
+		                        AND TO_DATE (#endCal#, 'YYYY-MM-DD HH24')
+		         )
+		GROUP BY TO_CHAR (DATE_HOUR, 'yyyy-MM-DD')
+	</select>
+	
+	<select  id="getWebhardStatisticMonth" parameterClass="java.util.HashMap" resultClass="com.nara.springframework.webhard.DiskStatisticEntity">
+		SELECT   TO_CHAR (DATE_HOUR, 'yyyy-MM W') AS DATE_HOUR,
+		         SUM (UPLOAD_COUNT) AS UPLOAD_COUNT,
+		         SUM (UPLOAD_AMOUNT) AS UPLOAD_AMOUNT,
+		         SUM (DOWNLOAD_COUNT) AS DOWNLOAD_COUNT,
+		         SUM (DOWNLOAD_AMOUNT) AS DOWNLOAD_AMOUNT,
+		         SUM (DELETE_COUNT) AS DELETE_COUNT,
+		         SUM (DELETE_AMOUNT) AS DELETE_AMOUNT
+		    FROM DISK_STATISTICS
+		   WHERE (DATE_HOUR BETWEEN TO_DATE (#startCal#, 'YYYY-MM-DD HH24')
+		                        AND TO_DATE (#endCal#, 'YYYY-MM-DD HH24')
+		         )
+		GROUP BY TO_CHAR (DATE_HOUR, 'yyyy-MM W')
+	</select>
+	
+	<select  id="getWebhardStatisticYear" parameterClass="java.util.HashMap" resultClass="com.nara.springframework.webhard.DiskStatisticEntity">
+		SELECT   TO_CHAR (DATE_HOUR, 'yyyy-MM') AS DATE_HOUR,
+		         SUM (UPLOAD_COUNT) AS UPLOAD_COUNT,
+		         SUM (UPLOAD_AMOUNT) AS UPLOAD_AMOUNT,
+		         SUM (DOWNLOAD_COUNT) AS DOWNLOAD_COUNT,
+		         SUM (DOWNLOAD_AMOUNT) AS DOWNLOAD_AMOUNT,
+		         SUM (DELETE_COUNT) AS DELETE_COUNT,
+		         SUM (DELETE_AMOUNT) AS DELETE_AMOUNT
+		    FROM DISK_STATISTICS
+		   WHERE (DATE_HOUR BETWEEN TO_DATE (#startCal#, 'YYYY-MM-DD HH24')
+		                        AND TO_DATE (#endCal#, 'YYYY-MM-DD HH24')
+		         )
+		GROUP BY TO_CHAR (DATE_HOUR, 'yyyy-MM')
+	</select>
+	
+</sqlMap>

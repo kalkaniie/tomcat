@@ -1,0 +1,345 @@
+<script language=javascript>
+
+function treeExpand() {
+   divs=document.getElementsByTagName("DIV");
+   for (i=0;i<divs.length;i++) {
+	   if(divs[i].id.indexOf("mail_box_") != -1)
+	   divs[i].style.display="block";
+   }
+}
+
+function lineBackGround() {
+   table=document.getElementsByTagName("TABLE");
+   var nLineNum = 0;
+   for (i=0;i<table.length;i++) {
+     if(table(i).getAttribute("ID") == "mailbox_Table"){
+       if(nLineNum%2 == 1)
+         table(i).style.background="EDF3F5";
+       nLineNum++;
+     }
+   }
+   
+   tr=document.getElementsByTagName("TR");
+   nLineNum = 0;
+   for (j=0;j<tr.length;j++) {
+     if(tr(j).getAttribute("ID") == "mailinfoTr"){
+       if(nLineNum%2 == 1)
+         tr(j).style.background="EDF3F5";
+       nLineNum++;
+     }
+   }
+}
+function regist(){
+  var objForm=document.mbox_manager_form;
+  if(objForm.MBOX_NAME.value.length < 1 ){
+    alert("편지함명을 입력하십시오");
+    objForm.MBOX_NAME.focus();
+    return;
+  } else if(objForm.MBOX_NAME.value.indexOf('"') != -1 
+        || objForm.MBOX_NAME.value.indexOf("'") != -1 
+        || objForm.MBOX_NAME.value.indexOf('/') != -1
+        || objForm.MBOX_NAME.value.indexOf('\\') != -1
+        || objForm.MBOX_NAME.value.indexOf(':') != -1
+        || objForm.MBOX_NAME.value.indexOf('*') != -1
+        || objForm.MBOX_NAME.value.indexOf('?') != -1
+        || objForm.MBOX_NAME.value.indexOf('<') != -1
+        || objForm.MBOX_NAME.value.indexOf('>') != -1
+        || objForm.MBOX_NAME.value.indexOf('%') != -1
+        || objForm.MBOX_NAME.value.indexOf('^') != -1
+        || objForm.MBOX_NAME.value.indexOf('&') != -1
+        || objForm.MBOX_NAME.value.indexOf('|') != -1){
+    alert("편지함명에 \"\'\\/:*?<>|%^& 문자를 사용할 수 없습니다.");
+    objForm.MBOX_NAME.focus();
+    return;
+  }
+  
+  // alert(objForm.MBOX_PUBLIC[1].value)
+ if(objForm.MBOX_PUBLIC[1].checked == true){
+    
+    if(objForm.MBOX_PASSWD.value.length < 1){
+	    alert('편지함 패스워드를 입력하십시오');
+    	objForm.MBOX_PASSWD.focus();
+   	    return;
+    }	
+	if(objForm.MBOX_RE_PASSWD.value.length < 1){
+	    alert('편지함 패스워드  확인을 입력하십시오');
+    	objForm.MBOX_RE_PASSWD.focus();    	 
+	    return;    	
+    }	
+	if(objForm.MBOX_PASSWD.value != objForm.MBOX_RE_PASSWD.value)
+	{
+	   alert('비밀번호와 비밀번호 확인이 다릅니다.');
+	   return;
+	}
+  }
+  
+  objForm.method.value = "aj_regist";
+  
+  Ext.Ajax.request({
+		scope :this,
+		url: 'mbox.auth.do',
+		method : 'POST',
+		form: objForm,
+		success : function(response, options) {
+  		var reader = new Ext.data.XmlReader({
+  		   	record: 'RESPONSE'
+  			}, 
+  			['RESULT','MESSAGE','MBOX_NAME','MBOX_IDX']);
+  		var resultXML = reader.read(response);
+  		if (resultXML.records[0].data.RESULT == "success") {
+  			opener.leftMailBoxAllReload();
+  			try{
+  				var mbox_selectbox;
+  				if( opener.document.getElementsByName('select_mbox') != null){
+  					insertOptionOpener(opener.document.getElementsByName('select_mbox')[0],resultXML.records[0].data.MBOX_NAME,resultXML.records[0].data.MBOX_IDX );
+  					insertOptionOpener(opener.document.getElementsByName('select_mbox')[1],resultXML.records[0].data.MBOX_NAME,resultXML.records[0].data.MBOX_IDX );
+  				}
+  			}catch(e){}	
+  			
+			location.href='mbox.auth.do?method=manager_std';
+		}else{
+			alert(resultXML.records[0].data.MESSAGE);  			
+  		}
+		},
+		failure : function(response, options) {callAjaxFailure(response, options);}
+	});
+  
+  
+}
+
+  
+function isSecurityBox(MBOX_IDX ,MBOX_PUBLIC ,MBOX_TYPE ,  func_name ){
+  var objForm=document.mbox_manager_form;
+  var MBOX_CERT = eval("objForm.MBOX_" + MBOX_IDX);
+  
+  if(MBOX_PUBLIC != null && MBOX_PUBLIC =='S' && MBOX_CERT.value != 'Y'){
+  		SecurityBox(MBOX_IDX ,'securityMailBox' ,MBOX_TYPE ,  func_name );
+  		return  false;
+  	}
+  else
+  	return true;
+}
+
+
+function SecurityBox(mboxIdx , mboxName , mbox_type, func_name){
+		/*
+		newmboxWindowOpen('보안 편지함',300,125,'mbox.auth.do?method=webmail_idpwd','MBOX_IDX='+ mboxIdx  
+				+ '&mboxName=' +mboxName
+				+ '&func_name=' +func_name
+				+ '&mboxgubun=M') ;
+		*/
+		var width = 300;
+		var height = 125 ;
+		sw = screen.availWidth/2;
+		sh = screen.availHeight/2;
+		
+		pw = (sw- width);
+		py = (sh - height);
+		
+		var link = "mbox.auth.do?method=webmail_idpwd_type2&MBOX_IDX="+ mboxIdx+ "&mboxName=" +mboxName+ "&func_name=" +func_name
+				+ "&mboxgubun=M&MBOX_TYPE=" +mbox_type;
+		window.open(link,'secure_mbox','left='+pw+',top=' +py +',scrollbars=yes,width=300,height=100') ;
+		
+		return true;
+}
+
+function func_redirect(param  , MBOX_IDX  , MBOX_TYPE){
+			
+		    if(param == "removeAllMailInBox")
+		 		removeAllMailInBox(MBOX_IDX , 'N')
+		 	else if(param == "removeMbox"){
+		 		removeMbox(MBOX_IDX,MBOX_TYPE, 'N');
+		 		return false;
+		 		}
+		 	else if(param == "downloadMbox")
+		 		downloadMbox(MBOX_IDX, 'N');
+		 	else if(param == "fileUpload")
+		 		fileUpload(MBOX_IDX, 'N');
+				
+		 		
+}
+
+function removeAllMailInBox(MBOX_IDX , MBOX_PUBLIC){
+	if(isSecurityBox(MBOX_IDX ,MBOX_PUBLIC , '',  'removeAllMailInBox')){
+    
+	    objForm = document.mbox_manager_form;
+	    var isRemove = confirm("편지함속의 모든 편지가 삭제됩니다.\n편지함을 삭제하시겠습니까?");    
+	  	if(isRemove){
+	    objForm.method.value = "aj_removeAllMailInMbox";
+	    objForm.MBOX_IDX.value = MBOX_IDX;
+	    objForm.action="mbox.auth.do";
+	    Ext.Ajax.request({
+			scope :this,
+			url: 'mbox.auth.do',
+			method : 'POST',
+			form: objForm,
+			success : function(response, options) {
+			var reader = new Ext.data.XmlReader({
+			   	record: 'RESPONSE'
+				}, 
+				['RESULT','MESSAGE']);
+			var resultXML = reader.read(response);
+			if (resultXML.records[0].data.RESULT == "success") {
+				opener.leftMailBoxAllReload();
+				location.reload();
+			}else{
+				Ext.Msg.alert('message', resultXML.records[0].data.MESSAGE);
+			}
+			},
+			failure : function(response, options) {callAjaxFailure(response, options);}
+		});
+	  }
+  }
+
+}
+
+function removeMbox(MBOX_IDX,MBOX_TYPE, MBOX_PUBLIC){
+	if(isSecurityBox(MBOX_IDX ,MBOX_PUBLIC , MBOX_TYPE , 'removeMbox')){
+		objForm = document.mbox_manager_form;
+		var isRemove = confirm("편지함속의 모든 편지가 삭제됩니다.\n편지함을 삭제하시겠습니까?");    
+		if(isRemove){
+		    objForm.method.value = "aj_remove";
+		    objForm.MBOX_IDX.value = MBOX_IDX;
+		    objForm.MBOX_TYPE.value = MBOX_TYPE;
+		    objForm.action="mbox.auth.do";
+		    Ext.Ajax.request({
+				scope :this,
+				url: 'mbox.auth.do',
+				method : 'POST',
+				form: objForm,
+				success : function(response, options) {
+					var reader = new Ext.data.XmlReader({record: 'RESPONSE'},['RESULT','MESSAGE']);
+					var resultXML = reader.read(response);
+					if (resultXML.records[0].data.RESULT == "success") {
+						opener.leftMailBoxAllReload();
+						deleteOptionOpener(opener.document.getElementsByName('select_mbox')[0],MBOX_IDX);
+						deleteOptionOpener(opener.document.getElementsByName('select_mbox')[1],MBOX_IDX);
+						location.href='mbox.auth.do?method=manager_std';
+					}else{
+						alert(resultXML.records[0].data.MESSAGE);
+					}
+				},
+				failure : function(response, options) {callAjaxFailure(response, options);}
+			});
+		}
+	} 
+}
+
+function downloadMbox(MBOX_IDX, MBOX_PUBLIC) { //v2.0
+if(isSecurityBox(MBOX_IDX ,MBOX_PUBLIC , '', 'downloadMbox')){
+  objForm = document.mbox_manager_form;
+  objForm.method.value="download";
+  objForm.MBOX_IDX.value = MBOX_IDX;
+  objForm.action = "mbox.auth.do";
+  // objForm.submit();
+   objForm.submit();
+  }
+}
+
+function fileUpload(MBOX_IDX, MBOX_PUBLIC){
+	callFileUploadDownload("fileUpload('" + MBOX_IDX + "','" + MBOX_PUBLIC + "')");
+	var obj = document.getElementById("KBUpDown"); 
+	if (obj == null) {
+		setTimeout("fileUpload('" + MBOX_IDX + "','" + MBOX_PUBLIC + "')", 1000);
+	  	return;
+	}
+ 	if (install_action == install_ok) { 
+	 	if(isSecurityBox(MBOX_IDX ,MBOX_PUBLIC , '',  'fileUpload')){
+	  		FileUpload('emlUpload','MAIL',MBOX_IDX,'mbox_manager_form');
+	  	}
+	}
+}
+
+var nMboxIdx = 0;
+var strMboxName = "";
+function modifyMbox(MBOX_IDX,MBOX_TYPE,MBOX_NAME){
+  if(nMboxIdx != 0){
+    var obj = eval("mboxName_"+nMboxIdx);
+    obj.innerHTML = "<a href=webwebmail.auth.do?method=mail_list&MBOX_IDX="+nMboxIdx+">"+strMboxName+"</a>";
+  }
+  
+  var obj = eval("mboxName_"+MBOX_IDX);
+  var str = "<input type='text' name='MBOX_NAME_"+MBOX_IDX+"' value='"+MBOX_NAME+"' style='width:100px' maxlength=30 />" ;
+  str += "<a href='javascript:modify("+MBOX_IDX+","+MBOX_TYPE+");' style='padding-left:5px'><img src='/images_std/kor/btn/btn_table_ok.gif'/></a>";
+  str += "<a href='javascript:location.reload();' style='padding-left:5px'><img src='/images_std/kor/btn/btn_cancel.gif'/></a>";
+  obj.innerHTML = str;
+  nMboxIdx = MBOX_IDX;
+  strMboxName = MBOX_NAME;
+}
+
+function modify(MBOX_IDX,MBOX_TYPE){
+  var objForm=document.mbox_manager_form;
+  var objMbox = eval("document.mbox_manager_form.MBOX_NAME_"+MBOX_IDX);
+  if(objMbox.value.length < 1 ){
+    alert("편지함명을 입력하십시오");
+    objMbox.focus();
+    return;
+  } else if(objMbox.value.indexOf('"') != -1 
+        || objMbox.value.indexOf("'") != -1 
+        || objMbox.value.indexOf('/') != -1
+        || objMbox.value.indexOf('\\') != -1
+        || objMbox.value.indexOf(':') != -1
+        || objMbox.value.indexOf('*') != -1
+        || objMbox.value.indexOf('?') != -1
+        || objMbox.value.indexOf('<') != -1
+        || objMbox.value.indexOf('>') != -1
+        || objMbox.value.indexOf('%') != -1
+        || objMbox.value.indexOf('^') != -1
+        || objMbox.value.indexOf('&') != -1
+        || objMbox.value.indexOf('|') != -1){
+    alert("편지함명에 \"\'\\/:*?<>|%^& 문자를 사용할 수 없습니다.");
+    objForm.MBOX_NAME.focus();
+    return;
+  }
+  
+  document.mbox_manager_form.MBOX_IDX.value=MBOX_IDX;
+  objForm.MBOX_NAME.value = objMbox.value;
+  objForm.method.value = "aj_modify";
+  document.mbox_manager_form.MBOX_TYPE.value=MBOX_TYPE;
+  Ext.Ajax.request({
+		scope :this,
+		url: 'mbox.auth.do',
+		method : 'POST',
+		form: objForm,
+		success : function(response, options) {
+			var reader = new Ext.data.XmlReader({record: 'RESPONSE'},['RESULT','MESSAGE']);
+			var resultXML = reader.read(response);
+			if (resultXML.records[0].data.RESULT == "success") {
+				opener.leftMailBoxAllReload();
+				
+				opener.leftMailBoxAllReload();
+				deleteOptionOpener(opener.document.getElementsByName('select_mbox')[0],MBOX_IDX);
+				deleteOptionOpener(opener.document.getElementsByName('select_mbox')[1],MBOX_IDX);
+				
+				insertOptionOpener(opener.document.getElementsByName('select_mbox')[0],objForm.MBOX_NAME.value,MBOX_IDX);
+				insertOptionOpener(opener.document.getElementsByName('select_mbox')[1],objForm.MBOX_NAME.value,MBOX_IDX );
+					
+				location.href='mbox.auth.do?method=manager_std';
+				
+			}else{
+				alert(resultXML.records[0].data.MESSAGE);
+			}
+		},failure : function(response, options) {callAjaxFailure(response, options);}
+	});
+}
+
+function registMbox(MBOX_IDX, PATH){
+  
+  document.mbox_manager_form.PATH.value=PATH;
+  document.mbox_manager_form.MBOX_REF.value=MBOX_IDX;
+  document.mbox_manager_form.MBOX_TYPE.value=6;
+  document.mbox_manager_form.MBOX_NAME.focus();
+
+}
+
+
+
+function chmod(value){
+  if(value == 'P'){
+    document.getElementById('S_PASSWD').style.display="none";
+    }else{
+    document.getElementById('S_PASSWD').style.display="inline";
+  }  
+}
+
+</script>

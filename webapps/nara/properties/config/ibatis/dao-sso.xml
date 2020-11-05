@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE daoConfig
+    PUBLIC "-//ibatis.apache.org//DTD DAO Configuration 2.0//EN"
+    "http://ibatis.apache.org/dtd/dao-2.dtd">
+
+<daoConfig>
+
+	<context>
+    	<transactionManager type="SQLMAP">
+    		<property name="SqlMapConfigURL" value="file:///D:/naravision/KM5.0/nara/properties/config/ibatis/sql-map-config-sso.xml"/>
+      		<!--<property name="SqlMapConfigURL" value="file:///D:/KebiPortal-2.0/nara-config/config/ibatis/sql-map-config.xml"/>-->
+      		<!--property name="SqlMapConfigURL" value="file:////usr/local/kebi/tomcat/webapps/nara/properties/config/ibatis/sql-map-config.xml"/-->
+    	</transactionManager>
+
+    	<dao interface="com.nara.springframework.dao.SsoDao"
+      		implementation="com.nara.springframework.dao.ibatis.SqlMapSsoDao"/>
+  </context>
+  
+</daoConfig>

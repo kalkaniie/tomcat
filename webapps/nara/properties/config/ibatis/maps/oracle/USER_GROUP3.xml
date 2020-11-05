@@ -1,0 +1,382 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="USER_GROUP3">
+  	
+  	<select id="select_usergroup_type_01" 
+  				parameterClass="java.util.HashMap" 
+  				resultClass="com.nara.jdf.db.entity.UserGroupEntity">
+		SELECT
+			USER_GROUP_IDX,
+			P_USER_GROUP_IDX,
+			DOMAIN,
+      		USER_GROUP_NAME,
+      		USER_GROUP_SORT_NO,
+			USER_GROUP_DEFAULT,
+			USER_GROUP_FUNCTION,
+			USER_GROUP_VOLUME,
+			USER_GROUP_MAIL,
+			USER_GROUP_SCHEDULE,
+			USER_GROUP_ADDRESS,
+			USER_GROUP_STRUCTURE,
+			USER_GROUP_SMS_QUOTA
+		FROM USER_GROUP3 
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "USER_GROUP_IDX">
+				USER_GROUP_IDX = #USER_GROUP_IDX#
+			</isNotNull> 
+			<isNotNull prepend="AND" property= "DOMAIN">
+				DOMAIN = #DOMAIN#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "P_USER_GROUP_IDX">
+				P_USER_GROUP_IDX = #P_USER_GROUP_IDX#
+			</isNotNull> 
+			
+		</dynamic>
+  	</select> 	
+ 	<select id="select_usergroup_type_02" 
+  				parameterClass="java.util.HashMap" 
+  				resultClass="com.nara.jdf.db.entity.UserGroupEntity">
+		SELECT
+			AA.USER_GROUP_IDX,
+			AA.P_USER_GROUP_IDX,
+			AA.DOMAIN,
+      		AA.USER_GROUP_NAME,
+			AA.USER_GROUP_DEFAULT,
+			AA.USER_GROUP_FUNCTION,
+			AA.USER_GROUP_VOLUME,
+			AA.USER_GROUP_MAIL,
+			AA.USER_GROUP_SCHEDULE,
+			AA.USER_GROUP_ADDRESS,
+			AA.USER_GROUP_STRUCTURE,
+			AA.USER_GROUP_SMS_QUOTA
+		FROM USER_GROUP3 AA, USER_GROUP_LIST BB
+		WHERE AA.USER_GROUP_IDX = BB.USER_GROUP_IDX 
+		<dynamic prepend="">
+			<isNotNull prepend="AND" property= "USER_GROUP_IDX">
+				AA.USER_GROUP_IDX = #USER_GROUP_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "DOMAIN">
+				AA.DOMAIN = #DOMAIN#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				BB.USERS_IDX = #USERS_IDX#
+			</isNotNull>  
+		</dynamic>
+  	</select>
+  	
+  	<select id="select_usergroup_type_04" 
+  				parameterClass="java.util.HashMap" 
+  				resultClass="com.nara.jdf.db.entity.UserGroupEntity">
+		SELECT
+			USER_GROUP_IDX,
+			P_USER_GROUP_IDX,
+			DOMAIN,
+      		USER_GROUP_NAME,
+			USER_GROUP_DEFAULT,
+			USER_GROUP_FUNCTION,
+			USER_GROUP_VOLUME,
+			USER_GROUP_MAIL,
+			USER_GROUP_SCHEDULE,
+			USER_GROUP_ADDRESS,
+			USER_GROUP_STRUCTURE,
+			USER_GROUP_SMS_QUOTA,
+			( SELECT COUNT(*) FROM USER_GROUP3 
+				<dynamic prepend="WHERE">
+					<isNotNull prepend="AND" property= "P_USER_GROUP_IDX">
+						P_USER_GROUP_IDX = AA.USER_GROUP_IDX
+					</isNotNull> 
+					<isNotNull prepend="AND" property= "DOMAIN">
+						DOMAIN = #DOMAIN#
+					</isNotNull>
+				</dynamic>
+		    ) AS CHILD_GROUP_CNT
+			
+		FROM USER_GROUP3  AA
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "USER_GROUP_IDX">
+				USER_GROUP_IDX = #USER_GROUP_IDX#
+			</isNotNull> 
+			<isNotNull prepend="AND" property= "DOMAIN">
+				DOMAIN = #DOMAIN#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "P_USER_GROUP_IDX">
+				P_USER_GROUP_IDX = #P_USER_GROUP_IDX#
+			</isNotNull> 
+			
+		</dynamic>
+		ORDER BY USER_GROUP_SORT_NO 
+  	</select>
+  	
+  	<select id="select_usergroup_type_05" 
+  				parameterClass="java.util.HashMap" 
+  				resultClass="com.nara.jdf.db.entity.UserGroupEntity">
+		SELECT
+			USER_GROUP_IDX,
+			P_USER_GROUP_IDX,
+			DOMAIN,
+      		USER_GROUP_NAME,
+			USER_GROUP_DEFAULT,
+			USER_GROUP_FUNCTION,
+			USER_GROUP_VOLUME,
+			USER_GROUP_MAIL,
+			USER_GROUP_SCHEDULE,
+			USER_GROUP_ADDRESS,
+			USER_GROUP_STRUCTURE,
+			USER_GROUP_SMS_QUOTA
+		FROM USER_GROUP3 
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "USER_GROUP_IDX">
+				USER_GROUP_IDX = #USER_GROUP_IDX#
+			</isNotNull> 
+			<isNotNull prepend="AND" property= "DOMAIN">
+				DOMAIN = #DOMAIN# AND P_USER_GROUP_IDX = 0
+			</isNotNull>
+			<isNotNull prepend="AND" property= "P_USER_GROUP_IDX">
+				P_USER_GROUP_IDX = #P_USER_GROUP_IDX#
+			</isNotNull> 
+			
+		</dynamic>
+  	</select>
+  	
+  	<insert id="insert_user_group_type_01" 
+  				parameterClass="com.nara.jdf.db.entity.UserGroupEntity">
+  		INSERT INTO USER_GROUP3
+  		(
+  			USER_GROUP_IDX, 
+  			P_USER_GROUP_IDX, 
+  			USER_GROUP_NAME, 
+  			USER_GROUP_SORT_NO, 
+  			DOMAIN, 
+  			USER_GROUP_DEFAULT, 
+  			USER_GROUP_FUNCTION, 
+  			USER_GROUP_VOLUME, 
+  			USER_GROUP_MAIL, 
+  			USER_GROUP_SCHEDULE, 
+  			USER_GROUP_STRUCTURE, 
+  			USER_GROUP_SMS_QUOTA, 
+  			USER_GROUP_ADDRESS
+  		)
+  		VALUES
+  		(
+			<dynamic prepend="">
+				<isGreaterEqual prepend="" property="USER_GROUP_IDX" compareValue="1">
+					#USER_GROUP_IDX#,
+				</isGreaterEqual>
+				<isEqual prepend="" property="USER_GROUP_IDX" compareValue="0">
+					SEQ_USER_GROUP.NEXTVAL,
+				</isEqual>
+			</dynamic>
+  			#P_USER_GROUP_IDX#, 
+  			#USER_GROUP_NAME#, 
+  			#USER_GROUP_SORT_NO#, 
+  			#DOMAIN#, 
+  			#USER_GROUP_DEFAULT#, 
+  			#USER_GROUP_FUNCTION#, 
+  			#USER_GROUP_VOLUME#, 
+  			#USER_GROUP_MAIL#, 
+  			#USER_GROUP_SCHEDULE#, 
+  			#USER_GROUP_STRUCTURE#, 
+  			#USER_GROUP_SMS_QUOTA#, 
+  			#USER_GROUP_ADDRESS#  		
+  		)
+  	</insert>
+  	
+  	<insert id="insert_user_group_type_02"
+	        parameterClass="com.nara.jdf.db.entity.UserGroupEntity">
+		INSERT INTO USER_GROUP3( 
+            USER_GROUP_IDX, 
+            P_USER_GROUP_IDX, 
+            DOMAIN,
+            USER_GROUP_SORT_NO,
+            USER_GROUP_NAME, 
+            USER_GROUP_DEFAULT, 
+            USER_GROUP_FUNCTION, 
+            USER_GROUP_VOLUME, 
+            USER_GROUP_MAIL, 
+            USER_GROUP_SCHEDULE, 
+            USER_GROUP_ADDRESS, 
+            USER_GROUP_STRUCTURE,
+            USER_GROUP_SMS_QUOTA 
+		)
+		VALUES
+		(
+			<dynamic prepend="">
+				<isGreaterEqual prepend="" property="USER_GROUP_IDX" compareValue="1">
+					#USER_GROUP_IDX#,
+				</isGreaterEqual>
+				<isEqual prepend="" property="USER_GROUP_IDX" compareValue="0">
+					SEQ_USER_GROUP.NEXTVAL,
+				</isEqual>
+				
+			</dynamic>			
+			            
+			#P_USER_GROUP_IDX#,    
+			#DOMAIN#,
+			(select nvl( max(USER_GROUP_SORT_NO)+1, 1)  from USER_GROUP3 where P_USER_GROUP_IDX = #P_USER_GROUP_IDX#),  
+			#USER_GROUP_NAME#,     
+			#USER_GROUP_DEFAULT#,  
+			#USER_GROUP_FUNCTION#, 
+			#USER_GROUP_VOLUME#,   
+			#USER_GROUP_MAIL#,     
+			#USER_GROUP_SCHEDULE#, 
+			#USER_GROUP_ADDRESS#,  
+			#USER_GROUP_STRUCTURE#,
+			#USER_GROUP_SMS_QUOTA#  
+		)
+	</insert>   
+	
+	<update id="update_user_group_type_01"
+	        parameterClass="com.nara.jdf.db.entity.UserGroupEntity">
+	     UPDATE USER_GROUP3 SET 
+            P_USER_GROUP_IDX 	= #P_USER_GROUP_IDX#, 			 
+            USER_GROUP_NAME 	= #USER_GROUP_NAME#, 		  
+            USER_GROUP_DEFAULT 	= #USER_GROUP_DEFAULT#, 	
+            USER_GROUP_FUNCTION = #USER_GROUP_FUNCTION#,  
+            USER_GROUP_VOLUME 	= #USER_GROUP_VOLUME#, 	  
+            USER_GROUP_MAIL 	= #USER_GROUP_MAIL#, 		  
+            USER_GROUP_SCHEDULE = #USER_GROUP_SCHEDULE#,  
+            USER_GROUP_ADDRESS	= #USER_GROUP_ADDRESS#,	  
+            USER_GROUP_STRUCTURE= #USER_GROUP_STRUCTURE#, 
+            USER_GROUP_SMS_QUOTA= #USER_GROUP_SMS_QUOTA# 
+         WHERE 
+         	USER_GROUP_IDX= #USER_GROUP_IDX# 
+	</update>
+	
+	<update id="update_user_group_type_02"
+	        parameterClass="java.util.Map">
+	    UPDATE USER_GROUP3
+	    SET	USER_GROUP_DEFAULT = #USER_GROUP_DEFAULT#
+	    WHERE DOMAIN = #DOMAIN#
+	</update>
+	
+	<update id="update_user_group_type_03"
+	        parameterClass="java.util.Map">
+	    UPDATE USER_GROUP3
+	    SET	P_USER_GROUP_IDX = #T_PARENT_IDX#
+	    WHERE DOMAIN = #DOMAIN#
+	    	AND USER_GROUP_IDX= #USER_GROUP_IDX# 
+	</update>
+  	
+  	<procedure id="update_user_group_sort" parameterClass="java.util.HashMap" >
+        { call pkg_kebi_mail.sp_usergroup_sort_setting(#DOMAIN#, #P_USER_GROUP_IDX#) }
+    </procedure>
+
+	<delete id="delete_user_group_type_01"
+  				parameterClass="java.util.HashMap">
+  		DELETE FROM USER_GROUP3
+  		
+  		<dynamic prepend="WHERE">
+  			<isNotNull prepend="AND" property= "USER_GROUP_IDX">
+				USER_GROUP_IDX = #USER_GROUP_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "DOMAIN">
+				DOMAIN = #DOMAIN#
+			</isNotNull>
+  		</dynamic>
+  	</delete>
+  	
+  	<select id="select_user_group_sms_quota_info"
+  	        parameterClass="java.util.HashMap"
+  	        resultClass="java.util.HashMap">
+		SELECT 
+			AA.USER_GROUP_IDX USER_GROUP_IDX1,
+			AA.USER_GROUP_NAME USER_GROUP_NAME1,
+			AA.P_USER_GROUP_IDX P_USER_GROUP_IDX1,
+			AA.USER_GROUP_SMS_QUOTA USER_GROUP_SMS_QUOTA1,
+		
+			BB.USER_GROUP_IDX USER_GROUP_IDX2,	
+			LPAD(' ', 4)||BB.USER_GROUP_NAME USER_GROUP_NAME2,
+			BB.P_USER_GROUP_IDX P_USER_GROUP_IDX2,
+			BB.USER_GROUP_SMS_QUOTA USER_GROUP_SMS_QUOTA2,
+			
+			CC.USER_GROUP_IDX USER_GROUP_IDX3,	
+			LPAD(' ', 8)||CC.USER_GROUP_NAME USER_GROUP_NAME3,
+			CC.P_USER_GROUP_IDX P_USER_GROUP_IDX3,
+			CC.USER_GROUP_SMS_QUOTA USER_GROUP_SMS_QUOTA3,
+				
+			DD.USER_GROUP_IDX USER_GROUP_IDX4,	
+			LPAD(' ', 12)||DD.USER_GROUP_NAME USER_GROUP_NAME4,	
+			DD.P_USER_GROUP_IDX P_USER_GROUP_IDX4,
+			DD.USER_GROUP_SMS_QUOTA USER_GROUP_SMS_QUOTA4
+		FROM USER_GROUP3 AA LEFT JOIN USER_GROUP3 BB ON AA.USER_GROUP_IDX = BB.P_USER_GROUP_IDX
+		LEFT JOIN USER_GROUP3 CC ON BB.USER_GROUP_IDX = CC.P_USER_GROUP_IDX
+		LEFT JOIN USER_GROUP3 DD ON CC.USER_GROUP_IDX = DD.P_USER_GROUP_IDX
+		WHERE AA.P_USER_GROUP_IDX = 0
+		<dynamic prepend="">
+  			<isNotNull prepend="AND" property= "DOMAIN">
+				DOMAIN = #DOMAIN#
+			</isNotNull>
+  		</dynamic>
+		ORDER BY AA.USER_GROUP_NAME, BB.USER_GROUP_NAME, CC.USER_GROUP_NAME, DD.USER_GROUP_NAME
+	</select> 
+	
+	<update id="update_user_group_type_04"
+	        parameterClass="java.util.Map">
+	    UPDATE USER_GROUP3
+	    
+	    <dynamic prepend="">
+			<isEqual prepend="SET " property= "UPDATE_TYPE" compareValue="SMS_QUOTA">
+				USER_GROUP_SMS_QUOTA = #USER_GROUP_SMS_QUOTA#
+			</isEqual>
+		</dynamic>
+
+	    WHERE USER_GROUP_IDX= #USER_GROUP_IDX# 
+	</update>
+	
+	
+	<select id="count_usergroup_p_idx_type_01"
+	        parameterClass="java.util.HashMap"
+	        resultClass="java.lang.Integer">
+		SELECT COUNT(USER_GROUP_IDX)			 
+	 	FROM USER_GROUP3 
+	 	<dynamic prepend="">
+			<isNotNull prepend="WHERE" property= "USER_GROUP_IDX">
+				P_USER_GROUP_IDX = #USER_GROUP_IDX#
+			</isNotNull>
+		</dynamic>
+ 	</select>
+
+    <select id="select_user_group_idx"
+            parameterClass="java.util.HashMap"
+            resultClass="java.lang.Integer">
+        SELECT USER_GROUP_IDX
+        FROM USER_GROUP3
+        WHERE
+            DOMAIN = #DOMAIN#
+            <isNull prepend="AND" property="P_USER_GROUP_IDX">
+            P_USER_GROUP_IDX = 0
+            </isNull>
+            <isNotNull prepend="AND" property="P_USER_GROUP_IDX">
+            P_USER_GROUP_IDX = #P_USER_GROUP_IDX#
+            </isNotNull>
+            <isNotNull prepend="AND" property="USER_GROUP_NAME">
+            USER_GROUP_NAME = #USER_GROUP_NAME#
+            </isNotNull>
+    </select>
+    
+    <select id="select_user_group_idx_list"
+            parameterClass="java.lang.Integer"
+            resultClass="java.lang.Integer">
+        SELECT USER_GROUP_IDX
+        FROM USER_GROUP3
+        WHERE P_USER_GROUP_IDX = #P_USER_GROUP_IDX#
+    </select>
+    
+    <select id="get_user_group_max_sort_no"
+            parameterClass="java.lang.Integer"
+            resultClass="java.lang.Integer">
+        SELECT NVL(MAX(USER_GROUP_SORT_NO),0)
+        FROM USER_GROUP3
+        WHERE P_USER_GROUP_IDX = #P_USER_GROUP_IDX#
+    </select>
+
+    <update id="move_user_group"
+            parameterClass="java.util.HashMap">
+    	UPDATE USER_GROUP3
+    	SET P_USER_GROUP_IDX = #P_USER_GROUP_IDX#,
+    	    USER_GROUP_SORT_NO = #USER_GROUP_SORT_NO#
+        WHERE DOMAIN = #DOMAIN#
+        AND   USER_GROUP_IDX = #USER_GROUP_IDX#
+    </update>
+</sqlMap>

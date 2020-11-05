@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<! DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="MESSENGER">
+
+
+	<resultMap id="Result_Clob_Message_All" class="java.util.HashMap">
+		<result property="noteIndex" column="noteIndex"/>
+		<result property="domainName" column="domainName"/>
+		<result property="userId" column="userId"/>
+		<result property="noteContents" column="noteContents" jdbcType="CLOB" javaType="java.lang.String"/>
+	</resultMap>
+
+
+	<select id="get_Clob_Message_All"  resultMap="Result_Clob_Message_All">
+		select NOTE_IDX, NOTE_FONT, USERS_ID, USERS_NAME from msg_noteinfo
+	</select>
+
+
+
+</sqlMap>

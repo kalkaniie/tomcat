@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="NOTE_RECONF">
+	<insert id="insert_note_reconf_type_01"
+			parameterClass="com.nara.jdf.db.entity.NoteReconfEntity">
+		INSERT INTO NOTE_RECONF
+		(
+			NOTE_RECONF_IDX,
+			USERS_IDX,
+			NOTE_IDX,
+			NOTE_RECONF_TO,
+			NOTE_RECONF_TO_ORI,
+			NOTE_SEND_TIME,
+			NOTE_READ_TIME,
+			NOTE_SEND_IDX,
+			NOTE_RECONF_STATE	
+		)
+		VALUES
+		(
+			SEQ_NOTE_RECONF.NEXTVAL,
+			#USERS_IDX#,
+			#NOTE_IDX#,
+			#NOTE_RECONF_TO#,
+			#NOTE_RECONF_TO_ORI#,
+			CURRENT,
+			NULL,
+			#NOTE_SEND_IDX#,
+			#NOTE_RECONF_STATE#		
+		)
+	</insert>
+	
+	<delete id="delete_note_reconf_type_01"
+			parameterClass="java.util.HashMap">
+		DELETE FROM NOTE_RECONF
+		
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "NOTE_SEND_IDX">
+				NOTE_SEND_IDX = #NOTE_SEND_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "NOTE_RECONF_IDX">
+				NOTE_RECONF_IDX = #NOTE_RECONF_IDX#
+			</isNotNull>
+		</dynamic>			
+	</delete>	
+	
+	<select id="select_note_reconf_type_01"
+			parameterClass="java.util.HashMap"
+			resultClass="java.util.HashMap">	
+		SELECT SKIP $SKIP$ FIRST $USERS_LISTNUM$ 
+			NOTE_RECONF_IDX,
+			USERS_IDX,
+			NOTE_IDX,
+			NOTE_RECONF_TO,
+			NOTE_RECONF_TO_ORI,
+			TO_CHAR(NOTE_SEND_TIME,'%Y-%m-%d %H:%M:%S') NOTE_SEND_TIME,
+			TO_CHAR(NOTE_READ_TIME,'%Y-%m-%d %H:%M:%S') NOTE_READ_TIME,
+			NOTE_RECONF_STATE
+		FROM NOTE_RECONF
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "NOTE_SEND_IDX">
+				NOTE_SEND_IDX = #NOTE_SEND_IDX#
+			</isNotNull>
+		</dynamic>
+		ORDER BY NOTE_RECONF_TO ASC
+	</select>
+	
+	<select id="count_note_reconf_type_01"
+			parameterClass="java.util.HashMap"
+			resultClass="java.lang.Integer">	
+		SELECT 
+			COUNT(NOTE_RECONF_IDX) CNT
+		FROM NOTE_RECONF
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "NOTE_SEND_IDX">
+				NOTE_SEND_IDX = #NOTE_SEND_IDX#
+			</isNotNull>
+		</dynamic>
+	</select>
+</sqlMap>

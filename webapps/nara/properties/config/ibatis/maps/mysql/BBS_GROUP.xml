@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="BBS_GROUP"> 
+  	<select id="select_bbs_group_type_01" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="java.util.HashMap">
+  		 SELECT
+           BBS_GROUP_IDX,
+		   DOMAIN,
+		   BBS_GROUP_NAME,
+		   BBS_GROUP_LEVEL
+         FROM BBS_GROUP 
+         <dynamic prepend="WHERE">
+  			<isNotNull prepend="AND" property= "DOMAIN">
+				DOMAIN = #DOMAIN#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "BBS_GROUP_IDX">
+				BBS_GROUP_IDX = #BBS_GROUP_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "BBS_GROUP_LEVEL">
+				BBS_GROUP_LEVEL = #BBS_GROUP_LEVEL#
+			</isNotNull>
+		</dynamic>
+		
+		ORDER BY BBS_GROUP_LEVEL ASC
+	</select>
+	<select id="select_bbs_group_type_02" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="com.nara.jdf.db.entity.BbsGroupEntity">
+  		 SELECT
+           BBS_GROUP_IDX,
+		   DOMAIN,
+		   BBS_GROUP_NAME,
+		   BBS_GROUP_LEVEL
+         FROM BBS_GROUP 
+         <dynamic prepend="WHERE">
+  			<isNotNull prepend="AND" property= "DOMAIN">
+				DOMAIN = #DOMAIN#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "BBS_GROUP_IDX">
+				BBS_GROUP_IDX = #BBS_GROUP_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "BBS_GROUP_LEVEL">
+				BBS_GROUP_LEVEL = #BBS_GROUP_LEVEL#
+			</isNotNull>
+		</dynamic>
+		
+		ORDER BY BBS_GROUP_LEVEL ASC
+	</select>
+	
+	<select id="get_bbs_group_max_level"
+			parameterClass="java.lang.String"
+			resultClass="java.lang.Integer">
+		SELECT MAX(BBS_GROUP_LEVEL) 
+		FROM BBS_GROUP 
+		WHERE DOMAIN = #DOMAIN#
+	</select>
+	
+	<insert id="insert_bbs_group_type_01"
+			parameterClass="com.nara.jdf.db.entity.BbsGroupEntity">
+		INSERT INTO BBS_GROUP
+		(
+			BBS_GROUP_IDX,
+			DOMAIN,
+			BBS_GROUP_NAME,
+			BBS_GROUP_LEVEL
+		)
+		VALUES
+		(
+			<dynamic prepend="">
+				<isGreaterEqual prepend="" property="BBS_GROUP_IDX" compareValue="1">
+					#BBS_GROUP_IDX#,
+				</isGreaterEqual>
+				<isEqual prepend="" property="BBS_GROUP_IDX" compareValue="0">
+					NEXTVAL('BBS_GROUP'),
+				</isEqual>
+			</dynamic>
+			#DOMAIN#,
+			#BBS_GROUP_NAME#,
+			#BBS_GROUP_LEVEL#
+		)
+	</insert>
+	
+	<delete id="delete_bbs_group_type_01"
+			parameterClass="java.util.HashMap">
+		DELETE FROM BBS_GROUP
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "DOMAIN">
+				DOMAIN = #DOMAIN#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "BBS_GROUP_IDX">
+				BBS_GROUP_IDX = #BBS_GROUP_IDX#
+			</isNotNull>
+		</dynamic>
+	</delete>
+	
+	<update id="update_bbs_group_type_01"
+			parameterClass="java.util.HashMap">
+		UPDATE BBS_GROUP
+		<dynamic prepend="">
+			<isEqual prepend="SET " property= "UPDATE_TYPE" compareValue="BBS_GROUP_NAME">
+				BBS_GROUP_NAME = #BBS_GROUP_NAME#
+			</isEqual>
+			<isEqual prepend="SET " property= "UPDATE_TYPE" compareValue="BBS_GROUP_LEVEL">
+				BBS_GROUP_LEVEL = #BBS_GROUP_LEVEL#
+			</isEqual>
+		</dynamic>
+		
+		WHERE BBS_GROUP_IDX = #BBS_GROUP_IDX#
+	</update>
+	
+	<select id="get_board_tree_list"
+			resultClass="java.util.HashMap">
+		SELECT *
+		FROM (
+		        SELECT 
+		            AA.BBS_GROUP_IDX,
+		            AA.DOMAIN,
+		            AA.BBS_GROUP_NAME,
+		            AA.BBS_GROUP_LEVEL,
+		            BB.BBS_IDX,
+		            BB.BBS_NAME
+		        FROM BBS_GROUP AA LEFT JOIN BBS BB ON AA.BBS_GROUP_IDX=BB.BBS_GROUP_IDX
+		        WHERE AA.DOMAIN = #DOMAIN#
+		        UNION 
+		        SELECT 
+		            AA.BBS_GROUP_IDX,
+		            AA.DOMAIN,
+		            AA.BBS_GROUP_NAME,
+		            AA.BBS_GROUP_LEVEL,
+		            BB.BBS_IDX,
+		            BB.BBS_NAME 
+		        FROM BBS_GROUP AA RIGHT JOIN BBS BB ON AA.BBS_GROUP_IDX=BB.BBS_GROUP_IDX 
+		        WHERE BB.BBS_TYPE = 1 AND AA.BBS_GROUP_IDX IS NULL
+		        	AND AA.DOMAIN = #DOMAIN#
+		    )
+		ORDER BY BBS_GROUP_LEVEL		
+	</select>
+</sqlMap>

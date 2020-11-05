@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="USERS_DELETE">
+	<select id="select_users_delete_type_01"
+	        parameterClass="java.util.HashMap"
+	        resultClass="com.nara.jdf.db.entity.UserDeleteEntity">
+	    SELECT 
+	    	*
+	    FROM 
+	    (
+	    	SELECT
+				USERS_DELETE_IDX,
+				DOMAIN,
+				USERS_DELETE_ID,
+				USERS_DELETE_NAME,
+				USERS_DELETE_PASSWD,
+				USERS_DELETE_JUMIN1,
+				USERS_DELETE_JUMIN2,
+				USERS_DELETE_DEPARTMENT,
+				USERS_DELETE_LICENCENUM,
+				CEIL((ROW_NUMBER() OVER(ORDER BY $orderCol$ $orderType$))/$USERS_LISTNUM$) PAGENUM
+	    	FROM USERS_DELETE
+		    
+			<dynamic prepend="WHERE">
+				<isNotEqual prepend="" property= "strKeyword" compareValue="">
+					<isEqual prepend="AND" property= "strIndex" compareValue="USERS_DELETE_ID">
+						USERS_DELETE_ID LIKE '%'||#strKeyword#||'%'
+					</isEqual>
+					<isEqual prepend="AND" property= "strIndex" compareValue="USERS_DELETE_NAME">
+						USERS_DELETE_NAME LIKE '%'||#strKeyword#||'%'
+					</isEqual>
+					<isEqual prepend="AND" property= "strIndex" compareValue="USERS_DELETE_JUMIN">
+						USERS_DELETE_JUMIN1 ||'-'|| USERS_DELETE_JUMIN2 = #strKeyword#
+					</isEqual>
+					<isEqual prepend="AND" property= "strIndex" compareValue="USERS_DELETE_DEPARTMENT">
+						USERS_DELETE_DEPARTMENT LIKE '%'||#strKeyword#||'%'
+					</isEqual>
+					<isEqual prepend="AND" property= "strIndex" compareValue="USERS_DELETE_LICENCENUM">
+						USERS_DELETE_LICENCENUM LIKE '%'||#strKeyword#||'%'
+					</isEqual>
+				</isNotEqual>
+  			</dynamic>
+  		) AA
+  		
+  		WHERE AA.PAGENUM = #nPage#
+	</select>
+
+	<select id="select_users_delete_type_02"
+	        parameterClass="java.util.HashMap"
+	        resultClass="com.nara.jdf.db.entity.UserDeleteEntity">
+
+	   	SELECT
+			USERS_DELETE_IDX,
+			DOMAIN,
+			USERS_DELETE_ID,
+			USERS_DELETE_NAME,
+			USERS_DELETE_PASSWD,
+			USERS_DELETE_JUMIN1,
+			USERS_DELETE_JUMIN2,
+			USERS_DELETE_DEPARTMENT,
+			USERS_DELETE_LICENCENUM
+	   	FROM USERS_DELETE
+		
+		<dynamic prepend="WHERE">
+  			<isNotNull prepend="AND" property= "USERS_DELETE_IDX">
+				USERS_DELETE_IDX = #USERS_DELETE_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "USERS_DELETE_ID">
+				USERS_DELETE_ID = #USERS_DELETE_ID#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "DOMAIN">
+				DOMAIN = #DOMAIN#
+			</isNotNull>
+  		</dynamic>
+	</select>
+		
+	<select id="count_users_delete_type_01"
+	        parameterClass="java.util.HashMap"
+	        resultClass="java.lang.Integer">
+    	SELECT
+			COUNT(USERS_DELETE_IDX) CNT
+    	FROM USERS_DELETE
+	    
+		<dynamic prepend="WHERE">
+			<isNotEqual prepend="" property= "strKeyword" compareValue="">
+				<isEqual prepend="AND" property= "strIndex" compareValue="USERS_DELETE_ID">
+					USERS_DELETE_ID LIKE '%'||#strKeyword#||'%'
+				</isEqual>
+				<isEqual prepend="AND" property= "strIndex" compareValue="USERS_DELETE_NAME">
+					USERS_DELETE_NAME LIKE '%'||#strKeyword#||'%'
+				</isEqual>
+				<isEqual prepend="AND" property= "strIndex" compareValue="USERS_DELETE_JUMIN">
+					USERS_DELETE_JUMIN1 ||'-'|| USERS_DELETE_JUMIN2 = #strKeyword#
+				</isEqual>
+				<isEqual prepend="AND" property= "strIndex" compareValue="USERS_DELETE_DEPARTMENT">
+					USERS_DELETE_DEPARTMENT LIKE '%'||#strKeyword#||'%'
+				</isEqual>
+				<isEqual prepend="AND" property= "strIndex" compareValue="USERS_DELETE_LICENCENUM">
+					USERS_DELETE_LICENCENUM LIKE '%'||#strKeyword#||'%'
+				</isEqual>
+			</isNotEqual>
+		</dynamic>
+
+	</select>
+	
+	<insert id="insert_users_delete_type_01"
+	        parameterClass="com.nara.jdf.db.entity.UserDeleteEntity">
+		INSERT INTO USERS_DELETE
+		(
+			USERS_DELETE_IDX,
+			DOMAIN,
+			USERS_DELETE_ID,
+			USERS_DELETE_NAME,
+			USERS_DELETE_PASSWD,
+			USERS_DELETE_JUMIN1,
+			USERS_DELETE_JUMIN2,
+			USERS_DELETE_DEPARTMENT,
+			USERS_DELETE_LICENCENUM
+		)
+		VALUES
+		(
+			<dynamic prepend="">
+  				<isGreaterEqual prepend="" property="USERS_DELETE_IDX" compareValue="1">
+					#USERS_DELETE_IDX#,
+				</isGreaterEqual>
+				<isLessEqual prepend="" property="USERS_DELETE_IDX" compareValue="0">
+					SEQ_USERS_DELETE.NEXTVAL,
+				</isLessEqual>
+  			</dynamic>
+
+			#DOMAIN#,
+			#USERS_DELETE_ID#,
+			#USERS_DELETE_NAME#,
+			#USERS_DELETE_PASSWD#,
+			#USERS_DELETE_JUMIN1#,
+			#USERS_DELETE_JUMIN2#,
+			#USERS_DELETE_DEPARTMENT#,
+			#USERS_DELETE_LICENCENUM#
+		)
+	</insert>
+	
+	<delete id="delete_users_delete_type_01"
+	        parameterClass="java.util.HashMap">
+		DELETE FROM USERS_DELETE
+		
+		<dynamic prepend="WHERE">
+  			<isNotNull prepend="AND" property= "USERS_DELETE_IDX">
+				USERS_DELETE_IDX = #USERS_DELETE_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "USERS_DELETE_ID">
+				USERS_DELETE_ID = #USERS_DELETE_ID#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "DOMAIN">
+				DOMAIN = #DOMAIN#
+			</isNotNull>
+  		</dynamic>
+	</delete>
+</sqlMap>

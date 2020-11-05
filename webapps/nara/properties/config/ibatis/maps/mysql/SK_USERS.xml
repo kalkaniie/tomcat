@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="SK_USERS">
+
+	<select id="select_address_type_01" parameterClass="java.util.Map"
+		resultClass="java.util.HashMap">
+		SELECT
+		COUNT(S.SK_USERS_IDX) SK_USERS_COUNT,
+		A.USERS_IDX,
+		A.USERS_NAME,
+		'1' ADDRESS_SORT_NO,
+		A.USERS_ID USERS_EMAIL,
+		S.SK_USERS_IDX, 
+		S.SK_USERS_CENTER_NAME SK_USERS_CENTER_NAME,
+		S.SK_USERS_GROUP_NAME SK_USERS_GROUP_NAME,
+		S.SK_USERS_OFFICE_NAME SK_USERS_OFFICE_NAME
+		FROM USERS A LEFT OUTER JOIN SK_USERS S
+		ON A.USERS_IDX=S.USERS_IDX
+		<dynamic prepend="WHERE">
+			<isNotEqual prepend="AND" open=" SUBSTR($strField$,1,1) IN ("
+				close=")" property="strKey" compareValue="">
+				$strKey$
+			</isNotEqual>
+			<isNotEqual prepend="AND" property="strKeyword"
+				compareValue="">
+				$strIndex$ LIKE CONCAT('%',#strKeyword#,'%')
+			</isNotEqual>
+			<isNotEqual prepend="AND" property="USERS_COMPNAME"
+				compareValue="">
+				A.USERS_COMPNAME = #USERS_COMPNAME#
+			</isNotEqual>			
+		</dynamic>
+		GROUP BY A.USERS_IDX
+		ORDER BY $orderCol$ $orderType$
+		LIMIT $SKIP$, $USERS_LISTNUM$
+	</select>
+
+	<select id="count_address_type_01" parameterClass="java.util.Map"
+		resultClass="java.lang.Integer">
+		SELECT
+		COUNT(USERS_IDX) CNT
+		FROM USERS
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property="USERS_NAME">
+				USERS_NAME = #USERS_NAME#
+			</isNotNull>
+			<isNotNull prepend="AND" property="USERS_ID">
+				USERS_ID = #USERS_ID#
+			</isNotNull>
+			<isNotEqual prepend="AND" property="USERS_COMPNAME"
+				compareValue="">
+				USERS_COMPNAME = #USERS_COMPNAME#
+			</isNotEqual>
+		</dynamic>
+	</select>
+
+	<select id="select_address_type_02"
+        parameterClass="java.util.Map"
+        resultClass="java.util.HashMap">	        
+		SELECT   S.SK_USERS_IDX,
+					 SUBSTR(S.USERS_IDX,1,INSTR(S.USERS_IDX,'@')-1) USERS_EMAIL,
+		     		 S.SK_USERS_CENTER_NAME,
+					 S.SK_USERS_GROUP_NAME,
+		             S.SK_USERS_OFFICE_NAME
+		FROM SK_USERS S LEFT JOIN USERS A
+		ON S.USERS_IDX=A.USERS_IDX
+			<dynamic prepend="WHERE"> 
+				<isNotEqual prepend="AND" property="SK_USERS_GROUP_NAME"
+					compareValue="">			
+					SK_USERS_GROUP_NAME LIKE CONCAT('%',#SK_USERS_GROUP_NAME#,'%')
+			</isNotEqual >
+			<isNotEqual prepend="AND" property="USERS_COMPNAME"
+				compareValue="">
+				A.USERS_COMPNAME = #USERS_COMPNAME#
+			</isNotEqual>						
+		  <isEqual prepend="AND" property="groupSearch"
+					compareValue="Y">			
+					S.USERS_IDX <![CDATA[ <> '' ]]>
+		 </isEqual >						
+		</dynamic>
+		ORDER BY $orderCol$ $orderType$
+		LIMIT $SKIP$, $USERS_LISTNUM$
+	</select>		
+	
+	<select id="count_address_type_02" parameterClass="java.util.Map"
+		resultClass="java.lang.Integer">
+		SELECT
+		COUNT(SK_USERS_IDX) CNT
+		FROM SK_USERS
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property="SK_USERS_GROUP_NAME">
+				SK_USERS_GROUP_NAME = #SK_USERS_GROUP_NAME#
+			</isNotNull>
+		</dynamic>
+	</select>
+
+	<select id="select_users_list" parameterClass="java.util.HashMap"
+		resultClass="com.nara.jdf.db.entity.SkUserEntity">
+		SELECT
+				COUNT(S.SK_USERS_IDX) AS SK_USERS_COUNT,
+				A.USERS_IDX,
+				S.SK_USERS_PERMIT,
+				S.SK_USERS_CENTER_NAME,
+				S.SK_USERS_GROUP_NAME,
+				S.SK_USERS_OFFICE_NAME
+			FROM USERS A LEFT OUTER JOIN SK_USERS S
+			ON A.USERS_IDX=S.USERS_IDX
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property="USERS_IDX">
+				<iterate property="USERS_IDX" prepend="" open="" close="" conjunction="AND">
+				A.USERS_IDX LIKE CONCAT('%',#USERS_IDX[]#,'%')
+				</iterate>
+			</isNotNull>
+			<isNotNull prepend="AND" property="SK_USERS_IDX">
+				<iterate property="SK_USERS_IDX" prepend="" open="" close="" conjunction="AND">
+				S.SK_USERS_IDX LIKE CONCAT('%',#SK_USERS_IDX[]#,'%')
+				</iterate>
+			</isNotNull>
+			<isNotNull prepend="AND" property="SK_USERS_OFFICE_NAME">
+				<iterate property="SK_USERS_OFFICE_NAME" prepend="" open="" close="" conjunction="AND">
+				S.SK_USERS_OFFICE_NAME LIKE CONCAT('%',#SK_USERS_OFFICE_NAME[]#,'%')
+				</iterate>
+			</isNotNull>						
+		</dynamic>
+		GROUP BY A.USERS_IDX
+		ORDER BY $orderCol$ $orderType$
+		LIMIT $SKIP$, $USERS_LISTNUM$
+	</select>
+
+  	<select id="count_user_type_manage_01" 
+ 				parameterClass="java.util.HashMap"
+ 				resultClass="java.lang.Integer">				
+       	        SELECT COUNT(DISTINCT U.USERS_IDX) 
+		        FROM USERS U LEFT OUTER JOIN SK_USERS S
+       			ON U.USERS_IDX = S.USERS_IDX
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				<iterate property="USERS_IDX" prepend="" open="" close="" conjunction="AND" >
+         				U.USERS_IDX LIKE CONCAT('%',#USERS_IDX[]#,'%') 
+    				</iterate>
+			</isNotNull>
+			<isNotNull prepend="AND" property= "SK_USERS_IDX">
+    				<iterate property="SK_USERS_IDX" prepend="" open="" close="" conjunction="AND" >
+         				S.SK_USERS_IDX LIKE CONCAT('%',#SK_USERS_IDX[]#,'%')
+    				</iterate>
+    			</isNotNull>
+    			<isNotNull prepend="AND" property= "SK_USERS_OFFICE_NAME">
+    				<iterate property="SK_USERS_OFFICE_NAME" prepend="" open="" close="" conjunction="AND" >
+          			S.SK_USERS_OFFICE_NAME LIKE CONCAT('%',#SK_USERS_OFFICE_NAME[]#,'%')
+    				</iterate>
+    			</isNotNull>
+		</dynamic>
+  	</select>
+
+	<select id="select_users_list_download" parameterClass="java.util.Map"
+		resultClass="java.util.HashMap">
+		SELECT
+			'1' ADDRESS_SORT_NO,
+			A.USERS_ID,
+			S.SK_USERS_PERMIT,
+			S.SK_USERS_CENTER_NAME,
+			S.SK_USERS_GROUP_NAME,
+			S.SK_USERS_OFFICE_NAME
+		FROM USERS A LEFT OUTER JOIN SK_USERS S
+		ON A.USERS_IDX=S.USERS_IDX
+		ORDER BY $orderCol$ $orderType$
+		LIMIT $SKIP$, $USERS_LISTNUM$
+	</select>
+
+  	<select id="select_sk_users_list" parameterClass="java.util.Map"
+		resultClass="com.nara.jdf.db.entity.SkUserEntity">
+		SELECT 
+			S.SK_USERS_IDX,
+		    S.USERS_IDX,
+		    S.SK_USERS_GUBUN,
+		    S.SK_USERS_CENTER_NAME,
+		    S.SK_USERS_GROUP_NAME,
+		    S.SK_USERS_OFFICE_NAME,
+		    S.SK_USERS_REGDATE,
+		    S.SK_USERS_PERMIT
+		FROM SK_USERS S LEFT OUTER JOIN  USERS AA
+		ON S.USERS_IDX=AA.USERS_IDX
+		<dynamic prepend="WHERE">
+			<isNotEqual prepend="AND" property="strKeyword"
+				compareValue="">
+				<isNotEqual property="strIndex"
+				 compareValue="USERS_IDX">
+					$strIndex$ LIKE CONCAT('%',#strKeyword#,'%')
+				</isNotEqual>
+				<isEqual  property="strIndex"
+				 compareValue="USERS_IDX">
+					S.USERS_IDX LIKE CONCAT('%',#strKeyword#,'%')
+				</isEqual>
+			</isNotEqual>
+			<isNotEqual prepend="AND" property="SK_USERS_CENTER_NAME"
+				compareValue="">
+				SK_USERS_CENTER_NAME LIKE CONCAT('%',#SK_USERS_CENTER_NAME#,'%')
+			</isNotEqual>
+			<isNotEqual prepend="AND" property="SK_USERS_GROUP_NAME"
+				compareValue="">
+				SK_USERS_GROUP_NAME LIKE CONCAT('%',#SK_USERS_GROUP_NAME#,'%')
+			</isNotEqual>
+			<isNotEqual prepend="AND" property="SK_USERS_OFFICE_NAME"
+				compareValue="">
+				SK_USERS_OFFICE_NAME LIKE CONCAT('%',#SK_USERS_OFFICE_NAME#,'%')
+			</isNotEqual>						
+			<isNotNull prepend="AND" property="USERS_COMPNAME">
+				SK_USERS_GUBUN = #USERS_COMPNAME#
+			</isNotNull>							
+		</dynamic>
+		ORDER BY $orderCol$ $orderType$
+		LIMIT $SKIP$, $USERS_LISTNUM$
+	</select>
+  	
+  	  <select id="count_users_list_sk_data" 
+ 				parameterClass="java.util.HashMap"
+ 				resultClass="java.lang.Integer">				
+        SELECT 
+	        COUNT(S.SK_USERS_IDX) AS SK_USERS_COUNT
+        FROM SK_USERS S LEFT OUTER JOIN  USERS AA
+		ON S.USERS_IDX=AA.USERS_IDX
+		<dynamic prepend="WHERE">
+			<isNotEqual prepend="AND" property="strKeyword"
+				compareValue="">
+				<isNotEqual property="strIndex"
+				 compareValue="USERS_IDX">
+					$strIndex$ LIKE CONCAT('%',#strKeyword#,'%')
+				</isNotEqual>
+				<isEqual  property="strIndex"
+				 compareValue="USERS_IDX">
+					S.USERS_IDX LIKE CONCAT('%',#strKeyword#,'%')
+				</isEqual>
+			</isNotEqual>
+			<isNotEqual prepend="AND" property="SK_USERS_CENTER_NAME"
+				compareValue="">
+				SK_USERS_CENTER_NAME LIKE CONCAT('%',#SK_USERS_CENTER_NAME#,'%')
+			</isNotEqual>
+			<isNotEqual prepend="AND" property="SK_USERS_GROUP_NAME"
+				compareValue="">
+				SK_USERS_GROUP_NAME LIKE CONCAT('%',#SK_USERS_GROUP_NAME#,'%')
+			</isNotEqual>
+			<isNotEqual prepend="AND" property="SK_USERS_OFFICE_NAME"
+				compareValue="">
+				SK_USERS_OFFICE_NAME LIKE CONCAT('%',#SK_USERS_OFFICE_NAME#,'%')
+			</isNotEqual>		
+			<isNotNull prepend="AND" property="USERS_COMPNAME">
+				S.SK_USERS_GUBUN = #USERS_COMPNAME#
+			</isNotNull>							
+		</dynamic>
+  	</select>
+  	
+  	<update id="update_sk_user_map"
+  		parameterClass="java.util.HashMap">
+  	  	UPDATE 
+  	  		SK_USERS 
+  	  	SET   	  	
+  	  		USERS_IDX = #USERS_IDX#
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "SK_USERS_IDX">
+				<iterate property="SK_USERS_IDX" 
+					prepend="" open="" close="" conjunction="OR" >
+         				SK_USERS_IDX = #SK_USERS_IDX[]# 
+    				</iterate>
+			</isNotNull>  		
+  	  	</dynamic>
+  	</update>
+  	
+  	<update id="update_sk_user_permit"
+  		parameterClass="java.util.HashMap">
+  		UPDATE
+  		SK_USERS
+  		SET 
+  		SK_USERS_PERMIT = #SK_USERS_PERMIT#
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "SK_USERS_IDX">
+				SK_USERS_IDX = #SK_USERS_IDX#
+			</isNotNull>  		
+		</dynamic>
+  	</update>
+
+
+  	<select id="select_sk_personal_users_list" parameterClass="java.util.Map"
+		resultClass="com.nara.jdf.db.entity.PersonalSkUserEntity">
+		SELECT 
+		 PERSONAL_IDX,
+		 PERSONAL_UKEYID,
+		 PERSONAL_USERS_IDX,
+		 PERSONAL_ORG_ID,
+		 PERSONAL_GUBUN,
+		 PERSONAL_REG_DATE
+		FROM SK_USERS_PERSONAL
+		<dynamic prepend="WHERE">
+		<isNotNull prepend="" property= "strKeyword">
+			<isEqual prepend="AND" property= "strIndex" compareValue="PERSONAL_UKEYID">
+         		PERSONAL_UKEYID LIKE CONCAT('%',#strKeyword#,'%')
+         	</isEqual>
+         	<isEqual prepend="AND" property= "strIndex" compareValue="PERSONAL_USERS_IDX">
+         		PERSONAL_USERS_IDX LIKE CONCAT('%',#strKeyword#,'%')
+         	</isEqual>
+         	<isEqual prepend="AND" property= "strIndex" compareValue="PERSONAL_ORG_ID">
+         		PERSONAL_ORG_ID LIKE CONCAT('%',#strKeyword#,'%')
+         	</isEqual>
+		</isNotNull>		
+		</dynamic>
+		ORDER BY $orderCol$ $orderType$
+		LIMIT $SKIP$, $USERS_LISTNUM$
+	</select>
+  	
+  	  <select id="select_sk_personal_users_list_count" 
+ 				parameterClass="java.util.HashMap"
+ 				resultClass="java.lang.Integer">				
+        SELECT 
+	        COUNT(PERSONAL_IDX) AS SK_USERS_PERSONAL_COUNT
+        FROM SK_USERS_PERSONAL
+		<dynamic prepend="WHERE">
+		<isNotNull prepend="" property= "strKeyword">
+			<isEqual prepend="AND" property= "strIndex" compareValue="PERSONAL_UKEYID">
+         		PERSONAL_UKEYID LIKE CONCAT('%',#strKeyword#,'%')
+         	</isEqual>
+         	<isEqual prepend="AND" property= "strIndex" compareValue="PERSONAL_USERS_IDX">
+         		PERSONAL_USERS_IDX LIKE CONCAT('%',#strKeyword#,'%')
+         	</isEqual>
+         	<isEqual prepend="AND" property= "strIndex" compareValue="PERSONAL_ORG_ID">
+         		PERSONAL_ORG_ID LIKE CONCAT('%',#strKeyword#,'%')
+         	</isEqual>
+		</isNotNull>
+		</dynamic>
+  	</select>  	
+  	
+</sqlMap>
+
+
+

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="SHARE_GROUP">
+	<insert id="insert_share_group_type_01"
+  				parameterClass="com.nara.jdf.db.entity.ShareGroupEntity">
+		INSERT INTO SHARE_GROUP 
+		(
+			SHARE_GROUP_IDX,
+			DOMAIN,
+			SHARE_GROUP_DEF,
+			SHARE_GROUP_REF,
+			SHARE_GROUP_NAME,
+			SHARE_GROUP_DEFAULT,
+			SHARE_GROUP_HOMEDIR,
+			SHARE_GROUP_QUOTA,
+			SHARE_GROUP_STATUS
+		)
+		VALUES
+		(
+			SEQ_SHARE_GROUP.NEXTVAL,
+			#DOMAIN#,
+			#SHARE_GROUP_DEF#,
+			#SHARE_GROUP_REF#,
+			#SHARE_GROUP_NAME#,
+			#SHARE_GROUP_DEFAULT#,
+			#SHARE_GROUP_HOMEDIR#,
+			#SHARE_GROUP_QUOTA#,
+			#SHARE_GROUP_STATUS#
+		)
+	</insert>
+	
+	<select id="select_share_group_type_01"
+	        parameterClass="java.util.HashMap"
+	        resultClass="com.nara.jdf.db.entity.ShareGroupEntity">
+		SELECT
+			SHARE_GROUP_IDX,
+			DOMAIN,
+			SHARE_GROUP_DEF,
+			SHARE_GROUP_REF,
+			SHARE_GROUP_NAME,
+			SHARE_GROUP_DEFAULT,
+			SHARE_GROUP_HOMEDIR,
+			SHARE_GROUP_QUOTA,
+			SHARE_GROUP_STATUS
+		FROM SHARE_GROUP
+		WHERE SHARE_GROUP_IDX = #SHARE_GROUP_IDX#
+		AND   DOMAIN = #DOMAIN#
+	</select>
+	
+	<select id="select_share_group_type_02"
+	        parameterClass="java.util.HashMap"
+	        resultClass="com.nara.jdf.db.entity.ShareGroupEntity">								
+    	SELECT SKIP $SKIP$ FIRST $USERS_LISTNUM$
+    		AA.SHARE_GROUP_IDX, 		
+    		AA.DOMAIN, 							
+    		AA.SHARE_GROUP_DEF, 		
+    		AA.SHARE_GROUP_REF, 		
+    		AA.SHARE_GROUP_NAME, 		
+    		AA.SHARE_GROUP_DEFAULT, 
+   			AA.SHARE_GROUP_HOMEDIR, 
+			AA.SHARE_GROUP_QUOTA, 	
+			AA.SHARE_GROUP_STATUS, 	
+			NVL(SUM(BB.FILE_SIZE),0) AS FILE_SIZE
+     	FROM SHARE_GROUP AA , ANACONDA_FILE BB 
+		WHERE  AA.SHARE_GROUP_NAME = SUBSTR(BB.USERS_IDX(+),11)  
+		<dynamic prepend="AND">
+			<isNotNull prepend="AND" property="DOMAIN">
+				AA.DOMAIN = #DOMAIN#
+			</isNotNull>
+		</dynamic>
+		GROUP BY  AA.SHARE_GROUP_IDX, AA.DOMAIN,AA.SHARE_GROUP_DEF,
+		          AA.SHARE_GROUP_REF, AA.SHARE_GROUP_NAME,AA.SHARE_GROUP_DEFAULT,
+		          AA.SHARE_GROUP_HOMEDIR, AA.SHARE_GROUP_QUOTA,AA.SHARE_GROUP_STATUS
+    	ORDER BY SHARE_GROUP_IDX 
+	</select>
+	
+	<delete id="delete_share_group_type_01"
+	        parameterClass="java.util.HashMap">
+		DELETE FROM SHARE_GROUP
+		WHERE SHARE_GROUP_IDX = #SHARE_GROUP_IDX#
+		AND   DOMAIN = #DOMAIN#
+	</delete>
+	
+	<update id="update_share_group_type_01"
+	        parameterClass="com.nara.jdf.db.entity.ShareGroupEntity">
+	    	UPDATE SHARE_GROUP 
+	    	SET 
+            	SHARE_GROUP_DEF     =  #SHARE_GROUP_DEF#, 
+            	SHARE_GROUP_DEFAULT =  #SHARE_GROUP_DEFAULT#,  
+            	SHARE_GROUP_QUOTA   =  #SHARE_GROUP_QUOTA#, 
+            	SHARE_GROUP_STATUS  =  #SHARE_GROUP_STATUS#  
+            WHERE SHARE_GROUP_IDX   =  #SHARE_GROUP_IDX# 
+	</update>
+	
+	
+            
+</sqlMap>

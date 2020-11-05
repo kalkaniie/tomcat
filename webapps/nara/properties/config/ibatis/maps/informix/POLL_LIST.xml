@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="POLL_LIST">
+	<delete id="delete_poll_list_type_01"
+	        parameterClass="java.util.HashMap">
+		DELETE FROM POLL_LIST
+		
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "POLL_IDX">
+				POLL_IDX = #POLL_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property="DOMAIN">
+				SUBSTR(USERS_IDX, INSTR(USERS_IDX, '@')) = '@$DOMAIN$'
+			</isNotNull>
+		</dynamic>
+	</delete>
+	
+	<select id="select_poll_list_count" 
+  				parameterClass="java.util.HashMap" 
+  				resultClass="java.lang.Integer">
+		SELECT	count(USERS_IDX)
+	 	FROM POLL_LIST
+	    WHERE POLL_IDX = #POLL_IDX#  
+	    <dynamic prepend="">
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+		</dynamic>
+	</select>
+	
+	<insert id="insert_poll_list_type_01"
+            parameterClass="java.util.HashMap">
+       	INSERT INTO POLL_LIST( 
+       		POLL_IDX,
+            USERS_IDX
+        ) VALUES (
+        	#POLL_IDX#,
+            #USERS_IDX#
+		)
+    </insert>
+</sqlMap>

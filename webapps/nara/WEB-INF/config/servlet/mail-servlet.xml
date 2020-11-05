@@ -1,0 +1,715 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans>
+	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="basename" value="messages"/>
+	</bean>
+	<bean id="jspViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+	  <property name="viewClass" value="org.springframework.web.servlet.view.tiles.TilesJstlView"/>
+	</bean>
+	<!-- ========================= DEFINITIONS OF PUBLIC CONTROLLERS ========================= -->	
+	<bean id="defaultHandlerMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping"/>
+	
+	<bean id="commonPublicController" name="/common.public.do" class="com.nara.springframework.controller.pub.CommonPublicController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property>
+	</bean>
+	<bean id="domainPublicController" name="/domain.public.do" class="com.nara.springframework.controller.pub.DomainPublicController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property>
+	</bean>
+	<bean id="userPublicController" name="/user.public.do" class="com.nara.springframework.controller.pub.UserPublicController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property>
+	</bean>
+	<bean id="anacondaPublicController" name="/anaconda.public.do" class="com.nara.springframework.controller.pub.AnacondaPublicController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean> 
+	<bean id="zipCodePublicController" name="/zipcode.public.do" class="com.nara.springframework.controller.pub.ZipCodePublicController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	<bean id="fileUploadAxPublicController" name="/fileuploadax.public.do" class="com.nara.springframework.controller.pub.FileUploadAxPublicController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/>
+		</property> 
+	</bean>
+	<bean id="webMailReConfPublicController" name="/webmailreconf.public.do" class="com.nara.springframework.controller.pub.WebMailReConfPublicController"> 
+		<property name="methodNameResolver"> 
+			<ref local="webMailReConfResolver"/>
+		</property> 
+	</bean>
+	<bean id="messagePublicController" name="/message.public.do" class="com.nara.springframework.controller.pub.MessagePublicController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/>
+		</property> 
+	</bean>
+
+	<bean id="NoticePublicController" name="/notice.public.do" class="com.nara.springframework.controller.pub.NoticePublicController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/>
+		</property> 
+	</bean>
+	
+	<bean id="ssoPublicController" name="/sso.public.do" class="com.nara.springframework.controller.pub.SsoPublicController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/>
+		</property> 
+	</bean>
+	<bean id="domainAuthController" name="/domain.auth.do" class="com.nara.springframework.controller.auth.DomainAuthController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean> 
+	<bean id="userAuthController" name="/user.auth.do" class="com.nara.springframework.controller.auth.UserAuthController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean> 
+	 
+	<bean id="addressAuthController" name="/address.auth.do" class="com.nara.springframework.controller.auth.AddressAuthController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean> 
+	
+	<bean id="addressUploadAuthController" name="/addressupload.auth.do" class="com.nara.springframework.controller.auth.AddressUploadAuthController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean> 
+	
+	<bean id="webMailAuthController" name="/webmail.auth.do" class="com.nara.springframework.controller.auth.WebMailAuthController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean> 
+	
+	<bean id="webMailReConfirmAuthController" name="/webmailReConfirm.auth.do" class="com.nara.springframework.controller.auth.WebMailReConfirmAuthController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean> 
+	
+	<bean id="mailBoxAuthController" name="/mbox.auth.do" class="com.nara.springframework.controller.auth.MailBoxAuthController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	<bean id="shareDiskAuthController" name="/sharedisk.auth.do" class="com.nara.springframework.controller.auth.ShareDiskAuthController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	<bean id="letterAuthController" name="/letter.auth.do" class="com.nara.springframework.controller.auth.LetterAuthController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	<bean id="formLetterAuthController" name="/formletter.auth.do" class="com.nara.springframework.controller.auth.FormLetterAuthController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	<bean id="pop3AuthController" name="/pop3.auth.do" class="com.nara.springframework.controller.auth.Pop3AuthController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	<bean id="scheduleAuthController" name="/schedule.auth.do" class="com.nara.springframework.controller.auth.ScheduleAuthController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	
+	<bean id="memoAuthController" name="/memo.auth.do" class="com.nara.springframework.controller.auth.MemoAuthController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	
+	<bean id="userEnvAuthController" name="/userenv.auth.do" class="com.nara.springframework.controller.auth.UserEnvAuthController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	
+	<bean id="autoDivisionAuthController" name="/autodivision.auth.do" class="com.nara.springframework.controller.auth.AutoDivisionAuthController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	
+	<bean id="injureAuthController" name="/injure.auth.do" class="com.nara.springframework.controller.auth.InjureAuthController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	
+	<bean id="mailTagAuthController" name="/mailtag.auth.do" class="com.nara.springframework.controller.auth.MailTagAuthController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	
+	<bean id="filterAuthController" name="/filter.auth.do" class="com.nara.springframework.controller.auth.FilterAuthController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	
+	<bean id="boardAuthController" name="/board.auth.do" class="com.nara.springframework.controller.auth.BoardAuthController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	<bean id="weatherAuthController" name="/weather.auth.do" class="com.nara.springframework.controller.auth.WeatherAuthController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean> 
+	<bean id="bbsAuthController" name="/bbs.auth.do" class="com.nara.springframework.controller.auth.BbsAuthController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	<bean id="bbsGroupAuthController" name="/bbsgroup.auth.do" class="com.nara.springframework.controller.auth.BbsGroupAuthController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	
+	<bean id="userGroupAuthController" name="/usergroup.auth.do" class="com.nara.springframework.controller.auth.UserGroupAuthController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	<bean id="userGroupListAuthController" name="/usergrouplist.auth.do" class="com.nara.springframework.controller.auth.UserGroupListAuthController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	
+	<bean id="intranetAuthController" name="/intranet.auth.do" class="com.nara.springframework.controller.auth.IntranetAuthController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	<bean id="bbsIntranetAuthController" name="/bbsintranet.auth.do" class="com.nara.springframework.controller.auth.BbsIntranetAuthController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	
+	<bean id="smsAuthController" name="/sms.auth.do" class="com.nara.springframework.controller.auth.SmsAuthController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	<bean id="publicAddressAuthController" name="/publicaddress.auth.do" class="com.nara.springframework.controller.auth.PublicAddressAuthController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	<bean id="publicGroupAuthController" name="/publicgroup.auth.do" class="com.nara.springframework.controller.auth.PublicGroupAuthController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	
+	<bean id="utilFileAttacheController" name="/utilfile.auth.do" class="com.nara.springframework.controller.auth.UtilFileAttacheController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	
+	<bean id="webFileManagerController" name="/webfile.auth.do" class="com.nara.springframework.controller.auth.WebFileManagerController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	<bean id="noteAuthController" name="/note.auth.do" class="com.nara.springframework.controller.auth.NoteAuthController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	<bean id="ecardAuthController" name="/ecard.auth.do" class="com.nara.springframework.controller.auth.ECardAuthController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	<bean id="pollAuthController" name="/poll.auth.do" class="com.nara.springframework.controller.auth.PollAuthController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	<bean id="signstmtAuthController" name="/signstmt.auth.do" class="com.nara.springframework.controller.auth.SignstmtAuthController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	<bean id="userGroupAuth2Controller" name="/usergroup2.auth.do" class="com.nara.springframework.controller.auth.UserGroupAuth2Controller"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	<bean id="userGroupListAuth2Controller" name="/usergrouplist2.auth.do" class="com.nara.springframework.controller.auth.UserGroupListAuth2Controller"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	<bean id="userGroupAuth3Controller" name="/usergroup3.auth.do" class="com.nara.springframework.controller.auth.UserGroupAuth3Controller"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	<bean id="userGroupListAuth3Controller" name="/usergrouplist3.auth.do" class="com.nara.springframework.controller.auth.UserGroupListAuth3Controller"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	
+	<bean id="sessionAuthController" name="/session.auth.do" class="com.nara.springframework.controller.auth.SessionAuthController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	<bean id="jtnefAuthController" name="/jtnef.auth.do" class="com.nara.springframework.controller.auth.JtnefAuthController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	<bean id="VirusCheckAuthController" name="/viruscheck.auth.do" class="com.nara.springframework.controller.auth.VirusCheckAuthController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	<bean id="KpnsAttachePublicController" name="/kpnsattache.pub.do" class="com.nara.springframework.controller.pub.KpnsAttachePublicController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	<bean id="KpnsWritePublicController" name="/kpnswrite.pub.do" class="com.nara.springframework.controller.pub.KpnsWritePublicController">
+    	<property name="methodNameResolver">
+        	<ref local="methodNameResolver"/>
+        </property>
+    </bean>
+	
+	<bean id="userAdminController" name="/user.admin.do" class="com.nara.springframework.controller.admin.UserAdminController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	<bean id="userGroupAdminController" name="/usergroup.admin.do" class="com.nara.springframework.controller.admin.UserGroupAdminController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	<bean id="userGroupListAdminController" name="/usergrouplist.admin.do" class="com.nara.springframework.controller.admin.UserGroupListAdminController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	<bean id="confAdminController" name="/config.admin.do" class="com.nara.springframework.controller.admin.ConfAdminController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	<bean id="skinBaseAdminController" name="/skinbase.admin.do" class="com.nara.springframework.controller.admin.SkinBaseAdminController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	<bean id="formLetterAdminController" name="/formletter.admin.do" class="com.nara.springframework.controller.admin.FormLetterAdminController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	<bean id="shaerGroupAdminController" name="/sharegroup.admin.do" class="com.nara.springframework.controller.admin.ShaerGroupAdminController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	<bean id="shaerGroupListAdminController" name="/sharegroupList.admin.do" class="com.nara.springframework.controller.admin.ShaerGroupListAdminController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	<bean id="organizeAdminController" name="/organize.admin.do" class="com.nara.springframework.controller.admin.OrganizeAdminController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	<bean id="authorityAdminController" name="/authority.admin.do" class="com.nara.springframework.controller.admin.AuthorityAdminController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	<bean id="pollAdminController" name="/poll.admin.do" class="com.nara.springframework.controller.admin.PollAdminController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	<bean id="bbsAdminController" name="/bbs.admin.do" class="com.nara.springframework.controller.admin.BbsAdminController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	<bean id="bbsGroupAdminController" name="/bbsgroup.admin.do" class="com.nara.springframework.controller.admin.BbsGroupAdminController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	
+	<bean id="publicGroupAdminController" name="/publicgroup.admin.do" class="com.nara.springframework.controller.admin.PublicGroupAdminController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	<bean id="publicAddressAdminController" name="/publicaddress.admin.do" class="com.nara.springframework.controller.admin.PublicAddressAdminController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	<bean id="publicAddressUploadAdminController" name="/publicaddressupload.admin.do" class="com.nara.springframework.controller.admin.PublicAddressUploadAdminController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	
+	<bean id="popupAdminController" name="/popup.admin.do" class="com.nara.springframework.controller.admin.PopupAdminController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	
+	<bean id="noteAdminController" name="/note.admin.do" class="com.nara.springframework.controller.admin.NoteAdminController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	
+	<bean id="userGroupAdmin2Controller" name="/usergroup2.admin.do" class="com.nara.springframework.controller.admin.UserGroupAdmin2Controller"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	
+	<bean id="userGroupListAdmin2Controller" name="/usergrouplist2.admin.do" class="com.nara.springframework.controller.admin.UserGroupListAdmin2Controller"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	<bean id="userGroupAdmin3Controller" name="/usergroup3.admin.do" class="com.nara.springframework.controller.admin.UserGroupAdmin3Controller"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	
+	<bean id="userGroupListAdmin3Controller" name="/usergrouplist3.admin.do" class="com.nara.springframework.controller.admin.UserGroupListAdmin3Controller"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	<bean id="certifyAdminController" name="/certify.admin.do" class="com.nara.springframework.controller.admin.CertifyAdminController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	<bean id="domainSystemController" name="/domain.system.do" class="com.nara.springframework.controller.system.DomainSystemController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	<bean id="userSystemController" name="/user.system.do" class="com.nara.springframework.controller.system.UserSystemController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	<bean id="smsSystemController" name="/sms.system.do" class="com.nara.springframework.controller.system.SmsSystemController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	
+	<bean id="agreementSystemController" name="/agreement.system.do" class="com.nara.springframework.controller.system.AgreementSystemController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	<bean id="mailreportSystemController" name="/mailreport.system.do" class="com.nara.springframework.controller.system.MailReportSystemController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	
+	<bean id="iPBlockingSystemController" name="/ipblocking.system.do" class="com.nara.springframework.controller.system.IPBlockingSystemController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	<bean id="mailLogTraceSystemController" name="/maillogtrace.system.do" class="com.nara.springframework.controller.system.MailLogTraceSystemController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	<bean id="holidaySystemController" name="/holiday.system.do" class="com.nara.springframework.controller.system.HolidaySystemController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	<bean id="ecardSystemController" name="/ecard.system.do" class="com.nara.springframework.controller.system.ECardSystemController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	<bean id="letterSystemController" name="/letter.system.do" class="com.nara.springframework.controller.system.LetterSystemController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	
+	<bean id="mailLogSystemController" name="/maillog.system.do" class="com.nara.springframework.controller.system.MailLogSystemController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	<bean id="serverinfoSystemController" name="/serverinfo.system.do" class="com.nara.springframework.controller.system.ServerInfoSystemController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	<bean id="grantIpSystemController" name="/grantip.system.do" class="com.nara.springframework.controller.system.GrantIpSystemController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	<bean id="loginLogSystemController" name="/loginlog.system.do" class="com.nara.springframework.controller.system.LoginLogSystemController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>
+	<bean id="archiveSystemController" name="/archive.system.do" class="com.nara.springframework.controller.system.ArchiveSystemController"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>	
+	<bean id="methodNameResolver" class="org.springframework.web.servlet.mvc.multiaction.ParameterMethodNameResolver"> 
+		<property name="paramName">  
+			<value>method</value> 
+		</property> 
+		<property name="defaultMethodName">  
+			<value>login_form</value> 
+		</property> 
+	</bean>
+	<bean id="webMailReConfResolver" class="org.springframework.web.servlet.mvc.multiaction.ParameterMethodNameResolver"> 
+		<property name="paramName">  
+			<value>method</value> 
+		</property> 
+		<property name="defaultMethodName">  
+			<value>confirm</value> 
+		</property> 
+	</bean>  
+	<bean id="cmdNameResolver" class="org.springframework.web.servlet.mvc.multiaction.ParameterMethodNameResolver"> 
+		<property name="paramName">  
+			<value>cmd</value> 
+		</property> 
+		<property name="defaultMethodName">  
+			<value>webmailAttacheFile</value> 
+		</property> 
+	</bean> 
+	<bean id="webHardServ" name="/webhard.auth.do" class="com.nara.springframework.webhard.WebHardServ"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>	
+	<bean id="AdminWebHardServ" name="/webhard.admin.do" class="com.nara.springframework.webhard.AdminWebHardServ"> 
+		<property name="methodNameResolver"> 
+			<ref local="methodNameResolver"/> 
+		</property> 
+	</bean>	
+	<bean id="BigMailFileController" name="/bigmail.file.do" class="com.nara.springframework.bigmail.BigMailFileController">
+		<property name="methodNameResolver"> 
+			<ref local="cmdParameterMethodNameResolver"/> 
+		</property>
+	</bean>
+	<bean id="BigMailActionController" name="/bigmail.action.do" class="com.nara.springframework.bigmail.BigMailActionController">
+		<property name="methodNameResolver"> 
+			<ref local="cmdParameterMethodNameResolver"/> 
+		</property>
+	</bean>
+	<bean id="AttachmentFileController" name="/attachment.file.do" class="com.kebi.attachment.FileController">
+		<property name="methodNameResolver"> 
+			<ref local="cmdParameterMethodNameResolver"/> 
+		</property>
+	</bean>
+	<bean id="cmdParameterMethodNameResolver" class="org.springframework.web.servlet.mvc.multiaction.ParameterMethodNameResolver"> 
+		<property name="paramName">  
+			<value>cmd</value> 
+		</property> 
+		<property name="defaultMethodName">  
+			<value>webmailAttacheFile</value> 
+		</property> 
+	</bean>
+	
+	<bean id="secureAuthHandlerMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="interceptors">
+            <list>
+                <ref bean="authBaseInterceptor"/>
+            </list>
+        </property>
+        <property name="urlMap">
+			<map>
+				<entry key="domain.auth.do" value-ref="domainAuthController"/>
+				<entry key="user.auth.do" value-ref="userAuthController"/>
+				<entry key="address.auth.do" value-ref="addressAuthController"/>
+				<entry key="addressupload.auth.do" value-ref="addressUploadAuthController"/>
+				<entry key="webmail.auth.do" value-ref="webMailAuthController"/>
+				<entry key="webmailReConfirm.auth.do" value-ref="webMailReConfirmAuthController"/>
+				<entry key="mbox.auth.do" value-ref="mailBoxAuthController"/>
+				<entry key="sharedisk.auth.do" value-ref="shareDiskAuthController"/>
+				<entry key="letter.auth.do" value-ref="letterAuthController"/>
+				<entry key="formletter.auth.do" value-ref="formLetterAuthController"/>
+				<entry key="pop3.auth.do" value-ref="pop3AuthController"/>
+				<entry key="schedule.auth.do" value-ref="scheduleAuthController"/>
+				<entry key="memo.auth.do" value-ref="memoAuthController"/>
+				<entry key="userenv.auth.do" value-ref="userEnvAuthController"/>
+				<entry key="autodivision.auth.do" value-ref="autoDivisionAuthController"/>
+				<entry key="injure.auth.do" value-ref="injureAuthController"/>
+				<entry key="mailtag.auth.do" value-ref="mailTagAuthController"/>
+				<entry key="filter.auth.do" value-ref="filterAuthController"/>
+				<entry key="board.auth.do" value-ref="boardAuthController"/>
+				<entry key="weather.auth.do" value-ref="weatherAuthController"/>
+				<entry key="bbs.auth.do" value-ref="bbsAuthController"/>
+				<entry key="bbsgroup.auth.do" value-ref="bbsGroupAuthController"/>
+				<entry key="usergroup.auth.do" value-ref="userGroupAuthController"/>
+				<entry key="usergrouplist.auth.do" value-ref="userGroupListAuthController"/>
+				<entry key="intranet.auth.do" value-ref="intranetAuthController"/>
+				<entry key="bbsintranet.auth.do" value-ref="bbsIntranetAuthController"/>
+				<entry key="sms.auth.do" value-ref="smsAuthController"/>
+				<entry key="publicaddress.auth.do" value-ref="publicAddressAuthController"/>
+				<entry key="publicgroup.auth.do" value-ref="publicGroupAuthController"/>
+				<entry key="utilfile.auth.do" value-ref="utilFileAttacheController"/>
+				<entry key="webfile.auth.do" value-ref="webFileManagerController"/>
+				<entry key="note.auth.do" value-ref="noteAuthController"/>
+				<entry key="ecard.auth.do" value-ref="ecardAuthController"/>
+				<entry key="poll.auth.do" value-ref="pollAuthController"/>
+				<entry key="usergroup2.auth.do" value-ref="userGroupAuth2Controller"/>
+				<entry key="usergrouplist2.auth.do" value-ref="userGroupListAuth2Controller"/>
+				<entry key="usergroup3.auth.do" value-ref="userGroupAuth3Controller"/>
+				<entry key="usergrouplist3.auth.do" value-ref="userGroupListAuth3Controller"/>
+				<entry key="signstmt.auth.do" value-ref="signstmtAuthController"/>
+				<entry key="webhard.auth.do" value-ref="webHardServ"/>
+				<entry key="webhard.admin.do" value-ref="AdminWebHardServ"/>
+				<entry key="session.auth.do" value-ref="sessionAuthController"/>
+				<entry key="jtnef.auth.do" value-ref="jtnefAuthController"/>
+				<entry key="viruscheck.auth.do" value-ref="VirusCheckAuthController"/>				
+			</map>
+		</property>
+    </bean>
+	<bean id="securePublicHandlerMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="interceptors">
+            <list>
+            	<ref bean="publicBaseInterceptor"/>
+            </list>
+        </property>
+        <property name="urlMap">
+			<map>
+			    <entry key="common.public.do" value-ref="commonPublicController"/>
+				<entry key="domain.public.do" value-ref="domainPublicController"/>
+				<entry key="user.public.do" value-ref="userPublicController"/> 
+				<entry key="anaconda.public.do" value-ref="anacondaPublicController"/>
+				<entry key="zipcode.public.do" value-ref="zipCodePublicController"/>
+				<entry key="fileuploadax.public.do" value-ref="fileUploadAxPublicController"/>
+				<entry key="message.public.do" value-ref="messagePublicController"/>
+				<entry key="notice.public.do" value-ref="NoticePublicController"/>
+				<entry key="sso.public.do" value-ref="ssoPublicController"/>
+				<entry key="webmailreconf.public.do" value-ref="webMailReConfPublicController"/>
+				<entry key="bigmail.file.do" value-ref="BigMailFileController"/>
+				<entry key="bigmail.action.do" value-ref="BigMailActionController"/>
+				<entry key="kpnsattache.pub.do" value-ref="KpnsAttachePublicController"/>
+				<entry key="kpnswrite.pub.do" value-ref="KpnsWritePublicController"/>
+				<entry key="attachment.file.do" value-ref="AttachmentFileController"/>
+			</map>
+		</property>
+    </bean>
+    <bean id="secureAdminHandlerMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="interceptors">
+            <list>
+            	<ref bean="adminBaseInterceptor"/>
+            </list>
+        </property>
+        <property name="urlMap">
+			<map>
+				<entry key="user.admin.do" value-ref="userAdminController"/>
+			    <entry key="usergroup.admin.do" value-ref="userGroupAdminController"/>
+			    <entry key="usergrouplist.admin.do" value-ref="userGroupListAdminController"/>
+			    <entry key="config.admin.do" value-ref="confAdminController"/>
+			    <entry key="skinbase.admin.do" value-ref="skinBaseAdminController"/>
+			    <entry key="formletter.admin.do" value-ref="formLetterAdminController"/>
+			    <entry key="sharegroup.admin.do" value-ref="shaerGroupAdminController"/>
+			    <entry key="sharegroupList.admin.do" value-ref="shaerGroupListAdminController"/>
+			    <entry key="organize.admin.do" value-ref="organizeAdminController"/>
+			    <entry key="authority.admin.do" value-ref="authorityAdminController"/>
+			    <entry key="poll.admin.do" value-ref="pollAdminController"/>
+			    <entry key="bbs.admin.do" value-ref="bbsAdminController"/>
+			    <entry key="bbsgroup.admin.do" value-ref="bbsGroupAdminController"/>
+			    <entry key="publicgroup.admin.do" value-ref="publicGroupAdminController"/>
+			    <entry key="publicaddress.admin.do" value-ref="publicAddressAdminController"/>
+			    <entry key="publicaddressupload.admin.do" value-ref="publicAddressUploadAdminController"/>
+			    <entry key="popup.admin.do" value-ref="popupAdminController"/>
+			    <entry key="note.admin.do" value-ref="noteAdminController"/>
+			    <entry key="usergroup2.admin.do" value-ref="userGroupAdmin2Controller"/>
+			    <entry key="usergrouplist2.admin.do" value-ref="userGroupListAdmin2Controller"/>
+			    <entry key="usergroup3.admin.do" value-ref="userGroupAdmin3Controller"/>
+			    <entry key="usergrouplist3.admin.do" value-ref="userGroupListAdmin3Controller"/>
+			    <entry key="certify.admin.do" value-ref="certifyAdminController"/>
+			</map>
+		</property>
+    </bean>
+    <bean id="secureSystemHandlerMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="interceptors">
+            <list>
+            	<ref bean="systemBaseInterceptor"/>
+            </list>
+        </property>
+        <property name="urlMap">
+			<map>
+			    <entry key="domain.system.do" value-ref="domainSystemController"/>
+			    <entry key="user.system.do" value-ref="userSystemController"/>
+			    <entry key="sms.system.do" value-ref="smsSystemController"/>
+			    <entry key="agreement.system.do" value-ref="agreementSystemController"/>
+			    <entry key="mailreport.system.do" value-ref="mailreportSystemController"/>
+			    <entry key="ipblocking.system.do" value-ref="iPBlockingSystemController"/>
+			    <entry key="maillogtrace.system.do" value-ref="mailLogTraceSystemController"/>
+			    <entry key="holiday.system.do" value-ref="holidaySystemController"/>
+			    <entry key="ecard.system.do" value-ref="ecardSystemController"/>
+			    <entry key="letter.system.do" value-ref="letterSystemController"/>
+			    <entry key="maillog.system.do" value-ref="mailLogSystemController"/>
+			    <entry key="serverinfo.system.do" value-ref="serverinfoSystemController"/>
+			    <entry key="grantip.system.do" value-ref="grantIpSystemController"/>
+			    <entry key="loginlog.system.do" value-ref="loginLogSystemController"/>
+			    <entry key="archive.system.do" value-ref="archiveSystemController"/>
+			</map>
+		</property>
+    </bean>
+    
+    <bean id="publicBaseInterceptor" class="com.nara.springframework.controller.Interceptor.PublicBaseInterceptor"></bean>
+    <bean id="authBaseInterceptor" class="com.nara.springframework.controller.Interceptor.AuthBaseInterceptor"></bean>
+    <bean id="adminBaseInterceptor" class="com.nara.springframework.controller.Interceptor.AdminBaseInterceptor"></bean> 
+    <bean id="systemBaseInterceptor" class="com.nara.springframework.controller.Interceptor.SystemBaseInterceptor"></bean>
+	<bean id="tilesConfigurer" class="org.springframework.web.servlet.view.tiles.TilesConfigurer">
+		<property name="definitions">
+			<list>
+				<value>/WEB-INF/config/tiles/kor_mail-defs.xml</value>
+				<value>/WEB-INF/config/tiles/eng_mail-defs.xml</value>
+			</list>
+		</property>
+	</bean>
+</beans>

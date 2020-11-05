@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE web-app PUBLIC
+	"-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+	"http://java.sun.com/dtd/web-app_2_3.dtd">
+
+<web-app>
+	<context-param>
+		<param-name>log4j.configureation</param-name>
+		<param-value>/WEB-INF/log4j.properties</param-value>
+	</context-param>
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value></param-value>
+	</context-param>	
+	
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+
+<servlet>
+		<servlet-name>mail</servlet-name>
+		<servlet-class>com.nara.springframework.NaraDispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>
+				/WEB-INF/config/servlet/mail-servlet.xml
+			</param-value>
+		</init-param>
+			<init-param>
+			<param-name>supportedMethods</param-name>
+			<param-value>PUT,GET,POST,OPTIONS</param-value>
+		</init-param>
+		<init-param>
+			<param-name>config.home</param-name>
+			<param-value>
+				/usr/local/kebi/tomcat/webapps/nara/properties/config
+			</param-value>
+		</init-param>
+		<init-param>
+			<param-name>log4j.configuration</param-name>
+			<param-value>
+				/usr/local/kebi/tomcat/webapps/nara/WEB-INF/classes/log4j.properties
+			</param-value>
+		</init-param>
+		<init-param>
+			<param-name>config.file</param-name>
+			<param-value>
+				/usr/local/kebi/tomcat/webapps/nara/properties/config/nara.properties
+			</param-value>
+		</init-param>
+		<init-param>
+			<param-name>mail.mime.allowencodedmessages</param-name>
+			<param-value>true</param-value>
+		</init-param>		
+		<load-on-startup>0</load-on-startup>
+	</servlet>
+	
+	<!-- web_messager 1/4 -->
+	<servlet>
+		<servlet-name>messenger</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>
+				/WEB-INF/config/servlet/messenger-servlet.xml
+			</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<!-- web_messager 2/4 -->
+	<servlet>
+		<servlet-name>NoteFileDownLoadSvl</servlet-name>
+		<servlet-class>com.nara.messenger.svl.NoteFileDownLoadSvl</servlet-class>
+	</servlet>
+	
+	<!-- web_messager 3/4  -->
+	<servlet-mapping>
+		<servlet-name>messenger</servlet-name>
+		<url-pattern>/messenger/*</url-pattern>
+	</servlet-mapping>
+	
+	<!-- web_messager 4/4 -->
+	<servlet-mapping>
+		<servlet-name>NoteFileDownLoadSvl</servlet-name>
+		<url-pattern>/messenger/notefiledwn</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>mail</servlet-name>
+		<url-pattern>/mail/*</url-pattern>
+	</servlet-mapping>
+
+	<filter>
+          <filter-name>encodingFilter</filter-name>
+          <filter-class>
+               org.springframework.web.filter.CharacterEncodingFilter
+          </filter-class>
+          <init-param>
+               <param-name>encoding</param-name>
+               <param-value>UTF-8</param-value>
+          </init-param>
+     </filter>
+     <filter-mapping>
+          <filter-name>encodingFilter</filter-name>
+          <url-pattern>/*</url-pattern>
+     </filter-mapping>
+     
+     <security-constraint>
+                <display-name>Properties Protection</display-name>
+                <web-resource-collection>
+                        <web-resource-name>SecureProperteisPages</web-resource-name>
+                        <url-pattern>*.properties</url-pattern>
+                        <url-pattern>*.xml</url-pattern>
+	                    <url-pattern>*.key</url-pattern>
+	                    <url-pattern>*.kebi</url-pattern>
+                </web-resource-collection>
+                <auth-constraint>
+                <role-name>nobody</role-name>
+                </auth-constraint>
+        </security-constraint>
+
+        <security-role>
+                <description>
+                        Properties files are protected from direct access.
+                </description>
+                <role-name>nobody</role-name>
+        </security-role>
+	
+	<welcome-file-list>
+		<welcome-file>index.html</welcome-file>
+		<welcome-file>index.jsp</welcome-file>
+	</welcome-file-list>
+
+</web-app>

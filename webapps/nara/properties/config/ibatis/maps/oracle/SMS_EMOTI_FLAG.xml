@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="SMS_EMOTI_FLAG">
+	<select id="select_sms_emoti_flag_type_01"
+	        parameterClass="java.util.HashMap"
+	        resultClass="com.nara.jdf.db.entity.SmsEmotiFlagEntity">
+		SELECT 
+			FLAG_NO,
+			FLAG
+		FROM SMS_EMOTI_FLAG	
+		ORDER BY FLAG_NO ASC
+	</select>
+	
+	<select id="count_sms_emoti_flag_type_01"
+	        parameterClass="java.util.HashMap"
+	        resultClass="java.lang.Integer">
+		SELECT 
+			COUNT(FLAG_NO) CNT
+		FROM SMS_EMOTI_FLAG	
+	</select>
+	
+	<insert id="insert_sms_emoti_flag_type_01"
+	        parameterClass="java.util.HashMap">
+	    INSERT INTO SMS_EMOTI_FLAG (FLAG_NO, FLAG)
+	    VALUES (#FLAG_NO#, #FLAG#)
+	</insert>
+	
+	<update id="update_sms_emoti_flag_type_01"
+	        parameterClass="java.util.HashMap">
+	    UPDATE SMS_EMOTI_FLAG
+	    SET FLAG = #FLAG#
+	    WHERE FLAG_NO = #FLAG_NO#
+	</update>
+	
+	<delete id="delete_sms_emoti_flag_type_01"
+	        parameterClass="java.util.HashMap">
+		DELETE FROM SMS_EMOTI_FLAG
+		WHERE FLAG_NO = #FLAG_NO#	
+	</delete>
+</sqlMap>

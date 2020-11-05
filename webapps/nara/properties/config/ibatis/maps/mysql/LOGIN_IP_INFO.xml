@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+
+<sqlMap namespace="LOGIN_IP_INFO"> 
+	<select id="select_user_ip_info"
+	        parameterClass="java.util.Map"
+	        resultClass="com.nara.jdf.db.entity.LoginIpInfoEntity">
+		SELECT 
+		    USERS_ID,
+			USERS_IDX,
+			DOMAIN,
+			OLD_IP,
+			CURRENT_IP,
+			NATION_CODE,
+			NATION_NAME,
+			OLD_NATION_CODE,
+			OLD_NATION_NAME
+        FROM LOGIN_IP_INFO
+        WHERE USERS_IDX = #USERS_IDX#
+	</select>
+	
+	<update id="update_user_ip_info" parameterClass="java.util.HashMap"> 
+		UPDATE LOGIN_IP_INFO SET 
+			OLD_IP = #OLD_IP#, 
+			CURRENT_IP = #current_ip#,
+			OLD_NATION_CODE = #OLD_NATION_CODE#,
+			NATION_CODE = #NATION_CODE#,
+			OLD_NATION_NAME = #OLD_NATION_NAME#,
+			NATION_NAME = #NATION_NAME#
+		WHERE USERS_IDX = #USERS_IDX#
+	</update>
+	
+	<insert id="insert_user_ip_info" parameterClass="java.util.Map"> 
+		INSERT INTO LOGIN_IP_INFO ( 
+			USERS_ID,
+			USERS_IDX,
+			DOMAIN,
+			OLD_IP,
+			CURRENT_IP,
+			NATION_CODE,
+			NATION_NAME,
+			OLD_NATION_CODE,
+			OLD_NATION_NAME
+		) 
+		VALUES 
+		(
+			#USERS_ID#, 
+			#USERS_IDX#,
+			#DOMAIN#, 
+			#OLD_IP#, 
+			#CURRENT_IP#, 
+			#NATION_CODE#,
+			#NATION_NAME#,
+			#OLD_NATION_CODE#,
+			#OLD_NATION_NAME#
+		)
+	</insert>
+</sqlMap>

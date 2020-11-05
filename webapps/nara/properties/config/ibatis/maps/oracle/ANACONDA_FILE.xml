@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="ANACONDA_FILE">
+	<select id="select_anaconda_file_max_size" 
+  	 	 	 	parameterClass="java.util.HashMap"
+  				resultClass="com.nara.jdf.db.entity.AnaFileEntity">
+    	SELECT
+			NVL(SUM(FILE_SIZE),0) FILE_SIZE
+		FROM ANACONDA_FILE
+		WHERE USERS_IDX = #USERS_IDX#
+		AND   FILE_DEL = #FILE_DEL#
+	</select>
+	
+	<select id="select_anaconda_file_dir_info" 
+  	 	 	 	parameterClass="java.util.HashMap"
+  				resultClass="java.util.HashMap">
+    	SELECT
+			NVL(SUM(FILE_SIZE),0) SUM_FILE_SIZE,
+			COUNT(FILE_SIZE) CNT_FILE_SIZE
+		FROM ANACONDA_FILE
+		WHERE USERS_IDX = #USERS_IDX#
+		AND   FILE_DIR = '0'
+		AND   FILE_DEL = '1'
+		AND   LENGTH(FILE_NAME) > LENGTH(#FILE_NAME#)
+		AND   FILE_NAME LIKE #FILE_NAME#||'%'
+		
+		<dynamic prepend="">
+	  	 	<isNotNull prepend="AND" property= "MAIL_SEQ">
+				MAIL_SEQ = #MAIL_SEQ#
+			</isNotNull>
+		</dynamic>
+	</select>
+	
+	<select id="select_anaconda_file_type_01"
+	        parameterClass="java.util.HashMap"
+	        resultClass="com.nara.jdf.db.entity.AnaFileEntity">
+		SELECT
+			FILE_DIR,
+			FILE_NAME
+		FROM ANACONDA_FILE
+		WHERE FILE_KEY = #FILE_KEY#
+		AND   USERS_IDX = #USERS_IDX#
+	</select>
+	
+	<select id="select_anaconda_file_type_02"
+	        parameterClass="com.nara.jdf.db.entity.AnaFileEntity"
+	        resultClass="com.nara.jdf.db.entity.AnaFileEntity">
+		SELECT
+			FILE_KEY, 
+			FILE_SEQ, 
+			USERS_IDX, 
+			MAIL_SEQ, 
+			FILE_NAME,
+			FILE_SUCCESS, 
+			FILE_DIR, 
+			FILE_SIZE, 
+			DOWN_CNT,
+			DOWN_CNT_PERMIT, 
+			FILE_EXPIRE,
+			FILE_CREATE, 
+			FILE_DEL,
+			FILE_CLIENT_DATE,
+			NVL(SHARE_YN,'0') SHARE_YN,
+			MAIL_YN
+		FROM ANACONDA_FILE
+		
+		WHERE FILE_DEL = '1'
+		
+		<dynamic prepend="">
+	  	 	<isNotEqual prepend="AND" property= "USERS_IDX" compareValue="">
+				USERS_IDX = #USERS_IDX#
+			</isNotEqual>
+			<isNotEqual prepend="AND" property= "FILE_NAME" compareValue="">
+				FILE_NAME LIKE #FILE_NAME#||'%'
+			</isNotEqual>
+			<isNotEqual prepend="AND" property= "MAIL_SEQ" compareValue="">
+				MAIL_SEQ = #MAIL_SEQ#
+			</isNotEqual>
+		</dynamic>
+		
+		ORDER BY FILE_NAME
+	</select>
+	
+	<select id="select_anaconda_file_type_03"
+	        parameterClass="java.util.HashMap"
+	        resultClass="com.nara.jdf.db.entity.AnaFileEntity">
+		SELECT
+			FILE_KEY, 
+			FILE_SEQ, 
+			USERS_IDX, 
+			MAIL_SEQ, 
+			FILE_NAME,
+			FILE_SUCCESS, 
+			FILE_DIR, 
+			FILE_SIZE, 
+			DOWN_CNT,
+			DOWN_CNT_PERMIT, 
+			FILE_EXPIRE,
+			FILE_CREATE, 
+			FILE_DEL,
+			FILE_CLIENT_DATE,
+			NVL(SHARE_YN,'0') SHARE_YN,
+			MAIL_YN
+		FROM ANACONDA_FILE
+		
+        <dynamic prepend="WHERE">
+	  	 	<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "FILE_NAME">
+				FILE_NAME LIKE #FILE_NAME#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "FILE_KEY">
+				FILE_KEY LIKE #FILE_KEY#
+			</isNotNull>
+		</dynamic>
+	</select>
+	
+	<select id="select_anaconda_file_type_04"
+	        parameterClass="java.util.HashMap"
+	        resultClass="com.nara.jdf.db.entity.AnaFileEntity">
+		SELECT
+			FILE_KEY, 
+			FILE_SEQ, 
+			USERS_IDX, 
+			MAIL_SEQ, 
+			FILE_NAME,
+			FILE_SUCCESS, 
+			FILE_DIR, 
+			FILE_SIZE, 
+			DOWN_CNT,
+			DOWN_CNT_PERMIT, 
+			FILE_EXPIRE,
+			FILE_CREATE, 
+			FILE_DEL,
+			FILE_CLIENT_DATE,
+			NVL(SHARE_YN,'0') SHARE_YN,
+			MAIL_YN
+		FROM ANACONDA_FILE
+		
+        <dynamic prepend="WHERE">
+	  	 	<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "FILE_NAME">
+				FILE_NAME = #FILE_NAME#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "FILE_KEY">
+				FILE_KEY = #FILE_KEY#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "MAIL_SEQ">
+				MAIL_SEQ = #MAIL_SEQ#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "FILE_SEQ">
+				FILE_SEQ = #FILE_SEQ#
+			</isNotNull>
+		</dynamic>
+	</select>
+	
+	<update id="update_anaconda_file_del_flag"
+	        parameterClass="java.util.HashMap">
+		UPDATE ANACONDA_FILE
+		SET FILE_DEL = #FILE_DEL#
+		
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+	  	 	<isEqual prepend="AND" property= "FILE_DIR" compareValue="1">
+				FILE_NAME LIKE #FILE_NAME#||'%'
+			</isEqual>
+			<isNotEqual prepend="AND" property= "FILE_DIR" compareValue="1">
+				FILE_KEY = #FILE_KEY#
+			</isNotEqual>
+		</dynamic>
+	</update>
+	
+	<update id="update_anaconda_file_minus_down_cnt"
+	        parameterClass="com.nara.jdf.db.entity.AnaMailEntity">
+		UPDATE ANACONDA_FILE
+		SET	DOWN_CNT = DOWN_CNT-1
+		WHERE USERS_IDX = #USERS_IDX#
+		AND MAIL_SEQ = #MAIL_SEQ#
+		AND	DOWN_CNT > 0
+	</update>
+	
+	<update id="update_anaconda_file_name"
+	        parameterClass="java.util.HashMap">
+		UPDATE ANACONDA_FILE
+		SET FILE_NAME = #AFTER_DIR#||SUBSTR(FILE_NAME, LENGTH(#BEFORE_DIR#)+1)
+		WHERE USERS_IDX = #USERS_IDX#
+		<dynamic prepend="">
+	  	 	<isEqual prepend="AND" property= "FILE_OR_DIR" compareValue="0">
+				FILE_NAME = #BEFORE_DIR#
+			</isEqual>
+			<isEqual prepend="AND" property= "FILE_OR_DIR" compareValue="1">
+				FILE_NAME LIKE #BEFORE_DIR#||'/%'
+			</isEqual>
+		</dynamic>
+	</update>
+	
+	<update id="update_anaconda_file_size"
+	        parameterClass="java.util.HashMap">
+		UPDATE ANACONDA_FILE
+		SET FILE_SIZE = #FILE_SIZE#
+		WHERE USERS_IDX = #USERS_IDX#
+		AND   FILE_NAME = #FILE_NAME#
+	</update>
+	
+	<update id="update_anaconda_file_sub_name"
+	        parameterClass="java.util.HashMap">
+		UPDATE ANACONDA_FILE
+		SET FILE_NAME = REPLACE(FILE_NAME, #FILE_DIR#, #FILE_DIR#)
+		WHERE USERS_IDX = #USERS_IDX#
+		AND   FILE_NAME LIKE #FILE_DIR#||'/%'
+	</update>
+	
+	<update id="update_anaconda_file_share_file"
+	        parameterClass="java.util.HashMap">
+		UPDATE ANACONDA_FILE
+		SET SHARE_YN = #SHARE_YN#
+		WHERE FILE_KEY = #FILE_KEY#
+	</update>
+	
+	<update id="update_anaconda_file_down_cnt"
+	        parameterClass="java.util.HashMap">
+		UPDATE ANACONDA_FILE
+		SET DOWN_CNT = #DOWN_CNT#
+		WHERE USERS_IDX = #USERS_IDX#
+		AND   MAIL_SEQ = #MAIL_SEQ#
+		AND   FILE_SEQ = #FILE_SEQ#
+	</update>
+	
+	<insert id="insert_anaconda_file"
+	        parameterClass="com.nara.jdf.db.entity.AnaFileEntity">
+		INSERT INTO ANACONDA_FILE
+		(
+			FILE_KEY,
+			FILE_SEQ,
+			USERS_IDX,
+			MAIL_SEQ,
+			FILE_NAME,
+			FILE_SUCCESS,
+			FILE_DIR,
+			FILE_SIZE,
+			DOWN_CNT,
+			DOWN_CNT_PERMIT,
+			FILE_EXPIRE,
+			FILE_CREATE,
+			FILE_DEL,
+			FILE_CNT,
+			MAIL_YN,
+			FILE_CLIENT_DATE,
+			FILE_ATTRIBUTE
+		)
+		VALUES
+		(
+			SEQ_ANACONDA_FILE.NEXTVAL,
+			#FILE_SEQ#,
+			#USERS_IDX#,
+			#MAIL_SEQ#,
+			#FILE_NAME#,
+			#FILE_SUCCESS#,
+			#FILE_DIR#,
+			#FILE_SIZE#,
+			#DOWN_CNT#,
+			#DOWN_CNT#,
+			#FILE_EXPIRE#,
+			#FILE_CREATE#,
+			#FILE_DEL#,
+			#FILE_CNT#,
+			#MAIL_YN#,
+			#FILE_CLIENT_DATE#,
+			#FILE_ATTRIBUTE#
+		)
+	</insert>
+	
+	<delete id="delete_anaconda_file_type_01"
+	        parameterClass="java.util.Map">
+	    DELETE FROM ANACONDA_FILE
+	    <dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "DOMAIN">
+				SUBSTR(USERS_IDX, INSTR(USERS_IDX, '@')) = '@'||#DOMAIN#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "FILE_KEY">
+				FILE_KEY = #FILE_KEY#
+			</isNotNull>
+		</dynamic>
+	</delete>
+	
+	<select id="select_anaconda_file_attribute"
+	        parameterClass="java.util.HashMap"
+	        resultClass="java.lang.String">
+		SELECT
+			DISTINCT(FILE_ATTRIBUTE)    AS FILE_ATTRIBUTE
+		FROM ANACONDA_FILE
+		
+        <dynamic prepend="WHERE">
+	  	 	<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "MAIL_SEQ">
+				MAIL_SEQ = #MAIL_SEQ#
+			</isNotNull>
+		</dynamic>
+	</select>
+	
+	<select id="select_anaconda_file_maxfileseq"
+	        parameterClass="java.util.HashMap"
+	        resultClass="java.lang.Integer">
+		SELECT
+			MAX(FILE_SEQ) MAXSEQ
+		FROM ANACONDA_FILE
+		
+        <dynamic prepend="WHERE">
+	  	 	<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "FILE_NAME">
+				FILE_NAME = #FILE_NAME#
+			</isNotNull>
+		</dynamic>
+	</select>
+</sqlMap>

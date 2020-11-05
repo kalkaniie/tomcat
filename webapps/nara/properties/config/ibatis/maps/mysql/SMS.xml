@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="SMS">
+	<select id="select_sms_type_01"
+                parameterClass="java.util.HashMap"
+                resultClass="com.nara.jdf.db.entity.SmsEntity">
+                SELECT
+                        SERIALNO,
+                        DESTCALLNO,
+                        CALLBACKNO,
+                        DATA,
+                        DATE_FORMAT(JEOBSU_TIME, '%Y-%m-%d %T') JEOBSU_TIME,
+                        DATE_FORMAT(YEYAK_TIME, '%Y-%m-%d %T') YEYAK_TIME,
+                        USER_NO,
+                        COMPANY_NO,
+                        RESULT,
+                        TYPE
+                FROM SMS
+                <dynamic prepend="WHERE">
+                        <isNotEqual prepend="AND" property= "COMPANY_NO" compareValue="">
+                                COMPANY_NO = #COMPANY_NO#
+                        </isNotEqual>
+                        <isNotEqual prepend="AND" property= "USER_NO" compareValue="">
+                                USER_NO LIKE CONCAT('%',#USER_NO#,'%')
+                        </isNotEqual>
+                        <isNotEqual prepend="AND" property= "JEOBSU_TIME" compareValue="">
+                               DATE_FORMAT(JEOBSU_TIME, '%Y-%m') = #JEOBSU_TIME#
+                        </isNotEqual>
+                </dynamic>
+                ORDER BY $orderCol$ $orderType$
+                LIMIT $SKIP$, $USERS_LISTNUM$
+        </select>
+	
+	<select id="count_sms_type_01"
+	        parameterClass="java.util.HashMap"
+	        resultClass="java.lang.Integer">
+			SELECT
+				COUNT(SERIALNO) CNT
+			FROM SMS
+			<dynamic prepend="WHERE">
+				<isNotEqual prepend="AND" property= "COMPANY_NO" compareValue="">
+					COMPANY_NO = #COMPANY_NO#
+				</isNotEqual>
+				<isNotEqual prepend="AND" property= "USER_NO" compareValue="">
+       				USER_NO LIKE CONCAT('%',#USER_NO#,'%')
+				</isNotEqual>
+				<isNotEqual prepend="AND" property= "JEOBSU_TIME" compareValue="">
+       				DATE_FORMAT(JEOBSU_TIME, '%Y-%m') = #JEOBSU_TIME#
+				</isNotEqual>
+			</dynamic>	
+	</select>
+	
+	<insert id="insert_sms_type_01"
+		parameterClass="com.nara.jdf.db.entity.SmsEntity">
+			
+		INSERT INTO SMS(
+			SERIALNO ,
+			DESTCALLNO,
+			CALLBACKNO ,
+			DATA ,
+			JEOBSU_TIME ,
+			YEYAK_TIME,USER_NO ,
+			COMPANY_NO ,
+			RESULT ,
+			TYPE
+		)
+		VALUES 
+		(
+			NEXTVAL('SMS'), 
+			#DESTCALLNO#, 
+			#CALLBACKNO#, 
+			#DATA#, 
+			SYSDATE(), 
+		<dynamic prepend="">
+			<isNotEqual prepend="" property= "JEOBSU_TIME" compareValue="0">
+				DATE_FORMAT(#JEOBSU_TIME#, '%Y-%m-%d %T'),
+			</isNotEqual>
+			<isEqual prepend="" property= "JEOBSU_TIME" compareValue="0">
+				SYSDATE(),
+			</isEqual>
+		</dynamic>
+		#USER_NO#, #COMPANY_NO#, #RESULT#, #TYPE#)
+	</insert>
+	
+	
+	<select id="select_sms_type_02"
+	        parameterClass="java.util.HashMap"
+	        resultClass="java.util.HashMap">
+		SELECT 
+			BB.DESTCALLNO 
+		FROM (
+			SELECT 
+				AA.DESTCALLNO,
+				AA.JEOBSU_TIME
+			FROM 
+				(SELECT
+					DISTINCT(DESTCALLNO) AS DESTCALLNO,
+					JEOBSU_TIME
+			 	FROM SMS
+			 	WHERE USER_NO = #USER_NO#
+				) AA
+			ORDER BY AA.JEOBSU_TIME DESC
+			) BB
+		LIMIT 1
+	</select>	
+</sqlMap>

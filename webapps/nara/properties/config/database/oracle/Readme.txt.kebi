@@ -1,0 +1,58 @@
+오라클의 system 계정으로 실행해야 함
+
+sql스크립트 위치 : /usr/local/kebi/orion/nara/properties/database/oracle
+
+
+//MAILDATA TABLESPACE 생성
+
+CREATE TABLESPACE MAILDATA
+DATAFILE '/oracle/app/oracle/oradata/PORTAL/maildata01.dbf' SIZE 1024M
+AUTOEXTEND ON NEXT 1024M
+DEFAULT STORAGE
+(INITIAL 1M
+NEXT     1M
+MINEXTENTS 5
+MAXEXTENTS 121
+PCTINCREASE 0);
+
+//INDEX TABLESPACE 생성 (CreateTable_Oracle.sql 수행시 제대로 테이블이 만들어지지 않는다면)
+
+CREATE TABLESPACE INDX
+DATAFILE '/oracle/app/oracle/oradata/PORTAL/indx01.dbf' SIZE 1024M
+AUTOEXTEND ON NEXT 1024M
+DEFAULT STORAGE
+(INITIAL 1M
+NEXT     1M
+MINEXTENTS 5
+MAXEXTENTS 121
+PCTINCREASE 0);
+
+
+//유져 생성
+
+CREATE USER kebi IDENTIFIED BY kebi
+DEFAULT TABLESPACE MAILDATA
+TEMPORARY TABLESPACE TEMP
+PROFILE DEFAULT
+QUOTA UNLIMITED ON TEMP
+QUOTA UNLIMITED ON MAILDATA ACCOUNT UNLOCK;
+
+GRANT CONNECT , DBA TO kebi WITH ADMIN OPTION;
+
+ALTER USER kebi DEFAULT ROLE ALL;
+
+
+//DB table 설치 (Oracle kebi계정으로 실행)
+##########################################
+# SQL>@CreateTable_Oracle.sql            # 
+# SQL>commit;                            # 
+##########################################
+
+//우편번호 정보 입력 (Oracle kebi계정으로 실행)
+##########################################
+# SQL>@Kebi_Zipcode20041022.sql				   #
+# SQL>commit;                            #
+##########################################
+
+오라클 10G 에서 테이블 삭제후 생성되는 임시 테이블 삭제하기
+ => PURGE RECYCLEBIN;

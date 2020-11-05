@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="POP">
+	<delete id="delete_pop_type_01"
+	        parameterClass="java.util.HashMap">
+		DELETE FROM POP
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "POP_IDX">
+				POP_IDX = #POP_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property="DOMAIN">
+				SUBSTR(USERS_IDX, INSTR(USERS_IDX, '@')) = '@$DOMAIN$'
+			</isNotNull>
+		</dynamic>
+	</delete>
+	
+	<select id="select_pop_type_01"
+	        parameterClass="java.util.Map"
+	        resultClass="com.nara.jdf.db.entity.Pop3Entity">	        
+		SELECT 
+           POP_IDX, 	
+           USERS_IDX, 
+           POP_PROTOCOL, 
+           POP_SERVER, 
+           POP_ID, 
+           POP_PASSWD, 
+           MBOX_IDX, 
+           POP_ISDEL, 
+           POP_MBOX,
+           POP_NAME,
+           POP_ICON 
+        FROM POP 
+        <dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property="USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+		</dynamic>
+		ORDER BY $orderCol$ $orderType$			  	
+	</select>
+	
+	
+	<insert id="insert_pop_type_01"
+	        parameterClass="com.nara.jdf.db.entity.Pop3Entity">
+		INSERT INTO POP( 
+          POP_IDX, 
+          USERS_IDX, 
+          POP_PROTOCOL, 
+          POP_SERVER, 
+          POP_ID, 
+          POP_PASSWD, 
+          MBOX_IDX, 
+          POP_ISDEL,
+          POP_MBOX,
+          POP_NAME,
+          POP_ICON 
+        )
+		VALUES
+		(
+			SEQ_POP.NEXTVAL, 
+			#USERS_IDX#, 
+			#POP_PROTOCOL#, 
+			#POP_SERVER#,
+			#POP_ID#, 
+			#POP_PASSWD#,
+			#MBOX_IDX#,
+			#POP_ISDEL#,
+			#POP_MBOX#,
+			#POP_NAME#,
+          	#POP_ICON#
+		)
+	</insert>
+	
+	
+	
+			
+	<update id="update_pop_type_01"
+	        parameterClass="com.nara.jdf.db.entity.Pop3Entity">
+	   UPDATE POP
+	    	SET	
+	    		USERS_IDX = #USERS_IDX#, 
+				POP_PROTOCOL=#POP_PROTOCOL#, 
+		      	POP_SERVER  =#POP_SERVER#,  
+		      	POP_ID      =#POP_ID#,      
+		      	POP_PASSWD  =#POP_PASSWD#,  
+		      	MBOX_IDX    =#MBOX_IDX#,    
+		      	POP_ISDEL   =#POP_ISDEL#,  
+		      	POP_MBOX    =#POP_MBOX#,   
+		      	POP_NAME    =#POP_NAME#,   
+		      	POP_ICON    =#POP_ICON#    
+		WHERE POP_IDX = #POP_IDX# 
+	</update>	
+	
+	<select id="select_pop_type_02"
+	        parameterClass="java.util.HashMap"
+	        resultClass="com.nara.jdf.db.entity.Pop3Entity">
+		SELECT
+			POP_IDX, 
+            USERS_IDX, 
+            POP_PROTOCOL, 
+            POP_SERVER, 
+            POP_ID, 
+            POP_PASSWD, 
+            MBOX_IDX, 
+            POP_ISDEL,
+            POP_MBOX,
+            POP_NAME,
+            POP_ICON 
+		FROM POP
+		WHERE POP_IDX = #POP_IDX#
+	</select>
+	
+</sqlMap>

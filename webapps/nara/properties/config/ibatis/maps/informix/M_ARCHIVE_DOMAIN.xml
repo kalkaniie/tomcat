@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="M_ARCHIVE_DOMAIN"> 
+  	<statement id="create_m_domain_archive_table"
+  				   parameterClass="java.lang.String">
+		CREATE TABLE $TABLE_NAME$
+		(
+			M_IDX			NUMBER NOT NULL,
+			MBOX_IDX		NUMBER	NOT NULL,																
+			USERS_IDX		VARCHAR2(200) NOT NULL,
+			M_SENDER		VARCHAR2(200),																
+			M_RETURN		VARCHAR2(200),																
+			M_TO			VARCHAR2(4000),																
+			M_CC			VARCHAR2(4000),																
+			M_BCC			VARCHAR2(4000),																
+			M_SENDERNM		VARCHAR2(100),																
+			M_TYPE			VARCHAR2(50),																
+			M_TITLE			VARCHAR2(255),																
+			M_TIME			DATE,																
+			M_SIZE			NUMBER,																
+			M_ISREAD		CHAR(1),																
+			M_PRIORITY		NUMBER(1) ,																
+			M_INJURIOUSE	CHAR(1),																
+			M_ATTACHE		VARCHAR2(255),																
+			M_FILENAME		VARCHAR2(64),																
+			M_DELETED  		CHAR(1) DEFAULT 'N',
+			CONSTRAINT  	PK_$TABLE_NAME$ PRIMARY KEY (M_IDX)																
+		)
+		PCTFREE 20 PCTUSED 60
+		STORAGE (INITIAL 100M  NEXT 100M  PCTINCREASE 0)
+  	</statement>
+	<statement id="create_m_domain_archive_sequence"
+	           parameterClass="java.lang.String">
+		CREATE SEQUENCE SEQ_$TABLE_NAME$
+		START WITH 1 
+		INCREMENT BY 1 
+		MINVALUE 1 
+		MAXVALUE 9999999999 
+		CACHE 20 NOCYCLE
+  	</statement>
+	<statement id="create_m_domain_archive_index"
+	           parameterClass="java.lang.String">
+		CREATE INDEX IDX_$TABLE_NAME$_01 
+		ON $TABLE_NAME$ (USERS_IDX) 
+		STORAGE(INITIAL 50M next 50M)
+   	</statement>
+</sqlMap>

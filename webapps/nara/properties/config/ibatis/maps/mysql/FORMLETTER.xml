@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="FORMLETTER"> 
+  	<insert id="insert_formletter_type_01"
+  				parameterClass="com.nara.jdf.db.entity.FormLetterEntity">
+  		INSERT INTO FORMLETTER
+  		(
+  			FORMLETTER_IDX,
+  			DOMAIN,
+  			FORMLETTER_TYPE,
+  			FORMLETTER_SUBJECT,
+  			CONTENT
+  		)
+  		VALUES
+  		(
+  			NEXTVAL('FORMLETTER'),
+  			#DOMAIN#,
+  			#FORMLETTER_TYPE#,
+  			#FORMLETTER_SUBJECT#,
+  			#CONTENT:java.lang.String#
+  		)
+	</insert>
+	
+	<select id="select_formletter_type_01"
+	        parameterClass="java.util.HashMap"
+	        resultClass="com.nara.jdf.db.entity.FormLetterEntity">
+		SELECT
+			FORMLETTER_IDX,
+			DOMAIN,
+			FORMLETTER_TYPE,
+			FORMLETTER_SUBJECT,
+			CONTENT
+		FROM FORMLETTER
+		
+		<dynamic prepend="WHERE">
+  			<isNotEqual prepend="AND" property="strIndex" compareValue="">
+				$strIndex$ LIKE CONCAT('%',#strKeyword#,'%')
+			</isNotEqual>
+		</dynamic>
+		ORDER BY FORMLETTER_IDX DESC
+		LIMIT $SKIP$, $USERS_LISTNUM$
+	</select>
+	
+	<select id="select_formletter_type_02"
+	        parameterClass="java.util.HashMap"
+	        resultClass="com.nara.jdf.db.entity.FormLetterEntity">
+		SELECT 
+			FORMLETTER_IDX,
+			DOMAIN,
+			FORMLETTER_TYPE,
+			FORMLETTER_SUBJECT,
+			CONTENT
+		FROM FORMLETTER
+		<dynamic prepend="WHERE">
+  			<isNotNull prepend="AND" property= "FORMLETTER_IDX">
+				FORMLETTER_IDX = #FORMLETTER_IDX#
+			</isNotNull>
+		</dynamic>
+	</select>
+	
+	<resultMap id="result_formletter_03" class="java.util.HashMap">
+		<result property="FORMLETTER_IDX" column="FORMLETTER_IDX" />
+		<result property="FORMLETTER_SUBJECT" column="FORMLETTER_SUBJECT" />
+		<result property="CONTENT" column="CONTENT" javaType="java.lang.String"/>
+	</resultMap>
+	<select id="select_formletter_type_03"
+	        parameterClass="java.util.HashMap"
+	        resultMap="result_formletter_03">
+		SELECT
+			FORMLETTER_IDX,
+			FORMLETTER_SUBJECT,
+			CONTENT
+		FROM FORMLETTER
+		
+		<dynamic prepend="WHERE">
+  			<isNotEqual prepend="AND" property="strIndex" compareValue="">
+				$strIndex$ LIKE CONCAT('%',#strKeyword#,'%')
+			</isNotEqual>
+		</dynamic>
+		ORDER BY FORMLETTER_SUBJECT ASC
+		LIMIT $SKIP$, $USERS_LISTNUM$
+	</select>
+	
+	<select id="count_formletter_type_01"
+	        parameterClass="java.util.HashMap"
+	        resultClass="java.lang.Integer">
+		SELECT
+			COUNT(FORMLETTER_IDX) CNT
+		FROM FORMLETTER
+			
+		<dynamic prepend="WHERE">
+		    <isNotEqual prepend="AND" property="strIndex" compareValue="">
+				$strIndex$ LIKE CONCAT('%',#strKeyword#,'%')
+			</isNotEqual>
+		</dynamic>	
+	</select>
+
+  	<delete id="delete_formletter_type_01"
+  				parameterClass="java.util.HashMap">
+  		DELETE FROM FORMLETTER
+  		WHERE FORMLETTER_IDX = #FORMLETTER_IDX#
+  		AND   DOMAIN = #DOMAIN#
+  	</delete>
+  	
+  	<update id="update_formletter_type_01"
+  				parameterClass="java.util.HashMap">
+  		UPDATE FORMLETTER
+  		SET    FORMLETTER_SUBJECT = #FORMLETTER_SUBJECT#,
+  		       CONTENT = #CONTENT:java.lang.String#
+  		WHERE  FORMLETTER_IDX = #FORMLETTER_IDX#
+  	</update>
+</sqlMap>

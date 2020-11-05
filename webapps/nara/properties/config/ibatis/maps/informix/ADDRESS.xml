@@ -1,0 +1,612 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+
+<sqlMap namespace="ADDRESS">
+	<select id="select_address_type_01"
+	        parameterClass="java.util.Map"
+	        resultClass="com.nara.jdf.db.entity.AddressEntity">	        
+		SELECT
+		    SKIP $SKIP$ FIRST $USERS_LISTNUM$
+			ADDRESS_IDX, 
+			P_ADDRESS_IDX,
+			USERS_IDX, 
+			GROUP_IDX, 
+			ADDRESS_NAME, 
+			ADDRESS_SORT_NO, 
+			ADDRESS_EMAIL, 
+			ADDRESS_TEL, 
+			ADDRESS_CELLTEL, 
+			ADDRESS_HOMEZIP, 
+			ADDRESS_HOMEADDR, 
+			ADDRESS_OFFICE, 
+			ADDRESS_DEPT, 
+			ADDRESS_DUTY, 
+			ADDRESS_OFFICETEL, 
+			ADDRESS_OFFICEZIP, 
+			ADDRESS_OFFICEADDR, 
+			ADDRESS_BIRTH, 
+			ADDRESS_ISSOLAR, 
+			ADDRESS_HOMEURL, 
+			ADDRESS_STMT,
+			ADDRESS_OFFICEFAX
+		FROM ADDRESS
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property="USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isGreaterEqual prepend="AND" property="GROUP_IDX" compareValue="0">
+				GROUP_IDX = #GROUP_IDX#
+			</isGreaterEqual>
+			<isNotEqual prepend="AND" open=" SUBSTR($strField$,0,1) IN (" close=")" property="strKey" compareValue="">
+				$strKey$
+			</isNotEqual>
+			<isNotEqual prepend="AND" property="strKeyword" compareValue="">
+				$strIndex$ LIKE '%$strKeyword$%'
+			</isNotEqual>
+		</dynamic>
+		
+		ORDER BY $orderCol$ $orderType$
+	</select>
+	
+	<select id="total_select_address_type_01"
+	        parameterClass="java.util.Map"
+	        resultClass="com.nara.jdf.db.entity.AddressEntity">	        
+		SELECT
+			ADDRESS_IDX, 
+			P_ADDRESS_IDX,
+			USERS_IDX, 
+			GROUP_IDX, 
+			ADDRESS_NAME, 
+			ADDRESS_SORT_NO, 
+			ADDRESS_EMAIL, 
+			ADDRESS_TEL, 
+			ADDRESS_CELLTEL, 
+			ADDRESS_HOMEZIP, 
+			ADDRESS_HOMEADDR, 
+			ADDRESS_OFFICE, 
+			ADDRESS_DEPT, 
+			ADDRESS_DUTY, 
+			ADDRESS_OFFICETEL, 
+			ADDRESS_OFFICEZIP, 
+			ADDRESS_OFFICEADDR, 
+			ADDRESS_BIRTH, 
+			ADDRESS_ISSOLAR, 
+			ADDRESS_HOMEURL, 
+			ADDRESS_STMT,
+			ADDRESS_OFFICEFAX
+		FROM ADDRESS
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property="USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isGreaterEqual prepend="AND" property="GROUP_IDX" compareValue="0">
+				GROUP_IDX = #GROUP_IDX#
+			</isGreaterEqual>
+			<isNotEqual prepend="AND" open=" SUBSTR($strField$,0,1) IN (" close=")" property="strKey" compareValue="">
+				$strKey$
+			</isNotEqual>
+			<isNotEqual prepend="AND" property="strKeyword" compareValue="">
+				$strIndex$ LIKE '%$strKeyword$%'
+			</isNotEqual>
+		</dynamic>
+		
+		ORDER BY $orderCol$ $orderType$
+	</select>
+	
+	<select id="select_address_type_02"
+	        parameterClass="java.util.Map"
+	        resultClass="com.nara.jdf.db.entity.AddressEntity">
+		SELECT
+			ADDRESS_IDX,
+			USERS_IDX,
+			GROUP_IDX,
+			NVL(ADDRESS_NAME, 'non name') ADDRESS_NAME,
+			ADDRESS_EMAIL
+		FROM ADDRESS
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "GROUP_IDX">
+				GROUP_IDX = #GROUP_IDX#
+			</isNotNull>
+		</dynamic>
+		ORDER BY $orderCol$ $orderType$
+	</select>
+	
+	<select id="select_address_type_03"
+	        parameterClass="java.util.Map"
+	        resultClass="com.nara.jdf.db.entity.AddressEntity">	        
+		SELECT
+			ADDRESS_IDX, 
+			P_ADDRESS_IDX,
+			USERS_IDX, 
+			GROUP_IDX, 
+			ADDRESS_NAME, 
+			ADDRESS_SORT_NO, 
+			ADDRESS_EMAIL, 
+			ADDRESS_TEL, 
+			ADDRESS_CELLTEL, 
+			ADDRESS_HOMEZIP, 
+			ADDRESS_HOMEADDR, 
+			ADDRESS_OFFICE, 
+			ADDRESS_DEPT, 
+			ADDRESS_DUTY, 
+			ADDRESS_OFFICETEL, 
+			ADDRESS_OFFICEZIP, 
+			ADDRESS_OFFICEADDR, 
+			ADDRESS_BIRTH, 
+			ADDRESS_ISSOLAR, 
+			ADDRESS_HOMEURL, 
+			ADDRESS_STMT,
+			ADDRESS_OFFICEFAX
+		FROM ADDRESS
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property="ADDRESS_IDX">
+				ADDRESS_IDX = #ADDRESS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property="USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isGreaterEqual prepend="AND" property="GROUP_IDX" compareValue="0">
+				GROUP_IDX = #GROUP_IDX#
+			</isGreaterEqual>
+		</dynamic>
+	</select>
+	
+	<select id="select_address_type_04"
+	        parameterClass="java.util.Map"
+	        resultClass="com.nara.jdf.db.entity.AddressEntity">
+		SELECT 
+			ADDRESS_IDX,
+			USERS_IDX,
+			GROUP_IDX,
+			NVL(ADDRESS_NAME, 'non name') ADDRESS_NAME,
+			ADDRESS_EMAIL	
+		FROM ADDRESS
+		WHERE GROUP_IDX = 0
+		AND   ADDRESS_NAME IN (
+	  					   	   	SELECT ADDRESS_NAME
+					   			FROM ADDRESS
+					   			WHERE GROUP_IDX = #GROUP_IDX#
+					   			AND   USERS_IDX = #USERS_IDX#
+	  			   	  		  )  
+		ORDER BY $orderCol$ $orderType$
+	</select>
+	
+	<select id="count_address_type_01"
+	        parameterClass="java.util.Map"
+	        resultClass="java.lang.Integer">
+		SELECT
+	  		COUNT(ADDRESS_IDX) CNT
+		FROM ADDRESS
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property="USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isGreaterEqual prepend="AND" property="GROUP_IDX" compareValue="0">
+				GROUP_IDX = #GROUP_IDX#
+			</isGreaterEqual>
+			<isNotEqual prepend="AND" open=" ( SUBSTR($strField$,0,1) IN (" close=") )" property="strKey" compareValue="">
+				$strKey$
+			</isNotEqual>
+			<isNotEqual prepend="AND" property="strKeyword" compareValue="">
+				$strIndex$ LIKE '%$strKeyword$%'
+			</isNotEqual>
+		</dynamic>
+	</select>
+	
+	<select id="count_address_type_02"
+	        parameterClass="java.util.Map"
+	        resultClass="java.lang.Integer">
+		SELECT
+	  		COUNT(ADDRESS_IDX) CNT
+		FROM ADDRESS
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isGreaterEqual prepend="AND" property="GROUP_IDX" compareValue="0">
+				GROUP_IDX = #GROUP_IDX#
+			</isGreaterEqual>
+			<isNotNull prepend="AND" property= "ADDRESS_EMAIL">
+				ADDRESS_EMAIL = #ADDRESS_EMAIL#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "NOT_ADDRESS_IDX">
+				ADDRESS_IDX != #NOT_ADDRESS_IDX#
+			</isNotNull>
+		</dynamic>
+	</select>
+	
+	<insert id="insert_address_type_01"
+	        parameterClass="com.nara.jdf.db.entity.AddressEntity">
+		INSERT INTO ADDRESS
+		(
+			ADDRESS_IDX, 
+			P_ADDRESS_IDX,
+			USERS_IDX, 
+			GROUP_IDX, 
+			ADDRESS_NAME, 
+			ADDRESS_SORT_NO, 
+			ADDRESS_EMAIL, 
+			ADDRESS_TEL, 
+			ADDRESS_CELLTEL, 
+			ADDRESS_HOMEZIP, 
+			ADDRESS_HOMEADDR, 
+			ADDRESS_OFFICE, 
+			ADDRESS_DEPT, 
+			ADDRESS_DUTY, 
+			ADDRESS_OFFICETEL, 
+			ADDRESS_OFFICEZIP, 
+			ADDRESS_OFFICEADDR, 
+			ADDRESS_BIRTH, 
+			ADDRESS_ISSOLAR, 
+			ADDRESS_HOMEURL, 
+			ADDRESS_STMT,
+			ADDRESS_OFFICEFAX
+		)
+		VALUES
+		(
+		<dynamic prepend="">
+			<isGreaterEqual prepend="" property="ADDRESS_IDX" compareValue="1">
+				#ADDRESS_IDX#,
+			</isGreaterEqual>
+			<isLessEqual prepend="" property="ADDRESS_IDX" compareValue="0">
+				SEQ_ADDRESS.NEXTVAL,
+			</isLessEqual>
+		</dynamic>
+			#P_ADDRESS_IDX#,
+			#USERS_IDX#, 
+			#GROUP_IDX#, 
+			#ADDRESS_NAME#, 
+			#ADDRESS_SORT_NO#, 
+			#ADDRESS_EMAIL#, 
+			#ADDRESS_TEL#, 
+			#ADDRESS_CELLTEL#, 
+			#ADDRESS_HOMEZIP#, 
+			#ADDRESS_HOMEADDR#, 
+			#ADDRESS_OFFICE#, 
+			#ADDRESS_DEPT#, 
+			#ADDRESS_DUTY#, 
+			#ADDRESS_OFFICETEL#, 
+			#ADDRESS_OFFICEZIP#, 
+			#ADDRESS_OFFICEADDR#, 
+			#ADDRESS_BIRTH#, 
+			#ADDRESS_ISSOLAR#, 
+			#ADDRESS_HOMEURL#, 
+			#ADDRESS_STMT#,
+			#ADDRESS_OFFICEFAX#
+		)
+	</insert>
+	
+	<insert id="copy_address_type_01"
+	        parameterClass="java.util.Map">
+		INSERT INTO ADDRESS (
+			ADDRESS_IDX,
+			P_ADDRESS_IDX,
+			USERS_IDX, 
+			GROUP_IDX, 
+			ADDRESS_NAME, 
+			ADDRESS_SORT_NO, 
+			ADDRESS_EMAIL, 
+			ADDRESS_TEL, 
+			ADDRESS_CELLTEL, 
+			ADDRESS_HOMEZIP, 
+			ADDRESS_HOMEADDR, 
+			ADDRESS_OFFICE, 
+			ADDRESS_DEPT, 
+			ADDRESS_DUTY, 
+			ADDRESS_OFFICETEL, 
+			ADDRESS_OFFICEZIP, 
+			ADDRESS_OFFICEADDR, 
+			ADDRESS_BIRTH, 
+			ADDRESS_ISSOLAR, 
+			ADDRESS_HOMEURL, 
+			ADDRESS_STMT,
+			ADDRESS_OFFICEFAX
+		)
+		SELECT 
+			SEQ_ADDRESS.NEXTVAL,
+			ADDRESS_IDX, 
+			USERS_IDX, 
+			#GROUP_IDX#, 
+			ADDRESS_NAME, 
+			ADDRESS_SORT_NO, 
+			ADDRESS_EMAIL, 
+			ADDRESS_TEL, 
+			ADDRESS_CELLTEL, 
+			ADDRESS_HOMEZIP, 
+			ADDRESS_HOMEADDR, 
+			ADDRESS_OFFICE, 
+			ADDRESS_DEPT, 
+			ADDRESS_DUTY, 
+			ADDRESS_OFFICETEL, 
+			ADDRESS_OFFICEZIP, 
+			ADDRESS_OFFICEADDR, 
+			ADDRESS_BIRTH, 
+			ADDRESS_ISSOLAR, 
+			ADDRESS_HOMEURL, 
+			ADDRESS_STMT,
+			ADDRESS_OFFICEFAX
+		FROM ADDRESS
+		WHERE ADDRESS_IDX = #ADDRESS_IDX#
+	</insert>
+	
+	<delete id="delete_address_type_01"
+	        parameterClass="java.util.Map">
+		DELETE FROM ADDRESS
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property="ADDRESS_IDX">
+				ADDRESS_IDX = #ADDRESS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property="P_ADDRESS_IDX">
+				P_ADDRESS_IDX = #P_ADDRESS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property="USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property="ADDRESS_EMAIL">
+				ADDRESS_EMAIL = #ADDRESS_EMAIL#
+			</isNotNull>
+			<isGreaterEqual prepend="AND" property="GROUP_IDX" compareValue="0">
+				GROUP_IDX = #GROUP_IDX#
+			</isGreaterEqual>
+			<isNotNull prepend="AND" property="DOMAIN">
+				SUBSTR(USERS_IDX, INSTR(USERS_IDX, '@')) = '@$DOMAIN$'
+			</isNotNull>
+		</dynamic>
+	</delete>
+	
+	<update id="simple_update_address_type_01"
+	        parameterClass="java.util.Map">
+	    UPDATE ADDRESS
+	    SET	ADDRESS_NAME = #ADDRESS_NAME#,
+	    	ADDRESS_EMAIL = #ADDRESS_EMAIL#,
+	    	ADDRESS_TEL = #ADDRESS_TEL#,
+	    	ADDRESS_CELLTEL = #ADDRESS_CELLTEL#
+	    WHERE USERS_IDX = #USERS_IDX#
+	    <dynamic prepend="">
+			<isNotNull prepend="AND" property="ADDRESS_IDX">
+				ADDRESS_IDX = #ADDRESS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property="P_ADDRESS_IDX">
+				P_ADDRESS_IDX = #P_ADDRESS_IDX#
+			</isNotNull>
+	    </dynamic> 
+	</update>
+	
+	<update id="update_address_type_01"
+	        parameterClass="com.nara.jdf.db.entity.AddressEntity">
+	    UPDATE ADDRESS
+	    SET	P_ADDRESS_IDX = #P_ADDRESS_IDX#,
+	        USERS_IDX = #USERS_IDX#, 
+			GROUP_IDX = #GROUP_IDX#, 
+			ADDRESS_NAME = #ADDRESS_NAME#, 
+			ADDRESS_SORT_NO = #ADDRESS_SORT_NO#, 
+			ADDRESS_EMAIL = #ADDRESS_EMAIL#, 
+			ADDRESS_TEL = #ADDRESS_TEL#, 
+			ADDRESS_CELLTEL = #ADDRESS_CELLTEL#, 
+			ADDRESS_HOMEZIP = #ADDRESS_HOMEZIP#, 
+			ADDRESS_HOMEADDR = #ADDRESS_HOMEADDR#, 
+			ADDRESS_OFFICE = #ADDRESS_OFFICE#, 
+			ADDRESS_DEPT = #ADDRESS_DEPT#, 
+			ADDRESS_DUTY = #ADDRESS_DUTY#, 
+			ADDRESS_OFFICETEL = #ADDRESS_OFFICETEL#, 
+			ADDRESS_OFFICEZIP = #ADDRESS_OFFICEZIP#, 
+			ADDRESS_OFFICEADDR = #ADDRESS_OFFICEADDR#, 
+			ADDRESS_BIRTH = #ADDRESS_BIRTH#, 
+			ADDRESS_ISSOLAR = #ADDRESS_ISSOLAR#, 
+			ADDRESS_HOMEURL = #ADDRESS_HOMEURL#, 
+			ADDRESS_STMT = #ADDRESS_STMT#,
+			ADDRESS_OFFICEFAX = #ADDRESS_OFFICEFAX#
+	    WHERE ADDRESS_IDX = #ADDRESS_IDX# 
+	</update>
+	
+	<select id="select_address_type_05"
+	        parameterClass="java.util.Map"
+	        resultClass="java.util.HashMap">	        
+		SELECT
+		    SKIP $SKIP$ FIRST $USERS_LISTNUM$
+			ADDRESS_IDX, 
+			P_ADDRESS_IDX,
+			USERS_IDX, 
+			GROUP_IDX, 
+			ADDRESS_NAME, 
+			ADDRESS_SORT_NO, 
+			ADDRESS_EMAIL, 
+			ADDRESS_TEL, 
+			ADDRESS_CELLTEL, 
+			ADDRESS_HOMEZIP, 
+			ADDRESS_HOMEADDR, 
+			ADDRESS_OFFICE, 
+			ADDRESS_DEPT, 
+			ADDRESS_DUTY, 
+			ADDRESS_OFFICETEL, 
+			ADDRESS_OFFICEZIP, 
+			ADDRESS_OFFICEADDR, 
+			ADDRESS_BIRTH, 
+			ADDRESS_ISSOLAR, 
+			ADDRESS_HOMEURL, 
+			ADDRESS_STMT,
+			ADDRESS_OFFICEFAX
+		FROM ADDRESS
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property="USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isGreaterEqual prepend="AND" property="GROUP_IDX" compareValue="0">
+				GROUP_IDX = #GROUP_IDX#
+			</isGreaterEqual>
+			<isNotEqual prepend="AND" open=" SUBSTR($strField$,0,1) IN (" close=")" property="strKey" compareValue="">
+				$strKey$
+			</isNotEqual>
+			<isNotEqual prepend="AND" property="strKeyword" compareValue="">
+				$strIndex$ LIKE '%$strKeyword$%'
+			</isNotEqual>
+		</dynamic>
+
+		ORDER BY $orderCol$ $orderType$	  	
+	</select>		
+	
+    <select id="select_address_email"
+            parameterClass="java.util.Map"
+            resultClass="java.lang.String">
+        SELECT ADDRESS_EMAIL
+        FROM ADDRESS
+        WHERE USERS_IDX = #USERS_IDX# 
+        AND GROUP_IDX = #GROUP_IDX#
+    </select>
+    
+    <select id="select_live_search"
+			parameterClass="java.util.Map"
+			resultClass="java.util.HashMap">
+    	SELECT 
+    		AA.USERS_NAME||'-'||BB.USERS_DEPARTMENT AS ADDRESS_NAME, AA.USERS_IDX AS ADDRESS_EMAIL
+    	FROM USERS_MASTER AA JOIN USERS_DETAIL BB ON AA.USERS_IDX = BB.USERS_IDX
+    	WHERE AA.USERS_IDX LIKE '$liveQueryStr$%' OR AA.USERS_NAME LIKE '$liveQueryStr$%'
+    	UNION
+    	SELECT '' ADDRESS_NAME, '=='||GROUP_NM ADDRESS_EMAIL
+    		FROM ADDRESS_GROUP 
+			WHERE USERS_IDX = #USERS_IDX#  AND GROUP_NM LIKE '$liveQueryStr$%'
+		UNION 
+		SELECT ADDRESS_NAME, ADDRESS_EMAIL 
+			FROM ADDRESS 
+			WHERE USERS_IDX = #USERS_IDX# 
+				AND	(ADDRESS_NAME LIKE  '$liveQueryStr$%' 
+				OR	ADDRESS_EMAIL LIKE '$liveQueryStr$%')
+		<dynamic prepend="">
+			<isEqual prepend="" property="usergroup" compareValue="0">
+			UNION
+				SELECT * 
+				FROM (
+				SELECT '',
+				  '++'||AA.USER_GROUP_NAME USER_GROUP_NAME
+				FROM USER_GROUP AA
+				WHERE AA.P_USER_GROUP_IDX = (
+				    SELECT USER_GROUP_IDX
+				    FROM USER_GROUP
+				    WHERE P_USER_GROUP_IDX = 0)
+				UNION
+				SELECT '',
+				  '++'||AA.USER_GROUP_NAME||'||'||BB.USER_GROUP_NAME
+				FROM USER_GROUP BB JOIN (
+				    SELECT USER_GROUP_IDX,
+				           USER_GROUP_NAME
+				    FROM USER_GROUP s1
+				    WHERE s1.P_USER_GROUP_IDX = (
+				        SELECT USER_GROUP_IDX
+				        FROM USER_GROUP
+				        WHERE P_USER_GROUP_IDX = 0)) AA
+				ON BB.P_USER_GROUP_IDX = AA.USER_GROUP_IDX
+				UNION
+				SELECT '',
+				  case when CC.USER_GROUP_NAME is null then '++'||BB.USER_GROUP_NAME else '++'||BB.USER_GROUP_NAME||'||'||CC.USER_GROUP_NAME end
+				FROM (
+				    SELECT BB.USER_GROUP_IDX,
+				           AA.USER_GROUP_NAME||'||'||BB.USER_GROUP_NAME USER_GROUP_NAME
+				    FROM USER_GROUP BB JOIN (
+				        SELECT USER_GROUP_IDX, USER_GROUP_NAME
+				        FROM USER_GROUP s1
+				        WHERE s1.P_USER_GROUP_IDX = (
+				            SELECT USER_GROUP_IDX
+				            FROM USER_GROUP
+				            WHERE P_USER_GROUP_IDX = 0)) AA on BB.P_USER_GROUP_IDX = AA.USER_GROUP_IDX) 
+				      BB LEFT JOIN USER_GROUP CC ON BB.USER_GROUP_IDX = CC.P_USER_GROUP_IDX)
+				WHERE USER_GROUP_NAME LIKE '%$liveQueryStr$%'  
+			</isEqual>
+		
+			<isEqual prepend="" property="publicgroup" compareValue="0">
+			UNION 
+			SELECT '' , ZZ.PUBLICGROUP_NAME FROM TABLE
+		    ( MULTISET (
+				SELECT '', 
+					DECODE(AA.PUBLICGROUP_NAME, NULL, '', '!'||AA.PUBLICGROUP_NAME)||
+					DECODE(BB.PUBLICGROUP_NAME, NULL, '', '||'||BB.PUBLICGROUP_NAME)||
+					DECODE(CC.PUBLICGROUP_NAME, NULL, '', '||'||CC.PUBLICGROUP_NAME)||
+					DECODE(DD.PUBLICGROUP_NAME, NULL, '', '||'||DD.PUBLICGROUP_NAME)||
+					DECODE(EE.PUBLICGROUP_NAME, NULL, '', '||'||EE.PUBLICGROUP_NAME)  AS PUBLICGROUP_NAME
+				FROM PUBLICGROUP AA LEFT JOIN PUBLICGROUP BB ON AA.PUBLICGROUP_IDX = BB.PUBLICGROUP_DEF
+				LEFT JOIN PUBLICGROUP CC ON BB.PUBLICGROUP_IDX = CC.PUBLICGROUP_DEF
+				LEFT JOIN PUBLICGROUP DD ON CC.PUBLICGROUP_IDX = DD.PUBLICGROUP_DEF
+				LEFT JOIN PUBLICGROUP EE ON DD.PUBLICGROUP_IDX = EE.PUBLICGROUP_DEF
+				WHERE AA.PUBLICGROUP_DEF = (SELECT PUBLICGROUP_IDX FROM PUBLICGROUP WHERE PUBLICGROUP_DEF = 0)
+			)) ZZ
+			WHERE ZZ.PUBLICGROUP_NAME LIKE '%$liveQueryStr$%' 		
+			
+			UNION
+			SELECT PUBLICADDRESS_NAME , PUBLICADDRESS_EMAIL 
+			FROM PUBLICADDRESS 
+			WHERE  PUBLICADDRESS_EMAIL LIKE '$liveQueryStr$%'
+			</isEqual>
+		</dynamic>
+	</select>
+	
+	<select id="select_all_address_email"
+            parameterClass="java.lang.String"
+            resultClass="java.lang.String">
+        <![CDATA[
+        SELECT '"' || address_name || '"<' || address_email || '>'
+        FROM ADDRESS
+        WHERE USERS_IDX = #USERS_IDX# AND LENGTH(address_email) > 0
+        GROUP BY address_name, address_email
+        ]]> 
+    </select>
+    
+    <select id="select_address_type_06"
+	        parameterClass="java.lang.String"
+	        resultClass="java.util.HashMap">
+		 <![CDATA[
+		 SELECT 
+			 ADDRESS_EMAIL, ADDRESS_CELLTEL 
+		 FROM ADDRESS 
+		 WHERE USERS_IDX =  #USERS_IDX#
+		 AND ADDRESS_EMAIL is not null 
+		 AND ADDRESS_CELLTEL is not null 
+		 AND LENGTH(ADDRESS_EMAIL) > 0 
+		 AND LENGTH(ADDRESS_CELLTEL) > 0
+		 GROUP BY ADDRESS_EMAIL,ADDRESS_CELLTEL
+		]]>	 
+	</select>
+	
+	<select id="select_address_list_by_group_idx"
+            parameterClass="java.util.Map"
+            resultClass="java.util.HashMap">
+        SELECT 
+        	ADDRESS_NAME, ADDRESS_EMAIL
+        FROM ADDRESS
+        WHERE USERS_IDX = #USERS_IDX# 
+        AND GROUP_IDX = #GROUP_IDX#
+    </select>
+    
+    <select id="select_p_address_idx"
+            parameterClass="java.lang.Integer"
+            resultClass="java.lang.Integer">
+        SELECT 
+        	P_ADDRESS_IDX
+        FROM ADDRESS
+        WHERE ADDRESS_IDX = #ADDRESS_IDX#
+    </select>
+    
+    <select id="is_exist_address_check"
+            parameterClass="java.util.HashMap"
+            resultClass="java.lang.Integer">
+        SELECT 
+        	COUNT(ADDRESS_IDX)
+        FROM ADDRESS
+        <dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property="USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property="GROUP_IDX">
+				GROUP_IDX = #GROUP_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property="ADDRESS_IDX">
+				ADDRESS_IDX = #ADDRESS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property="P_ADDRESS_IDX">
+				P_ADDRESS_IDX = #P_ADDRESS_IDX#
+			</isNotNull>
+		</dynamic>
+    </select>
+</sqlMap>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+<sqlMap namespace="BIGMAIL">
+
+    <select id="getUploadFileSizeLimit" parameterClass="java.lang.String" resultClass="java.lang.Long">
+        SELECT UPLOAD_FILE_SIZE_LIMIT FROM DISK_CONFIG WHERE DOMAIN = #DOMAIN#
+    </select>
+
+    <select id="getVirusCheckEnable" parameterClass="java.lang.String" resultClass="java.lang.Integer">
+        SELECT VIRUS_CHECK_ENABLE FROM DISK_CONFIG WHERE DOMAIN = #DOMAIN#
+    </select>
+    
+    <select id="getFileFilterList" resultClass="java.lang.String">
+        SELECT FILTER_ITEM FROM DISK_FILE_FILTER
+    </select>
+    
+    <select id="existsTable" parameterClass="java.lang.String" resultClass="java.lang.String" remapResults="true">
+    	SHOW TABLES LIKE '%$TABLE_NAME$%'
+    </select>
+        
+    <statement id="createIndex" parameterClass="java.util.HashMap">
+		CREATE INDEX $INDEX_NAME$
+        ON $TABLE_NAME$ ( $COLUMN_NAME$ )
+    </statement>
+    
+    <statement id="createBigMailLogTable" parameterClass="java.util.HashMap">
+        CREATE TABLE $TABLE_NAME$ (
+            USERS_IDX    VARCHAR(200),
+            M_IDX        DECIMAL,
+            M_TITLE      TEXT,
+            M_TO         TEXT,
+            FILE_ID      VARCHAR(50),
+            FILE_NAME    TEXT,
+            FILE_SIZE    BIGINT,
+            EXPIRY_DATE  DATE,
+            LOG_DATE     DATE
+         )
+    </statement> 
+    
+    <statement id="createGuestMailLogTable" parameterClass="java.util.HashMap">
+        CREATE TABLE $TABLE_NAME$ (
+            USERS_IDX     VARCHAR(200),
+            M_IDX         DECIMAL,
+            M_TITLE       TEXT,
+            M_TO          TEXT,
+            GUEST_ID      VARCHAR(50),
+            FOLDER_NAME   TEXT,
+            EXPIRY_DATE   DATE,
+            LOG_DATE      DATE
+        )
+    </statement> 
+    
+    <insert id="insertBigMailLog" parameterClass="java.util.HashMap">
+        INSERT INTO $TABLE_NAME$ (
+            USERS_IDX, M_IDX, M_TITLE, M_TO, FILE_ID, 
+            FILE_NAME, FILE_SIZE, EXPIRY_DATE, LOG_DATE 
+        ) VALUES (
+            #USERS_IDX#, #M_IDX#, #M_TITLE#, #M_TO#, #FILE_ID#,
+            #FILE_NAME#, #FILE_SIZE#, DATE_FORMAT(#EXPIRY_DATE# , '%Y-%m-%d %H:%i:%s'), DATE_FORMAT(#LOG_DATE#, '%Y-%m-%d %H:%i:%s')
+        )
+    </insert>
+    
+    <insert id="insertGuestMailLog" parameterClass="java.util.HashMap">
+        INSERT INTO $TABLE_NAME$ (
+            USERS_IDX, M_IDX, M_TITLE, M_TO, GUEST_ID, 
+            FOLDER_NAME, EXPIRY_DATE, LOG_DATE
+        ) VALUES (
+            #USERS_IDX#, #M_IDX#, #M_TITLE#, #M_TO#, #GUEST_ID#, 
+            #FOLDER_NAME#, DATE_FORMAT(#EXPIRY_DATE#, '%Y-%m-%d %H:%i:%s'), DATE_FORMAT(#LOG_DATE#, '%Y-%m-%d %H:%i:%s')
+        )
+    </insert>
+
+</sqlMap>

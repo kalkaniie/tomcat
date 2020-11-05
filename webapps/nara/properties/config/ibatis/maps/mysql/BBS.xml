@@ -1,0 +1,484 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="BBS"> 
+  	<select id="select_bbs_type_01" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="java.util.HashMap">
+		SELECT
+			BBS_IDX 
+		FROM BBS 
+		WHERE BBS_GROUP_IDX = #BBS_GROUP_IDX#
+		AND BBS_TYPE = #BBS_TYPE#
+	</select>
+	
+	<select id="get_bbs_idx_type_01" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="java.lang.Integer">
+  		 SELECT
+           BBS_IDX 
+         FROM BBS 
+         <dynamic prepend="WHERE">
+  			<isNotNull prepend="AND" property= "BBS_IDX">
+				BBS_IDX = #BBS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "DOMAIN">
+				DOMAIN = #DOMAIN#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "BBS_GROUP_IDX">
+				BBS_GROUP_IDX = #BBS_GROUP_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "BBS_MODE">
+				BBS_MODE = #BBS_MODE#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "BBS_TYPE">
+				BBS_TYPE = #BBS_TYPE#
+			</isNotNull>
+		</dynamic>
+	</select>
+	
+	<select id="select_bbs_info_type_01" 
+  				parameterClass="java.util.HashMap" 
+  				resultClass="com.nara.jdf.db.entity.BbsEntity">
+		SELECT    
+			BBS_IDX,   
+			DOMAIN ,                      
+			BBS_ADMIN,   
+			BBS_TYPE ,    
+			BBS_MODE ,                    
+			BBS_GROUP_IDX ,   
+			BBS_NAME ,   
+			BBS_USE_REPLY ,                      
+			BBS_USE_ATTACHE ,   
+			BBS_USE_APPEND ,                      
+			BBS_USE_ATTACHE_SIZE ,   
+			BBS_AUTH_MEMBER,                       
+			BBS_AUTH_GUEST,    
+			BBS_AUTH_HIGHER,                      
+			BBS_AUTH_LOWER,    
+			BBS_AUTH_EQUALTY,
+			BBS_USE_MYPAGE    
+		FROM  BBS     
+		<dynamic prepend="WHERE">
+  			<isNotNull prepend="AND" property= "BBS_IDX">
+				<isGreaterEqual prepend="" property="BBS_IDX" compareValue="1">
+					BBS_IDX = #BBS_IDX#
+				</isGreaterEqual>
+				<isLessEqual prepend="" property="BBS_IDX" compareValue="0">
+					<isNull prepend="" property= "DOMAIN">
+						<isNull prepend="" property= "BBS_GROUP_IDX">
+							BBS_IDX = (SELECT MIN(BBS_IDX) FROM BBS)
+						</isNull>
+						<isNotNull prepend="" property= "BBS_GROUP_IDX">
+							BBS_IDX = (SELECT MIN(BBS_IDX) FROM BBS WHERE BBS_GROUP_IDX = #BBS_GROUP_IDX#)
+						</isNotNull>					
+					</isNull> 
+					<isNotNull prepend="" property= "DOMAIN">
+						<isNull prepend="" property= "BBS_GROUP_IDX">
+							BBS_IDX = (SELECT MIN(BBS_IDX) FROM BBS WHERE DOMAIN = #DOMAIN#)
+						</isNull>
+						<isNotNull prepend="" property= "BBS_GROUP_IDX">
+							BBS_IDX = (SELECT MIN(BBS_IDX) FROM BBS WHERE DOMAIN = #DOMAIN# AND BBS_GROUP_IDX = #BBS_GROUP_IDX#)
+						</isNotNull>
+					</isNotNull>
+				</isLessEqual>
+			</isNotNull>
+			<isNotNull prepend="AND" property= "DOMAIN">
+				DOMAIN = #DOMAIN#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "BBS_GROUP_IDX">
+				BBS_GROUP_IDX = #BBS_GROUP_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "BBS_MODE">
+				BBS_MODE = #BBS_MODE#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "BBS_TYPE">
+				BBS_TYPE = #BBS_TYPE#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "BBS_USE_MYPAGE">
+				BBS_USE_MYPAGE = #BBS_USE_MYPAGE#
+			</isNotNull>
+		</dynamic>
+  	</select>
+  	
+  	<select id="select_intranet_bbs_list_type_01" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="com.nara.jdf.db.entity.BbsEntity">
+  		SELECT 
+           A.BBS_IDX,
+           A.DOMAIN,
+           A.BBS_ADMIN,
+           A.BBS_TYPE,
+           A.BBS_MODE,
+           A.BBS_GROUP_IDX,
+           A.BBS_NAME,
+           A.BBS_USE_REPLY,
+           A.BBS_USE_ATTACHE,
+           A.BBS_USE_APPEND,
+           A.BBS_USE_ATTACHE_SIZE,
+           A.BBS_AUTH_MEMBER,
+           A.BBS_AUTH_GUEST,
+           A.BBS_AUTH_HIGHER, 
+           A.BBS_AUTH_LOWER, 
+           A.BBS_AUTH_EQUALTY, 
+           IFNULL(B.BBS_NEW_ARTICLE,0) BBS_NEW_ARTICLE,
+  		   IFNULL(C.BBS_TOT_ARTICLE,0) BBS_TOT_ARTICLE,
+  		   A.BBS_USE_MYPAGE
+        FROM BBS A LEFT JOIN
+        ( 
+            SELECT 
+            	BBS_IDX , 
+            	<![CDATA[ /*+ INDEX( $B_TABLE$ B_IDX) */ COUNT(B_IDX) BBS_NEW_ARTICLE ]]>
+            FROM $B_TABLE$
+            WHERE STR_TO_DATE(B_DATE,'%Y-%m-%d %T') > STR_TO_DATE(#calender#,'%Y%m%d') 
+            AND LENGTH(B_TITLE) > 0 
+            GROUP BY BBS_IDX 
+            ) B ON A.BBS_IDX = B.BBS_IDX 
+           LEFT JOIN ( 
+            SELECT 
+            BBS_IDX , 
+            	COUNT(B_IDX) BBS_TOT_ARTICLE 
+            FROM $B_TABLE$
+            WHERE LENGTH(B_TITLE) > 0 
+            GROUP BY BBS_IDX
+            ) C ON A.BBS_IDX = C.BBS_IDX 
+            JOIN ORGANIZE D ON A.BBS_GROUP_IDX = D.ORGANIZE_IDX 
+            WHERE A.DOMAIN =  #DOMAIN#
+            AND A.BBS_TYPE =  2 
+          	<dynamic prepend="">
+		    	<isNotNull prepend="" property= "BBS_GROUP_IDX">
+					<iterate property="BBS_GROUP_IDX" prepend=" AND BBS_GROUP_IDX IN " open="(" close=")" conjunction="," >
+		      			#BBS_GROUP_IDX[]#
+					</iterate>
+				</isNotNull>
+    		</dynamic>
+           
+            ORDER BY D.ORGANIZE_NAME 
+	</select>
+  	
+  	
+  	<select id="select_bbs_list_type_01" 
+  				parameterClass="java.util.HashMap" 
+  				resultClass="java.util.HashMap">
+		 SELECT 
+			<![CDATA[ /*+ INDEX_ASC(BBS BBS_IDX) */ ]]>
+			BBS_IDX,
+            DOMAIN,
+            BBS_ADMIN,
+            BBS_TYPE,
+            BBS_MODE,
+            BBS_GROUP_IDX,
+            BBS_NAME,
+            BBS_USE_REPLY,
+            BBS_USE_ATTACHE,
+            BBS_USE_APPEND,
+            BBS_USE_ATTACHE_SIZE,
+            BBS_AUTH_MEMBER,
+            BBS_AUTH_GUEST,
+            BBS_AUTH_HIGHER, 
+            BBS_AUTH_LOWER, 
+            BBS_AUTH_EQUALTY,
+		    BBS_USE_MYPAGE
+		FROM BBS 	
+		WHERE DOMAIN = #DOMAIN#
+		AND BBS_TYPE = #BBS_TYPE#
+		<dynamic prepend="">
+			<isGreaterEqual prepend="AND" property="BBS_GROUP_IDX" compareValue="1">
+				BBS_GROUP_IDX = #BBS_GROUP_IDX# 
+			</isGreaterEqual>
+		</dynamic>	
+		ORDER BY BBS_IDX ASC
+		LIMIT $SKIP$, $USERS_LISTNUM$
+	</select>
+	
+  	<select id="select_bbs_list_type_02" 
+  				parameterClass="java.util.HashMap" 
+  				resultClass="com.nara.jdf.db.entity.BbsEntity">
+		SELECT 
+            A.BBS_IDX,
+            A.DOMAIN,
+            A.BBS_ADMIN,
+            A.BBS_TYPE,
+            A.BBS_MODE,
+            A.BBS_GROUP_IDX,
+            A.BBS_NAME,
+            A.BBS_USE_REPLY,
+            A.BBS_USE_ATTACHE,
+            A.BBS_USE_APPEND,
+            A.BBS_USE_ATTACHE_SIZE,
+            A.BBS_AUTH_MEMBER,
+            A.BBS_AUTH_GUEST,
+            A.BBS_AUTH_HIGHER, 
+            A.BBS_AUTH_LOWER, 
+            A.BBS_AUTH_EQUALTY, 
+            A.BBS_USE_MYPAGE,
+            IFNULL(B.BBS_NEW_ARTICLE,0) BBS_NEW_ARTICLE,
+  		    IFNULL(C.BBS_TOT_ARTICLE,0) BBS_TOT_ARTICLE
+         FROM BBS A ,
+            ( 
+             SELECT 
+             BBS_IDX , 
+             COUNT(B_IDX) BBS_NEW_ARTICLE 
+             FROM $B_TABLE$
+             WHERE TO_DATE(B_DATE,'%Y-%m-%d %T') > TO_DATE(#calender#,'%Y-%m-%d %T') 
+             AND LENGTH(B_TITLE) > 0 
+             GROUP BY BBS_IDX 
+             ) B, 
+            ( 
+             SELECT 
+             BBS_IDX , 
+              COUNT(B_IDX) BBS_TOT_ARTICLE 
+             FROM $B_TABLE$
+             WHERE LENGTH(B_TITLE) > 0 
+             GROUP BY BBS_IDX 
+             ) C 
+             WHERE A.DOMAIN =  #DOMAIN# 
+             AND A.BBS_TYPE =  #BBS_TYPE# 
+             AND A.BBS_IDX = B.BBS_IDX(+) 
+             AND A.BBS_IDX = C.BBS_IDX(+) ORDER BY A.BBS_IDX
+			
+	</select>
+	
+	<select id="select_bbs_list_type_03" 
+  				parameterClass="java.util.HashMap" 
+  				resultClass="java.util.HashMap">
+		SELECT 
+            BBS_IDX,
+			DOMAIN,
+			BBS_ADMIN,
+			BBS_TYPE,
+			BBS_MODE,
+			BBS_GROUP_IDX,
+			BBS_NAME,
+			BBS_USE_REPLY,
+			BBS_USE_ATTACHE,
+			BBS_USE_APPEND,
+			BBS_USE_ATTACHE_SIZE,
+			BBS_AUTH_MEMBER,
+			BBS_AUTH_GUEST,
+			BBS_AUTH_HIGHER,
+			BBS_AUTH_LOWER,
+			BBS_AUTH_EQUALTY,
+			BBS_USE_MYPAGE
+        FROM BBS
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "BBS_IDX">
+				BBS_IDX = #BBS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "DOMAIN">
+				DOMAIN = #DOMAIN#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "BBS_GROUP_IDX">
+				BBS_GROUP_IDX = #BBS_GROUP_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "BBS_MODE">
+				BBS_MODE = #BBS_MODE#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "BBS_TYPE">
+				BBS_TYPE = #BBS_TYPE#
+			</isNotNull>
+			<isNotNull prepend="ORDER BY" property= "orderCol">
+				$orderCol$ $orderType$
+			</isNotNull>
+		</dynamic>	
+	</select>
+	
+	<select id="select_bbs_count_01" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="java.lang.Integer">
+  		SELECT  COUNT(BBS_IDX)
+	 	FROM	BBS
+		WHERE DOMAIN = #DOMAIN#
+		AND BBS_TYPE = #BBS_TYPE#
+		<dynamic prepend="">
+			<isGreaterEqual prepend="AND" property="BBS_GROUP_IDX" compareValue="1">
+				BBS_GROUP_IDX = #BBS_GROUP_IDX#
+			</isGreaterEqual>
+		</dynamic>
+	</select>
+	
+	<update id="update_bbs_type_01"
+            parameterClass="com.nara.jdf.db.entity.BbsEntity">
+    	UPDATE BBS SET 
+    		BBS_MODE = #BBS_MODE# ,
+    		BBS_GROUP_IDX = #BBS_GROUP_IDX# ,
+    		BBS_NAME = #BBS_NAME# ,
+    		BBS_USE_REPLY = #BBS_USE_REPLY# ,
+    		BBS_USE_ATTACHE = #BBS_USE_ATTACHE# ,
+    		BBS_USE_APPEND = #BBS_USE_APPEND# ,
+    		BBS_USE_ATTACHE_SIZE = #BBS_USE_ATTACHE_SIZE# ,
+    		BBS_AUTH_MEMBER = #BBS_AUTH_MEMBER# ,
+    		BBS_AUTH_GUEST = #BBS_AUTH_GUEST# ,
+    		BBS_AUTH_HIGHER = #BBS_AUTH_HIGHER#, 
+    		BBS_AUTH_LOWER = #BBS_AUTH_LOWER#,
+    		BBS_AUTH_EQUALTY = #BBS_AUTH_EQUALTY#,
+    		BBS_USE_MYPAGE = #BBS_USE_MYPAGE#
+    	WHERE BBS_IDX = #BBS_IDX#
+	</update>
+	<update id="update_bbs_type_02"
+            parameterClass="java.util.HashMap">
+    	UPDATE BBS 
+    	SET BBS_ADMIN = #BBS_ADMIN# 
+    	WHERE BBS_GROUP_IDX = #BBS_GROUP_IDX#
+    	AND BBS_TYPE = #BBS_TYPE#
+	</update>
+	
+	<insert id="insert_bbs_type_01"
+            parameterClass="com.nara.jdf.db.entity.BbsEntity">
+    	INSERT INTO BBS( 
+	        BBS_IDX ,
+	        DOMAIN ,
+	        BBS_ADMIN ,
+	        BBS_TYPE , 
+	        BBS_MODE , 
+	        BBS_GROUP_IDX ,
+	        BBS_NAME ,
+	        BBS_USE_REPLY ,
+	        BBS_USE_ATTACHE ,
+	        BBS_USE_APPEND ,
+	        BBS_USE_ATTACHE_SIZE ,
+	        BBS_AUTH_MEMBER, 
+	        BBS_AUTH_GUEST, 
+	        BBS_AUTH_HIGHER, 
+	        BBS_AUTH_LOWER, 
+	        BBS_AUTH_EQUALTY,
+	        BBS_USE_MYPAGE 
+	  )VALUES (
+	  		NEXTVAL('BBS'),
+	  		#DOMAIN# ,
+	        #BBS_ADMIN# ,
+	        #BBS_TYPE# , 
+	        #BBS_MODE# , 
+	        #BBS_GROUP_IDX# ,
+	        #BBS_NAME# ,
+	        #BBS_USE_REPLY# ,
+	        #BBS_USE_ATTACHE# ,
+	        #BBS_USE_APPEND# ,
+	        #BBS_USE_ATTACHE_SIZE# ,
+	        #BBS_AUTH_MEMBER#, 
+	        #BBS_AUTH_GUEST#, 
+	        #BBS_AUTH_HIGHER#, 
+	        #BBS_AUTH_LOWER#, 
+	        #BBS_AUTH_EQUALTY#,
+	        #BBS_USE_MYPAGE# 
+	  )      
+	</insert>
+	
+	
+	<delete id="delete_bbs_type_01"
+  				parameterClass="java.util.HashMap">
+   		DELETE FROM BBS
+  		<dynamic prepend="WHERE">
+  			<isNotNull prepend="AND" property= "BBS_IDX">
+				BBS_IDX = #BBS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "DOMAIN">
+				DOMAIN = #DOMAIN#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "BBS_GROUP_IDX">
+				BBS_GROUP_IDX = #BBS_GROUP_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "BBS_TYPE">
+				BBS_TYPE = #BBS_TYPE#
+			</isNotNull>
+		</dynamic>
+  	</delete>	
+  	
+  	<select id="get_main_bbs_idx" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="java.lang.Integer">
+  		SELECT  IFNULL(MIN(BBS_IDX), 0)
+	 	FROM	BBS
+		WHERE DOMAIN = #DOMAIN#
+		<dynamic prepend="">
+			<isGreaterEqual prepend="AND" property="BBS_GROUP_IDX" compareValue="1">
+				BBS_GROUP_IDX = #BBS_GROUP_IDX#
+			</isGreaterEqual>
+			<isNotNull prepend="AND" property= "BBS_TYPE">
+				BBS_TYPE = #BBS_TYPE#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "BBS_MODE">
+				BBS_MODE = #BBS_MODE#
+			</isNotNull>
+		</dynamic>
+	</select>
+	
+	<!--Text mode-->
+	<select id="select_bbs_list_type_04" 
+  				parameterClass="java.util.HashMap" 
+  				resultClass="com.nara.jdf.db.entity.BbsEntity">
+		SELECT 
+            BBS_IDX,
+			DOMAIN,
+			BBS_ADMIN,
+			BBS_TYPE,
+			BBS_MODE,
+			BBS_GROUP_IDX,
+			BBS_NAME,
+			BBS_USE_REPLY,
+			BBS_USE_ATTACHE,
+			BBS_USE_APPEND,
+			BBS_USE_ATTACHE_SIZE,
+			BBS_AUTH_MEMBER,
+			BBS_AUTH_GUEST,
+			BBS_AUTH_HIGHER,
+			BBS_AUTH_LOWER,
+			BBS_AUTH_EQUALTY,
+			BBS_USE_MYPAGE
+        FROM BBS
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "BBS_IDX">
+				BBS_IDX = #BBS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "DOMAIN">
+				DOMAIN = #DOMAIN#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "BBS_GROUP_IDX">
+				BBS_GROUP_IDX = #BBS_GROUP_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "BBS_MODE">
+				BBS_MODE = #BBS_MODE#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "BBS_TYPE">
+				BBS_TYPE = #BBS_TYPE#
+			</isNotNull>
+			<isNotNull prepend="ORDER BY" property= "orderCol">
+				$orderCol$ $orderType$
+			</isNotNull>
+		</dynamic>	
+	</select>	
+	
+	<select id="select_bbs_list_by_select_option" 
+  				parameterClass="java.util.HashMap" 
+  				resultClass="java.util.HashMap">
+		<isEqual prepend="" property="BBS_TYPE" compareValue="1">
+			SELECT 
+				AA.BBS_IDX,
+				CONCAT(IFNULL(BB.BBS_GROUP_NAME,''), (CASE WHEN BB.BBS_GROUP_NAME IS NULL THEN '' ELSE '-' END),AA.BBS_NAME) BBS_NAME
+			FROM BBS AA LEFT JOIN BBS_GROUP BB ON AA.BBS_GROUP_IDX = BB.BBS_GROUP_IDX 
+			WHERE AA.BBS_TYPE=#BBS_TYPE#
+			ORDER BY BBS_NAME
+		</isEqual>
+		<isEqual prepend="" property="BBS_TYPE" compareValue="2">
+			SELECT 
+				AA.BBS_IDX,
+				CONCAT(BB.ORGANIZE_NAME,'-',AA.BBS_NAME) BBS_NAME
+			FROM BBS AA, 
+				(SELECT
+					AA.ORGANIZE_IDX,
+					CONCAT(
+						DD.ORGANIZE_NAME, CASE WHEN DD.ORGANIZE_NAME IS NULL THEN '' ELSE '-' END,
+						CC.ORGANIZE_NAME, CASE WHEN CC.ORGANIZE_NAME IS NULL THEN '' ELSE '-' END,
+						BB.ORGANIZE_NAME, CASE WHEN BB.ORGANIZE_NAME IS NULL THEN '' ELSE '-' END,
+						AA.ORGANIZE_NAME
+					) ORGANIZE_NAME
+				FROM ORGANIZE AA 
+				LEFT JOIN ORGANIZE BB ON AA.ORGANIZE_DEF = BB.ORGANIZE_IDX 
+				LEFT JOIN ORGANIZE CC ON BB.ORGANIZE_DEF = CC.ORGANIZE_IDX 
+				LEFT JOIN ORGANIZE DD ON CC.ORGANIZE_DEF = DD.ORGANIZE_IDX) BB
+			WHERE AA.BBS_GROUP_IDX = BB.ORGANIZE_IDX
+			AND AA.BBS_TYPE=#BBS_TYPE#
+			ORDER BY BBS_NAME			
+		</isEqual>
+	</select>
+</sqlMap>

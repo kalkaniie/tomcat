@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="WEBFILE_SHARE">
+	
+	<delete id="delete_webfile_share_type_01"
+  				parameterClass="java.util.HashMap">
+  		DELETE FROM FILE_SHARE
+  		<dynamic prepend="WHERE">
+  			<isNotNull prepend="AND" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "FILE_SHARE_FOLDER">
+				FILE_SHARE_FOLDER = #FILE_SHARE_FOLDER#
+			</isNotNull>
+  		</dynamic>
+  	</delete>
+  	
+  	<insert id="insert_webfile_share_type_01"
+          parameterClass="com.nara.jdf.db.entity.WebFileShareEntity">
+			INSERT INTO FILE_SHARE
+			(
+                FILE_SHARE_IDX,
+                USERS_IDX,
+                FILE_SHARE_FOLDER,
+                FILE_SHARE_AUTH
+			)
+			VALUES
+			(
+				NEXTVAL('FILE_SHARE'),
+				#USERS_IDX#,
+				#FILE_SHARE_FOLDER#,
+                #FILE_SHARE_AUTH#
+			)
+	</insert>
+	
+	<select id="select_webfile_share_type_01" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="com.nara.jdf.db.entity.WebFileShareEntity">
+        SELECT
+           /* INDEX_ASC(FILE_SHARE FILE_SHARE_IDX) */ 
+           FILE_SHARE_FOLDER 
+           FROM FILE_SHARE 
+		<dynamic prepend="">
+			<isNotNull prepend="WHERE" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+		</dynamic>   
+  	</select>
+  	
+  	<select id="select_webfile_share_type_02" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="com.nara.jdf.db.entity.WebFileShareEntity">
+        SELECT
+          <![CDATA[ /*+ INDEX_ASC(FILE_SHARE FILE_SHARE_IDX) */ ]]>
+          FILE_SHARE_IDX, 
+          USERS_IDX, 
+          FILE_SHARE_FOLDER, 
+          FILE_SHARE_AUTH 
+       FROM FILE_SHARE 
+		<dynamic prepend="">
+			<isNotNull prepend="WHERE" property= "USERS_IDX">
+				USERS_IDX = #USERS_IDX#
+			</isNotNull>
+		</dynamic>   
+  	</select>
+  	
+  	<select id="select_webfile_share_type_03" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="com.nara.jdf.db.entity.WebFileShareEntity">
+        SELECT 
+         <![CDATA[ /*+ INDEX_ASC(FILE_SHARE FILE_SHARE_IDX) */ ]]>
+          FILE_SHARE_IDX, 
+          USERS_IDX, 
+          FILE_SHARE_FOLDER, 
+          FILE_SHARE_AUTH 
+        FROM FILE_SHARE 
+        WHERE USERS_IDX = #USERS_IDX#
+           AND INSTR(#FILE_SHARE_FOLDER#,FILE_SHARE_FOLDER)  = 1 
+		
+  	</select>
+</sqlMap>

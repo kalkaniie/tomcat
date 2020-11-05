@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="SYSTEM_INFO">
+	<!--
+	<resultMap id="SystemInfoEntity" class="com.nara.jdf.db.entity.SystemInfoEntity">
+		<result property="SYSTEM_INFO_IDX" column="SYSTEM_INFO_IDX" columnIndex="1"/>
+		<result property="SYSTEM_INFO_VALUE" column="SYSTEM_INFO_VALUE" columnIndex="2"/>
+	</resultMap>
+  -->
+  <select id="select_systeminfo_info_type_01" 
+  				parameterClass="java.util.HashMap" 
+  				resultClass="com.nara.jdf.db.entity.SystemInfoEntity">
+    SELECT
+			SYSTEM_INFO_IDX,
+			SYSTEM_INFO_VALUE
+    FROM SYSTEM_INFO
+    <dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "SYSTEM_INFO_IDX">
+				SYSTEM_INFO_IDX= #SYSTEM_INFO_IDX#
+			</isNotNull> 			
+		</dynamic>
+  </select>
+  
+  
+  <update id="update_systeminfo_info_type_01"
+            parameterClass="java.util.HashMap">
+     	UPDATE SYSTEM_INFO SET 
+          	SYSTEM_INFO_VALUE 	= #SYSTEM_INFO_VALUE# 
+        WHERE SYSTEM_INFO_IDX 	= #SYSTEM_INFO_IDX# 
+	</update>
+	  
+</sqlMap>

@@ -1,0 +1,66 @@
+ <!-- saved from url=(0014)about:internet -->
+
+<HTML>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<SCRIPT SRC="./flashObj.js" LANGUAGE="javascript" type="text/javascript"></SCRIPT>
+
+<script language=javascript>
+	
+	
+	function testLoginMsg(){
+		Send_Msg(11,"test1@demo.imtong.com(0x03)ONLINE(0x03)75B0E15E1490D599C34BCB9B3988E27A");
+	}
+
+
+	function testStatusMsg(){
+		
+		Send_Msg(37,"test1@demo.imtong.com(0x03)test1@demo.imtong.com(0x03)0(0x03)0(0x03)없음");
+	}
+
+	function testMsg(){
+		
+		Send_Msg(23,"165833FEBA7930AE757CE19F91DC3AF2(0x03)test1@demo.imtong.com(0x03)test1(0x03)test2@demo.imtong.com(0x03)굴림,9,128,0,0,0,0,0(0x03)1193127232(0x03)test대화111111111111111");
+	}
+	
+	
+	//////////////////// 타이머 추가 부분 ////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	var timerid;
+	
+	function test_startTimer(){
+		// 타이머 시작
+		// 인자 : op_code, message, delay, repeat 
+		// 리턴 : timer id
+		var timer1, timer2;
+		timer1 = startTimer(0, "1번 타이머, 3초, 한번", 1000*3,  false);
+	    timer2 = startTimer(0, "2번 타이머, 1초, 반복", 1000*1,  true);
+		timerid = timer2;
+	}
+	
+	function test_stopTimer(){
+		// 타이머 정지
+		// 인자 : timer id
+		stopTimer(timerid);
+	}
+	
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+</script>
+
+</head>
+
+<BODY bgcolor="#FFFFFF">
+
+<SCRIPT LANGUAGE="javascript">flash_load("socket_client.swf","600","500","211.238.156.202","21002");</SCRIPT>
+
+<br><br>
+	<input type='button' value='서버 접속' onClick="javascript:Connect_Server()">
+	<input type='button' value='로그인' onClick="javascript:testLoginMsg()">
+	<input type='button' value='상태 메시지' onClick="javascript:testStatusMsg()">
+	<input type='button' value='대화메시지' onClick="javascript:testMsg()">
+	<input type='button' value='타이머 시작' onClick="javascript:test_startTimer()">
+	<input type='button' value='타이머 정지' onClick="javascript:test_stopTimer()">
+</BODY>
+</HTML>

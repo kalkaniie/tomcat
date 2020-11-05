@@ -1,0 +1,776 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="B_DOMAIN"> 
+  	<select id="select_board_type_02" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="java.util.HashMap">
+  		<![CDATA[
+  		SELECT A.B_IDX 
+  		FROM  $B_TABLE$ A, BBS B
+  		WHERE
+  			B.BBS_GROUP_IDX = #BBS_GROUP_IDX#
+			AND B.BBS_IDX = A.BBS_IDX
+			AND LENGTH(A.B_ATTACHE) > 0
+			AND	B.BBS_TYPE = #BBS_TYPE#
+		]]>	
+	</select>
+   	
+   	<select id="select_board_type_03" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="java.util.HashMap">
+  		<![CDATA[
+  		SELECT B_IDX
+  		FROM  $B_TABLE$ 
+  		WHERE  BBS_IDX = #BBS_IDX#
+			AND LENGTH(B_ATTACHE) > 0
+		]]>		
+	</select>
+   	
+   	<select id="select_board_seq_01" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="java.lang.Integer">
+  		SELECT NEXT_VAL 
+  		FROM SEQUENCE WHERE NAME = $B_TABLE$
+	</select>
+	
+	
+	<select id="select_board_info_type_01" 
+					parameterClass="java.util.HashMap" 
+					resultClass="com.nara.jdf.db.entity.BoardEntity">
+		SELECT 
+			B_IDX,
+			BBS_IDX,
+			B_REF,
+			B_STEP,
+			B_LEVEL,
+			USERS_IDX,
+			B_PASSWD,
+			B_NAME,
+			B_EMAIL,
+			B_TITLE,
+			B_CONTENT_TYPE,
+			B_CONTENT,
+			B_DATE,
+			B_ATTACHE,
+			B_ATTACHE_SIZE,
+			B_READ_NUM,
+			B_DOWNLOAD_NUM,
+			B_APPEND_NUM, 
+			B_NOTICE_WAY 
+		FROM $B_TABLE$
+		<dynamic prepend="WHERE">
+			<isNotNull prepend="AND" property= "B_IDX">
+				B_IDX= #B_IDX#
+			</isNotNull> 			
+		</dynamic>
+	</select>
+	
+	
+	<select id="select_board_count_01" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="java.lang.Integer">
+  		SELECT  COUNT(B_IDX) 
+	 	FROM	$B_TABLE$
+		WHERE BBS_IDX = #BBS_IDX#
+		
+		<dynamic prepend="">
+			<isNotNull prepend="" property= "strIndex">
+				<isEqual prepend="AND" property= "strIndex" compareValue="B_DATE">
+					STR_TO_DATE(B_DATE,'%Y-%m-%d %T') BETWEEN STR_TO_DATE(#startdt#, '%Y-%m-%d') AND DATE_ADD(DATE_ADD(STR_TO_DATE(#enddt#,'%Y-%m-%d'), INTERVAL 1 DAY), INTERVAL -1 SECOND)
+				</isEqual>	
+				<isNotEqual prepend="AND" property= "strIndex" compareValue="B_DATE">
+					$strIndex$ like CONCAT('%',#strKeyword#,'%')
+				</isNotEqual>	
+			</isNotNull> 			
+		</dynamic>
+	</select>
+	
+	
+	<select id="select_board_max_step" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="java.lang.Integer">
+  		<![CDATA[
+  		SELECT MAX(B_STEP) FROM $B_TABLE$
+  		WHERE 	BBS_IDX = #BBS_IDX# 
+  			AND B_REF = #B_REF#
+  			AND B_STEP > #B_STEP#
+  			AND B_LEVEL > #B_LEVEL#
+  		]]>
+  		<dynamic prepend="">
+			<isGreaterEqual prepend="" property="nMinStep" compareValue="1">
+				<![CDATA[
+				AND B_STEP < #nMinStep#
+				]]>
+			</isGreaterEqual>
+		</dynamic>
+	</select>
+	<select id="select_board_min_step" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="java.lang.Integer">
+  		<![CDATA[
+  		SELECT MIN(B_STEP) FROM $B_TABLE$
+  		WHERE 	BBS_IDX = #BBS_IDX# 
+  			AND B_REF = #B_REF#
+  			AND B_STEP > #B_STEP#
+  			AND B_LEVEL <= #B_LEVEL#
+  		]]>	
+  	</select>
+  	
+  	<select id="select_board_next_article" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="java.lang.Integer">
+  		<![CDATA[
+  		SELECT MAX(B_IDX) FROM $B_TABLE$
+  		WHERE BBS_IDX = #BBS_IDX# AND B_IDX < #B_IDX#
+  		]]>
+  		<dynamic prepend="">
+			<isNotNull prepend="" property= "strIndex">
+				<isEqual prepend="" property= "strIndex" compareValue="B_DATE">
+					<isNotEqual prepend="AND" property= "startdt" compareValue="">	
+						STR_TO_DATE(B_DATE,'%Y-%m-%d %T') BETWEEN STR_TO_DATE(#startdt#, '%Y-%m-%d') AND DATE_ADD(DATE_ADD(STR_TO_DATE(#enddt#,'%Y-%m-%d'), INTERVAL 1 DAY), INTERVAL -1 SECOND)
+					</isNotEqual>	
+				</isEqual>	
+				<isNotEqual prepend="AND" property= "strIndex" compareValue="B_DATE">
+					$strIndex$ like CONCAT('%',#strKeyword#,'%')
+				</isNotEqual>	
+			</isNotNull> 			
+		</dynamic>
+  	</select>
+	
+	<select id="select_board_prev_article" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="java.lang.Integer">
+  		<![CDATA[
+  		SELECT MIN(B_IDX) FROM $B_TABLE$
+  		WHERE BBS_IDX = #BBS_IDX# AND B_IDX > #B_IDX#
+  		]]>
+  		<dynamic prepend="">
+			<isNotNull prepend="" property= "strIndex">
+				<isEqual prepend="" property= "strIndex" compareValue="B_DATE">
+					<isNotEqual prepend="AND" property= "startdt" compareValue="">
+						STR_TO_DATE(B_DATE,'%Y-%m-%d %T') BETWEEN STR_TO_DATE(#startdt#, '%Y-%m-%d') AND DATE_ADD(DATE_ADD(STR_TO_DATE(#enddt#,'%Y-%m-%d'), INTERVAL 1 DAY), INTERVAL -1 SECOND)
+					</isNotEqual>	
+				</isEqual>	
+				<isNotEqual prepend="AND" property= "strIndex" compareValue="B_DATE">
+					$strIndex$ like CONCAT('%',#strKeyword#,'%')
+				</isNotEqual>	
+			</isNotNull> 			
+		</dynamic>
+  	</select>
+  	
+  	<select id="select_board_ref_list" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="com.nara.jdf.db.entity.BoardEntity">
+  		SELECT 
+			B_IDX,
+			BBS_IDX,
+			B_REF,
+			B_STEP,
+			B_LEVEL,
+			USERS_IDX,
+			B_NAME,
+			B_EMAIL,
+			B_TITLE,
+			B_DATE,
+			B_ATTACHE,
+			B_READ_NUM,
+			B_DOWNLOAD_NUM,
+			B_APPEND_NUM 
+		FROM $B_TABLE$
+		WHERE B_REF = #B_REF#
+		ORDER BY B_STEP 
+	</select>
+	<select id="select_board_top_list" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="java.util.HashMap">
+  		SELECT 
+			A.B_IDX,
+			A.BBS_IDX,
+			A.B_REF,
+			A.B_STEP,
+			A.B_LEVEL,
+			A.USERS_IDX,
+			A.B_NAME,
+			A.B_EMAIL,
+			A.B_TITLE,
+			A.B_DATE,
+			A.B_ATTACHE,
+			A.B_READ_NUM,
+			A.B_DOWNLOAD_NUM,
+			A.B_APPEND_NUM 
+		 FROM $B_TABLE$ A, BBS_TOP B 
+		 WHERE A.BBS_IDX = #BBS_IDX# 
+			 AND A.BBS_IDX=B.BBS_IDX 
+			 AND A.B_IDX = B.B_IDX 
+	</select>
+   	
+	<select id="select_bbs_top_search" 
+  				parameterClass="java.util.HashMap"
+  				resultClass="java.lang.Integer">
+  		SELECT COUNT(B_IDX) FROM BBS_TOP
+  		WHERE BBS_IDX = #BBS_IDX#  
+  			  AND B_IDX = #B_IDX# 
+	</select>
+	
+   	<update id="update_append_type_01"
+            parameterClass="java.util.HashMap">
+    	UPDATE $B_TABLE$ 
+    	SET B_APPEND_NUM = B_APPEND_NUM+1
+    	WHERE B_IDX = #B_IDX#
+	</update>
+	
+	<update id="update_append_type_02"
+            parameterClass="java.util.HashMap">
+    	UPDATE $B_TABLE$ 
+    	SET B_DOWNLOAD_NUM = B_DOWNLOAD_NUM+1
+    	WHERE B_IDX = #B_IDX#
+	</update>
+	<update id="update_append_type_03"
+            parameterClass="java.util.HashMap">
+    	UPDATE $B_TABLE$ 
+    	SET B_READ_NUM = B_READ_NUM+1
+    	WHERE B_IDX = #B_IDX#
+	</update>
+	
+	<update id="update_board_type_01"
+            parameterClass="java.util.HashMap">
+    	UPDATE $B_TABLE$ 
+    	SET 
+    	<dynamic prepend="">
+			<isEqual prepend="" property= "ATTACHE" compareValue="ATTACHE">
+    			B_ATTACHE = #B_ATTACHE#,
+    			B_ATTACHE_SIZE = #B_ATTACHE_SIZE#
+			</isEqual>
+			<isEqual prepend="" property= "ATTACHE" compareValue="CONTENT">
+    			B_TITLE = #B_TITLE#,
+    			B_CONTENT_TYPE = #B_CONTENT_TYPE#,
+    			B_NOTICE_WAY = #B_NOTICE_WAY#,
+    			B_CONTENT = #B_CONTENT,javaType=java.lang.String,jdbcType=NCLOB#
+			</isEqual>
+		</dynamic>	
+    	WHERE B_IDX = $B_IDX$
+	</update>
+	<update id="update_board_type_02"
+            parameterClass="java.util.HashMap">
+    	UPDATE $B_TABLE$ 
+    	SET BBS_IDX =#BBS_IDX#
+    	<dynamic prepend="">
+	    	<isNotNull prepend="" property= "B_IDX">
+				<iterate property="B_IDX" prepend=" WHERE B_IDX IN " open="(" close=")" conjunction="," >
+	      			#B_IDX[]#
+				</iterate>
+			</isNotNull>
+    	</dynamic>
+	</update>
+	
+	<insert id="insert_board_type_01"
+            parameterClass="com.nara.jdf.db.entity.BoardEntity">
+        INSERT INTO $B_TABLE$
+        (
+            B_IDX,
+			B_REF,
+			BBS_IDX,
+			B_STEP,
+			B_LEVEL,
+			USERS_IDX,
+			B_PASSWD,
+			B_NAME,
+			B_EMAIL,
+			B_TITLE,
+			B_CONTENT_TYPE,
+			B_DATE,
+			B_ATTACHE,
+			B_ATTACHE_SIZE,
+			B_READ_NUM,
+			B_DOWNLOAD_NUM,
+			B_APPEND_NUM,
+			B_NOTICE_WAY,
+			CUSTOM_TITLE,
+		    RECEIVE_USERS_IDX,
+		    RECEIVE_USERS_NAME,
+		    B_NOTICE_YN,
+		    B_NOTICE_TYPE,
+			B_CONTENT
+		) VALUES (
+			<dynamic prepend="">
+				<isGreaterEqual prepend="" property="B_IDX" compareValue="1">
+					#B_IDX#,
+				</isGreaterEqual>
+				<isLessEqual prepend="" property="B_IDX" compareValue="0">
+					NEXTVAL($B_TABLE$),
+				</isLessEqual>
+			</dynamic>
+			#B_REF#,	
+			#BBS_IDX#,
+			#B_STEP#,
+			#B_LEVEL#,
+			#USERS_IDX#,
+			#B_PASSWD#,
+			#B_NAME#,
+			#B_EMAIL#,
+			#B_TITLE#,
+			#B_CONTENT_TYPE#,
+			DATE_FORMAT(SYSDATE(),'%Y-%m-%d %T'),
+			#B_ATTACHE#,
+			#B_ATTACHE_SIZE#,
+			#B_READ_NUM#,
+			#B_DOWNLOAD_NUM#,
+			#B_APPEND_NUM#,
+			#B_NOTICE_WAY#,
+			#CUSTOM_TITLE#,
+		    #RECEIVE_USERS_IDX#,
+		    #RECEIVE_USERS_NAME#,
+		    #B_NOTICE_YN#,
+		    #B_NOTICE_TYPE#, 
+			#B_CONTENT,javaType=java.lang.String,jdbcType=NCLOB#
+		)
+    </insert>
+    
+    <insert id="insert_board_type_02"
+            parameterClass="com.nara.jdf.db.entity.BoardEntity">
+        INSERT INTO $B_TABLE$
+        (
+            B_IDX,
+			B_REF,
+			BBS_IDX,
+			B_STEP,
+			B_LEVEL,
+			USERS_IDX,
+			B_PASSWD,
+			B_NAME,
+			B_EMAIL,
+			B_TITLE,
+			B_CONTENT_TYPE,
+			B_DATE,
+			B_ATTACHE,
+			B_ATTACHE_SIZE,
+			B_READ_NUM,
+			B_DOWNLOAD_NUM,
+			B_APPEND_NUM, 
+			B_NOTICE_WAY, 
+			B_CONTENT
+		) VALUES (
+			NEXTVAL($B_TABLE$),
+			#B_REF#,
+			#BBS_IDX#,
+			#B_STEP#,
+			#B_LEVEL#,
+			#USERS_IDX#,
+			#B_PASSWD#,
+			#B_NAME#,
+			#B_EMAIL#,
+			#B_TITLE#,
+			#B_CONTENT_TYPE#,
+			DATE_FORMAT(SYSDATE(),'%Y-%m-%d %T'),
+			#B_ATTACHE#,
+			#B_ATTACHE_SIZE#,
+			#B_READ_NUM#,
+			#B_DOWNLOAD_NUM#,
+			#B_APPEND_NUM#, 
+			#B_NOTICE_WAY#,
+			#B_CONTENT,javaType=java.lang.String,jdbcType=NCLOB#
+		)
+    </insert>	
+    <delete id="delete_board_type_01"
+  				parameterClass="java.util.HashMap">
+   		DELETE FROM $B_TABLE$
+  		<dynamic prepend="WHERE">
+  			<isNotNull prepend="AND" property= "B_IDX">
+				B_IDX = #B_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "BBS_IDX">
+				BBS_IDX = #BBS_IDX#
+			</isNotNull>
+		</dynamic>
+  	</delete>	
+  	
+  	<update id="update_board_type_03"
+            parameterClass="java.util.HashMap">
+    	UPDATE $B_TABLE$ 
+    	SET B_APPEND_NUM = B_APPEND_NUM-1
+    	WHERE B_IDX =#B_IDX#
+	</update>
+	
+	<delete id="delete_board_top_type_01"
+  				parameterClass="java.util.HashMap">
+   		DELETE FROM $B_TABLE$
+  		<dynamic prepend="WHERE">
+  			<isNotNull prepend="AND" property= "B_IDX">
+				B_IDX = #B_IDX#
+			</isNotNull>
+			<isNotNull prepend="AND" property= "BBS_IDX">
+				BBS_IDX = #BBS_IDX#
+			</isNotNull>
+		</dynamic>
+  	</delete>
+  	<update id="update_board_type_04"
+            parameterClass="java.util.HashMap">
+    	UPDATE $B_TABLE$ 
+    	SET B_REF = #B_REF#
+    	WHERE B_IDX =#B_IDX#
+	</update>
+	<update id="update_board_type_05"
+            parameterClass="java.util.HashMap">
+    	UPDATE $B_TABLE$ 
+    	SET B_STEP = B_STEP+1
+    	WHERE BBS_IDX =#BBS_IDX#
+    		AND B_REF = #B_REF#
+    		AND B_STEP > #B_STEP#
+	</update>		
+	<update id="update_board_type_06"
+            parameterClass="java.util.HashMap">
+    	UPDATE $B_TABLE$ 
+    	SET B_ATTACHE = #B_ATTACHE#,
+    	    B_ATTACHE_SIZE = #B_ATTACHE_SIZE#
+    	WHERE B_IDX =#B_IDX#
+	</update>
+		
+	<select id="select_resent_board_list"
+		parameterClass="java.util.HashMap"
+		resultClass="java.util.HashMap">
+			<![CDATA[
+			SELECT 
+			    AA.B_IDX, 
+			    AA.BBS_IDX, 
+			    AA.USERS_IDX,
+			    AA.B_NAME, 
+			    AA.B_TITLE, 
+			    AA.B_ATTACHE,
+			    SUBSTR(AA.B_ATTACHE, INSTR(AA.B_ATTACHE, '.')+1) B_ATTACHE_EXT,
+			    AA.B_DATE,
+			    CASE WHEN BB.BBS_USERLOG_IDX IS NULL THEN  CASE WHEN (STR_TO_DATE(AA.B_DATE,'%Y-%m-%d %T') > DATE_ADD(SYSDATE(), INTERVAL -7 DAY)) THEN 'false' ELSE 'true' END
+			         else 'true' 
+			    end READARTICLE,
+			    CASE WHEN (STR_TO_DATE(AA.B_DATE,'%Y-%m-%d %T') > DATE_ADD(SYSDATE(), INTERVAL -7 DAY)) THEN 'true' 
+			         else 'false' 
+			    end NEWARTICLE,
+			    'list' B_GUBUN,
+			    AA.B_LEVEL
+			FROM $B_TABLE$ AA LEFT OUTER JOIN BBS_USERLOG BB 
+			ON AA.B_IDX = BB.BBS_USERLOG_IDX and BB.USERS_IDX = #USERS_IDX#
+			WHERE AA.BBS_IDX = #BBS_IDX#
+			ORDER BY AA.B_DATE DESC, AA.B_REF DESC, AA.B_STEP
+			LIMIT $SKIP$, $USERS_LISTNUM$
+			]]>
+	</select> 
+	<select id="get_board_list_type_01"
+		parameterClass="java.util.HashMap"
+		resultClass="java.util.HashMap">
+			<![CDATA[
+				SELECT 
+				    AA.B_IDX, 
+				    AA.BBS_IDX, 
+				    AA.USERS_IDX,
+				    AA.B_NAME,
+				    AA.B_EMAIL, 
+				    AA.B_TITLE, 
+				    AA.B_ATTACHE,
+				    SUBSTR(AA.B_ATTACHE, INSTR(AA.B_ATTACHE, '.')+1) B_ATTACHE_EXT,
+				    AA.B_DATE,
+				    AA.B_READ_NUM,
+				    AA.B_DOWNLOAD_NUM,
+				    AA.B_APPEND_NUM,
+				    CASE WHEN BB.BBS_USERLOG_IDX IS NULL THEN CASE WHEN (STR_TO_DATE(AA.B_DATE,'%Y-%m-%d %T') > DATE_ADD(SYSDATE(), INTERVAL -7 DAY)) THEN 'false' else 'true' END
+				         else 'true' 
+				    END READARTICLE,
+				    CASE WHEN (STR_TO_DATE(AA.B_DATE,'%Y-%m-%d %T') > DATE_ADD(SYSDATE(), INTERVAL -7 DAY)) THEN 'true' 
+				         ELSE 'false' 
+				    END NEWARTICLE,
+				    'list' B_GUBUN,
+				    AA.B_LEVEL
+				from $B_TABLE$ AA LEFT OUTER JOIN BBS_USERLOG BB ON AA.B_IDX = BB.BBS_USERLOG_IDX AND BB.USERS_IDX = #USERS_IDX#
+			]]>
+			
+			<dynamic prepend="WHERE">
+	  			<isNotNull prepend="AND" property= "BBS_IDX">
+					AA.BBS_IDX = #BBS_IDX#
+				</isNotNull>
+				<isNotEqual prepend="AND" property= "strKeyword" compareValue="">
+					<isNotNull property="strKeyword">
+					$strIndex$ like CONCAT('%',#strKeyword#,'%')
+					</isNotNull>
+				</isNotEqual>
+				<isNotNull prepend="AND" property= "startdt">
+					STR_TO_DATE(AA.B_DATE,'%Y-%m-%d %T') BETWEEN STR_TO_DATE(#startdt#,'%Y-%m-%d') AND DATE_ADD(DATE_ADD(STR_TO_DATE(#enddt#,'%Y-%m-%d'), INTERVAL 1 DAY), INTERVAL -1 SECOND)
+				</isNotNull>
+			</dynamic>
+			ORDER BY AA.B_REF DESC, AA.B_STEP
+			LIMIT $SKIP$, $USERS_LISTNUM$
+	</select>
+	
+	<select id="get_top_board_list_type_01"
+		parameterClass="java.util.HashMap"
+		resultClass="java.util.HashMap">
+			<![CDATA[	
+				select 
+				    AA.B_IDX, 
+				    AA.BBS_IDX, 
+				    AA.USERS_IDX,
+				    AA.B_NAME,
+				    AA.B_EMAIL, 
+				    AA.B_TITLE, 
+				    AA.B_ATTACHE, 
+				    '' B_ATTACHE_EXT,
+				    AA.B_DATE,
+				    AA.B_READ_NUM,
+				    AA.B_DOWNLOAD_NUM,
+				    AA.B_APPEND_NUM,
+				    CASE WHEN BB.BBS_USERLOG_IDX IS NULL THEN CASE WHEN (STR_TO_DATE(AA.B_DATE,'%Y-%m-%d %T') > DATE_ADD(SYSDATE(), INTERVAL -7 DAY)) THEN 'false' ELSE 'true' END
+				         ELSE 'true' 
+				    END READARTICLE,
+				    CASE WHEN (STR_TO_DATE(AA.B_DATE,'%Y-%m-%d %T') > DATE_ADD(SYSDATE(), INTERVAL -7 DAY)) THEN 'true' 
+				         ELSE 'false' 
+				    END NEWARTICLE,
+				    'top' B_GUBUN,
+				    AA.B_LEVEL
+				FROM BBS_TOP CC INNER JOIN $B_TABLE$ AA 
+				ON CC.BBS_IDX = AA.BBS_IDX AND CC.B_IDX = AA.B_IDX AND CC.BBS_IDX = #BBS_IDX# LEFT OUTER JOIN BBS_USERLOG BB ON AA.B_IDX = BB.BBS_USERLOG_IDX AND BB.USERS_IDX = #USERS_IDX#
+			]]>
+	</select>	
+	
+	<select id="get_board_list_count_type_01"
+		parameterClass="java.util.HashMap"
+		resultClass="java.lang.Integer">
+			<![CDATA[
+				SELECT 
+				    COUNT(AA.B_IDX) CNT
+				FROM $B_TABLE$ AA LEFT OUTER JOIN BBS_USERLOG BB ON AA.B_IDX = BB.BBS_USERLOG_IDX AND BB.USERS_IDX = #USERS_IDX#
+			]]>
+			
+				<dynamic prepend="WHERE">
+		  			<isNotNull prepend="AND" property= "BBS_IDX">
+						AA.BBS_IDX = #BBS_IDX#
+					</isNotNull>
+					<isNotEqual prepend="AND" property= "strKeyword" compareValue="">
+						 <isNotNull property="strKeyword">
+						 	<isEqual prepend="" property= "strIndex" compareValue="0">
+								(  B_TITLE like  CONCAT('%',#strKeyword#,'%') 
+								OR B_NAME like  CONCAT('%',#strKeyword#,'%')
+								)
+							</isEqual>
+							<isNotEqual prepend="" property= "strIndex" compareValue="0">
+								$strIndex$ like CONCAT('%',#strKeyword#,'%')
+							</isNotEqual>	
+						 </isNotNull>
+					</isNotEqual>
+					<isNotNull prepend="AND" property= "startdt">
+						STR_TO_DATE(AA.B_DATE,'%Y-%m-%d %T') BETWEEN STR_TO_DATE(#startdt#,'%Y-%m-%d') AND DATE_ADD(DATE_ADD(STR_TO_DATE(#enddt#,'%Y-%m-%d'), INTERVAL 1 DAY), INTERVAL -1 SECOND)
+					</isNotNull>
+				</dynamic>
+
+	</select>
+	
+	<select id="get_board_list_type_02"
+		parameterClass="java.util.HashMap"
+		resultClass="java.util.HashMap">
+			<![CDATA[
+				SELECT 
+				    AA.B_IDX, 
+				    AA.BBS_IDX, 
+				    AA.B_NAME, 
+				    AA.B_TITLE, 
+				    AA.B_ATTACHE,
+				    SUBSTR(AA.B_ATTACHE, INSTR(AA.B_ATTACHE, '.')+1) B_ATTACHE_EXT,
+				    AA.B_DATE,
+				    AA.B_READ_NUM,
+				    AA.B_DOWNLOAD_NUM,
+				    AA.B_APPEND_NUM,
+				    CASE WHEN BB.BBS_USERLOG_IDX IS NULL THEN CASE WHEN (STR_TO_DATE(AA.B_DATE,'%Y-%m-%d %T') > DATE_ADD(SYSDATE(), INTERVAL -7 DAY)) THEN 'false' ELSE 'true' END
+				         ELSE 'true' 
+				    END READARTICLE,
+				    CASE WHEN (STR_TO_DATE(AA.B_DATE,'%Y-%m-%d %T') > DATE_ADD(SYSDATE(), INTERVAL -7 DAY)) THEN 'true' 
+				         ELSE 'false' 
+				    END NEWARTICLE,
+				    'list' B_GUBUN,
+				    AA.B_LEVEL
+				FROM $B_TABLE$ AA LEFT OUTER JOIN BBS_USERLOG BB ON AA.B_IDX = BB.BBS_USERLOG_IDX AND BB.USERS_IDX = #USERS_IDX#
+			]]>
+			
+			<dynamic prepend="WHERE">
+				1=1
+	  			<isGreaterEqual prepend="" property="BBS_IDX" compareValue="1">
+					AA.BBS_IDX = #BBS_IDX#
+				</isGreaterEqual>
+			</dynamic>
+			<dynamic prepend="AND" open="(" close=")">
+				<isNotEqual prepend="OR" property= "B_TITLE" compareValue="">
+					B_TITLE like CONCAT('%',#B_TITLE#,'%')
+				</isNotEqual>
+				<isNotEqual prepend="OR" property= "B_NAME" compareValue="">
+					B_NAME like CONCAT('%',#B_NAME#,'%')
+				</isNotEqual>
+				<isNotEqual prepend="OR" property= "B_CONTENT" compareValue="">
+					B_CONTENT like CONCAT('%',#B_CONTENT#,'%')
+				</isNotEqual>
+			</dynamic>
+			<dynamic prepend="">
+				<isNotEqual prepend="AND" property= "startdt" compareValue="">
+					STR_TO_DATE(AA.B_DATE,'%Y-%m-%d %T') BETWEEN STR_TO_DATE(#startdt#,'%Y-%m-%d') AND DATE_ADD(DATE_ADD(STR_TO_DATE(#enddt#,'%Y-%m-%d'), INTERVAL 1 DAY), INTERVAL -1 SECOND)
+				</isNotEqual>
+			</dynamic>
+			ORDER BY AA.B_DATE DESC
+			LIMIT $SKIP$, $USERS_LISTNUM$
+	</select>
+	<select id="get_board_list_count_type_02"
+		parameterClass="java.util.HashMap"
+		resultClass="java.lang.Integer">
+			<![CDATA[
+				SELECT 
+				    COUNT(AA.B_IDX) CNT
+				FROM $B_TABLE$ AA LEFT OUTER JOIN BBS_USERLOG BB ON AA.B_IDX = BB.BBS_USERLOG_IDX AND BB.USERS_IDX = #USERS_IDX#
+			]]>
+			
+			<dynamic prepend="WHERE">
+				<isGreaterEqual prepend="" property="BBS_IDX" compareValue="1">
+					AA.BBS_IDX = #BBS_IDX#
+				</isGreaterEqual>
+				<isNotEqual prepend="OR" property= "B_TITLE" compareValue="">
+					B_TITLE like CONCAT('%',#B_TITLE#,'%')
+				</isNotEqual>
+				<isNotEqual prepend="OR" property= "B_NAME" compareValue="">
+					B_NAME like CONCAT('%',#B_NAME#,'%')
+				</isNotEqual>
+				<isNotEqual prepend="OR" property= "B_CONTENT" compareValue="">
+					B_CONTENT like CONCAT('%',#B_CONTENT#,'%')
+				</isNotEqual>
+				<isNotEqual prepend="AND" property= "startdt" compareValue="">
+					STR_TO_DATE(AA.B_DATE,'%Y-%m-%d %T') BETWEEN STR_TO_DATE(#startdt#,'%Y-%m-%d') AND DATE_ADD(DATE_ADD(STR_TO_DATE(#enddt#,'%Y-%m-%d'), INTERVAL 1 DAY), INTERVAL -1 SECOND)
+				</isNotEqual>
+			</dynamic>
+
+	</select>
+	
+	<select id="select_board_alimi_type_01" 
+					parameterClass="java.util.HashMap" 
+					resultClass="com.nara.jdf.db.entity.BoardEntity">
+		SELECT 
+			B_IDX,
+			BBS_IDX,
+			B_REF,
+			B_STEP,
+			B_LEVEL,
+			USERS_IDX,
+			B_PASSWD,
+			B_NAME,
+			B_EMAIL,
+			B_TITLE,
+			B_CONTENT_TYPE,
+			B_CONTENT,
+			B_DATE,
+			B_ATTACHE,
+			B_ATTACHE_SIZE,
+			B_READ_NUM,
+			B_DOWNLOAD_NUM,
+			B_APPEND_NUM, 
+			B_NOTICE_WAY,
+			CUSTOM_TITLE,
+		    RECEIVE_USERS_IDX,
+		    RECEIVE_USERS_NAME,
+		    B_NOTICE_YN,
+		    B_NOTICE_TYPE
+		FROM $B_TABLE$
+		WHERE BBS_IDX = #BBS_IDX#
+			AND RECEIVE_USERS_IDX = #USERS_IDX#
+			AND B_NOTICE_YN = 'N'
+	</select>
+	
+	<update id="update_append_alimi_type_01"
+            parameterClass="java.util.HashMap">
+    	UPDATE $B_TABLE$ 
+    	SET B_READ_NUM = B_READ_NUM+1,
+    		B_NOTICE_YN ='Y'
+    	WHERE B_IDX = #B_IDX#
+	</update>
+	
+	<!-- Text Mode -->
+	<select id="get_board_list_type_01_text"
+		parameterClass="java.util.HashMap"
+		resultClass="com.nara.jdf.db.entity.BoardEntity">
+			<![CDATA[			
+				SELECT 
+				    AA.B_IDX, 
+				    AA.BBS_IDX, 
+				    AA.USERS_IDX,
+				    AA.B_NAME, 
+				    AA.B_EMAIL,
+				    AA.B_TITLE, 
+				    AA.B_ATTACHE,
+				    SUBSTR(AA.B_ATTACHE, INSTR(AA.B_ATTACHE, '.')+1) B_ATTACHE_EXT,
+				    AA.B_DATE,
+				    AA.B_READ_NUM,
+				    AA.B_DOWNLOAD_NUM,
+				    AA.B_APPEND_NUM,
+				    CASE WHEN BB.BBS_USERLOG_IDX IS NULL THEN CASE WHEN (STR_TO_DATE(AA.B_DATE,'%Y-%m-%d %T') > DATE_ADD(SYSDATE(), INTERVAL -7 DAY)) THEN 'false' else 'true' END
+				         ELSE 'true' 
+				    END READARTICLE,
+				    CASE WHEN (STR_TO_DATE(AA.B_DATE,'%Y-%m-%d %T') > DATE_ADD(SYSDATE(), INTERVAL -7 DAY)) THEN 'true' 
+				         ELSE 'false' 
+				    END NEWARTICLE,
+				    'list' B_GUBUN,
+				    AA.B_LEVEL
+				FROM $B_TABLE$ AA LEFT OUTER JOIN BBS_USERLOG BB ON AA.B_IDX = BB.BBS_USERLOG_IDX AND BB.USERS_IDX = #USERS_IDX#
+			]]>
+			
+			<dynamic prepend="WHERE">
+	  			<isNotNull prepend="AND" property= "BBS_IDX">
+					AA.BBS_IDX = #BBS_IDX#
+				</isNotNull>
+				<isNotEqual prepend="AND" property= "strKeyword" compareValue="">
+					<isEqual prepend="" property= "strIndex" compareValue="0">
+							(  B_TITLE like  CONCAT('%',#strKeyword#,'%') OR B_NAME like  CONCAT('%',#strKeyword#,'%') )
+						</isEqual>
+					<isNotEqual prepend="" property= "strIndex" compareValue="0">
+						$strIndex$ like CONCAT('%',#strKeyword#,'%')
+					</isNotEqual>
+							
+				</isNotEqual>
+				<isNotNull prepend="AND" property= "startdt">
+					STR_TO_DATE(AA.B_DATE,'%Y-%m-%d %T') BETWEEN STR_TO_DATE(#startdt#,'%Y-%m-%d') AND DATE_ADD(DATE_ADD(STR_TO_DATE(#enddt#,'%Y-%m-%d'), INTERVAL 1 DAY), INTERVAL -1 SECOND)
+				</isNotNull>
+			</dynamic>
+			ORDER BY AA.B_REF DESC, AA.B_STEP
+			LIMIT $SKIP$, $USERS_LISTNUM$
+	</select>
+	
+	<select id="get_top_board_list_type_01_text"
+			parameterClass="java.util.HashMap"
+			resultClass="com.nara.jdf.db.entity.BoardEntity">
+		<![CDATA[	
+			SELECT 
+			    AA.B_IDX, 
+			    AA.BBS_IDX, 
+			    AA.USERS_IDX,
+			    AA.B_NAME, 
+			    AA.B_EMAIL,
+			    AA.B_TITLE, 
+			    AA.B_ATTACHE, 
+			    '' B_ATTACHE_EXT,
+			    AA.B_DATE,
+			    AA.B_READ_NUM,
+			    AA.B_DOWNLOAD_NUM,
+			    AA.B_APPEND_NUM,
+			    CASE WHEN BB.BBS_USERLOG_IDX IS NULL THEN CASE WHEN (STR_TO_DATE(AA.B_DATE,'%Y-%m-%d %T') > DATE_ADD(SYSDATE(), INTERVAL -7 DAY)) THEN 'false' ELSE 'true' END
+			         ELSE 'true' 
+			    END READARTICLE,
+			    CASE WHEN (STR_TO_DATE(AA.B_DATE,'%Y-%m-%d %T') > DATE_ADD(SYSDATE(), INTERVAL -7 DAY)) THEN 'true' 
+			         ELSE 'false' 
+			    END NEWARTICLE,
+			    'top' B_GUBUN,
+			    AA.B_LEVEL
+			FROM BBS_TOP CC INNER JOIN $B_TABLE$ AA 
+			ON CC.BBS_IDX = AA.BBS_IDX and CC.B_IDX = AA.B_IDX and CC.BBS_IDX   = #BBS_IDX# 
+			LEFT OUTER JOIN BBS_USERLOG BB ON AA.B_IDX = BB.BBS_USERLOG_IDX AND BB.USERS_IDX = #USERS_IDX#
+		]]>
+	</select>	
+	
+	<select id="get_board_list_count_type_03"
+				parameterClass="java.util.HashMap"
+				resultClass="java.lang.Integer">
+		SELECT COUNT(AA.B_IDX) CNT
+		FROM $B_TABLE$ AA LEFT OUTER JOIN BBS_USERLOG BB 
+		ON AA.B_IDX = BB.BBS_USERLOG_IDX AND BB.USERS_IDX = #USERS_IDX#
+		WHERE AA.BBS_IDX = #BBS_IDX# AND BB.BBS_USERLOG_IDX IS NULL
+		AND STR_TO_DATE(AA.B_DATE,'%Y-%m-%d %T') > DATE_ADD(SYSDATE(), INTERVAL -7 DAY)
+	</select>	
+</sqlMap>
